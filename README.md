@@ -7,7 +7,7 @@
 | MORIN Laurie    | [mlaurie](https://github.com/mlaurie) |
 | WADOUX Nicolas  | [Wadoux-Nicolas](https://github.com/Wadoux-Nicolas) |
 
-# Specifications
+# Spécifications
 
 | Spécifications fonctionnelles            | Description |
 |------------------------------------------|-------------|
@@ -17,6 +17,15 @@
 | **Gestion d'évènements**                 | - Les utilisateurs d’un groupe peuvent créer des évènements en spécifiant une description, une date (optionnel), un lieu (optionnel) et une liste de choses à amener, telles que des plats pour un buffet ou une contribution financière. <br>- Les évènements sont liés à un groupe. <br>- Les participants peuvent confirmer leur présence à condition que les sondages associés à l’évènement soient clos. <br>- Les participants peuvent commenter l'évènement et voir qui d'autre y participe. |
 | **Système de Sondage isolés**            | - Les utilisateurs peuvent créer des sondages pour recueillir des opinions ou des votes sur des sujets spécifiques, tels que la notation à la fin d'un évènement ou le choix d'une option pour une activité future. <br>- Les résultats des sondages sont affichés en temps réel. <br>- Le créateur du sondage peut le clôturer. <br>- Les utilisateurs peuvent créer des sondages associés à un évènement. <br>- Duplication de sondage pour réutilisation future. <br>- Une fois le sondage publié, les membres peuvent ajouter leurs propres propositions (option lors de la création). |
 | **Évènements Récurrents et Duplication** | - Les utilisateurs ont la possibilité de créer des évènements récurrents. |
+
+# Spécifications de l'administrateur
+
+| Spécifications fonctionnelles             | Description                                                                                                                    |
+|-------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| **Gestion des Utilisateurs**              | - Les administrateurs peuvent consulter la liste des utilisateurs, les modifiers et les supprimer.                             |
+| **Gestion des Groupes & évènements**      | - Les administrateurs peuvent créer, supprimer et gérer des groupes/évènements/sondages sur la plateforme.                     |
+| **Contrôle des Paramètres de Plateforme** | - Les administrateurs peuvent configurer les paramètres globaux de la plateforme, tels que les features activées actuellement. |
+
 
 # Scénario
 ### Scénario 1 :
