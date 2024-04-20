@@ -31,20 +31,20 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-#    - name: Use CLI
-#      uses: scaleway/action-scw@v0
-#      with:
-#        save-config: true
-#        export-config: true
-#        version: v2.27.0
-#        access-key: ${{ secrets.SCW_ACCESS_KEY }}
-#        secret-key: ${{ secrets.SCW_SECRET_KEY }}
-#        default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
-#        default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-#
-#    - name: Deploy container
-#      uses: scaleway/action-scw@v0
-#      id: cli
-#      with:
-#        args: container container deploy ${{ vars.CONTAINER_ID }}
-#    - run: echo ${{ steps.cli.outputs.json }}
+    - name: Use CLI
+      uses: scaleway/action-scw@v0
+      with:
+        save-config: true
+        export-config: true
+        version: v2.27.0
+        access-key: ${{ secrets.SCALEWAY_REGISTRY_USERNAME }}
+        secret-key: ${{ secrets.SCALEWAY_REGISTRY_PASSWORD }}
+        default-project-id: ${{ vars.SCALEWAY_DEFAULT_PROJECT_ID }}
+        default-organization-id: ${{ vars.SCALEWAY_DEFAULT_ORGANIZATION_ID }}
+
+    - name: Deploy container
+      uses: scaleway/action-scw@v0
+      id: cli
+      with:
+        args: container container deploy ${{ vars.CONTAINER_ID }}
+    - run: echo ${{ steps.cli.outputs.json }}
