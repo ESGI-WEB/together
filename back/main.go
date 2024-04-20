@@ -8,7 +8,7 @@ import (
 )
 
 func HomeHandler(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("Hello World."))
+	res.Write([]byte("Hello, World!"))
 }
 
 func getEnv(key, fallback string) string {

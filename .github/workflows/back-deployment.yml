@@ -2,7 +2,7 @@ name: Back deployment
 
 on:
   push:
-    branches: [ "ci/deployment" ]
+    branches: [ "main" ]
 
 jobs:
   build:
