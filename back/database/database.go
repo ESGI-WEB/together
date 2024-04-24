@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"together/database/models"
+	"together/models"
 	"together/utils"
 )
 
@@ -20,6 +20,19 @@ type Config struct {
 type DB struct {
 	DB     *gorm.DB
 	Config Config
+}
+
+var allModels = []interface{}{
+	&models.Address{},
+	&models.Attend{},
+	&models.Category{},
+	&models.Event{},
+	&models.Group{},
+	&models.Message{},
+	&models.Poll{},
+	&models.PollAnswerChoice{},
+	&models.Reaction{},
+	&models.User{},
 }
 
 func (db *DB) Connect() error {
@@ -51,7 +64,7 @@ func (db *DB) Close() error {
 }
 
 func (db *DB) AutoMigrate() error {
-	return db.DB.AutoMigrate(&database.User{})
+	return db.DB.AutoMigrate(allModels...)
 }
 
 func (db *DB) CloseDB() {
@@ -73,6 +86,11 @@ func InitDB() (*DB, error) {
 
 	newDB := DB{Config: dbConfig}
 	err := newDB.Connect()
+	if err != nil {
+		return nil, err
+	}
+
+	err = newDB.DB.SetupJoinTable(&models.Event{}, "Participants", &models.Attend{})
 	if err != nil {
 		return nil, err
 	}
