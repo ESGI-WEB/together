@@ -10,6 +10,8 @@ type Event struct {
 	Description  string
 	Date         string
 	Time         *string
+	TypeID       uint
+	Type         EventType
 	AddressID    uint
 	Address      Address
 	CategoryID   uint
