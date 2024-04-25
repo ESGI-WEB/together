@@ -8,8 +8,16 @@ services:
       - "${PORT:-8080}:8080"
     environment:
       PORT: ${PORT:-8080}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-app}
+      DB_SSL_MODE: ${DB_SSL_MODE:-disable}
     volumes:
       - "./:/src/app"
+    networks:
+      - together-network
 
   postgres:
     image: postgres:16
@@ -21,6 +29,12 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
+    networks:
+      - together-network
+
+networks:
+  together-network:
+    driver: bridge
 
 volumes:
   postgres:

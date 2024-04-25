@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"strconv"
 	"together/models"
 	"together/utils"
 )
@@ -75,17 +76,22 @@ func (db *DB) CloseDB() {
 }
 
 func InitDB() (*DB, error) {
+	port, err := strconv.Atoi(utils.GetEnv("DB_PORT", "5432"))
+	if err != nil {
+		return nil, err
+	}
+
 	dbConfig := Config{
-		Host:     utils.GetEnv("DB_HOST", "localhost").(string),
-		Port:     utils.GetEnv("DB_PORT", 5432).(int),
-		User:     utils.GetEnv("DB_USER", "postgres").(string),
-		Password: utils.GetEnv("DB_PASSWORD", "postgres").(string),
-		Name:     utils.GetEnv("DB_NAME", "postgres").(string),
-		SSLMode:  utils.GetEnv("DB_SSL_MODE", "disable").(string),
+		Host:     utils.GetEnv("DB_HOST", "localhost"),
+		Port:     port,
+		User:     utils.GetEnv("DB_USER", "postgres"),
+		Password: utils.GetEnv("DB_PASSWORD", "postgres"),
+		Name:     utils.GetEnv("DB_NAME", "postgres"),
+		SSLMode:  utils.GetEnv("DB_SSL_MODE", "disable"),
 	}
 
 	newDB := DB{Config: dbConfig}
-	err := newDB.Connect()
+	err = newDB.Connect()
 	if err != nil {
 		return nil, err
 	}

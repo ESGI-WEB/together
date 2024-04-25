@@ -30,7 +30,7 @@ func main() {
 
 	router.LoadRoutes(e, &router.HelloRouter{})
 
-	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080").(string)
+	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
 	e.Logger.Fatal(e.Start(addr))
 	fmt.Printf("Listening on %s\n", addr)
 }

@@ -2,7 +2,9 @@ package utils
 
 import "os"
 
-func GetEnv(key string, fallback interface{}) interface{} {
+// LookupEnv always returns a string no int or whatever
+
+func GetEnv(key string, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}
