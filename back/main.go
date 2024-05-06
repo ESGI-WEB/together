@@ -14,6 +14,8 @@ func main() {
 	e := echo.New()
 
 	// init database
+	// can also be called in func init but defer must be called in main
+	// so we keep everything together here
 	newDB, err := database.InitDB()
 	if err != nil {
 		e.Logger.Fatal(err)
@@ -28,7 +30,7 @@ func main() {
 		return
 	}
 
-	router.LoadRoutes(e, &router.HelloRouter{})
+	router.LoadRoutes(e, &router.HelloRouter{}, &router.UserRouter{})
 
 	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
 	e.Logger.Fatal(e.Start(addr))

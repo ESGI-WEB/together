@@ -11,12 +11,31 @@ const (
 
 type User struct {
 	gorm.Model
-	Name              string
-	Email             string `gorm:"unique;<-:create"`
-	Password          string
-	Biography         *string
-	AvatarPath        *string
-	Role              Role               `gorm:"default:user"`
-	Groups            []Group            `gorm:"many2many:group_users;"`
-	PollAnswerChoices []PollAnswerChoice `gorm:"many2many:poll_answer_choice_users"`
+	Name              string             `json:"name" validate:"required,min=2,max=50"`
+	Email             string             `gorm:"unique;<-:create" json:"email" validate:"email,required"`
+	Password          string             `json:"-" validate:"required"`
+	Role              Role               `gorm:"default:user" json:"role"`
+	Biography         *string            `json:"biography"`
+	AvatarPath        *string            `json:"avatar_path"`
+	Groups            []Group            `gorm:"many2many:group_users;" json:"groups,omitempty"`
+	PollAnswerChoices []PollAnswerChoice `gorm:"many2many:poll_answer_choice_users" json:"poll_answer_choices,omitempty"`
+}
+
+// TODO find a better solution for this
+type UserCreate struct {
+	Name       string  `json:"name" validate:"required,min=2,max=50"`
+	Email      string  `json:"email" validate:"email,required"`
+	Password   string  `json:"password" validate:"required,min=8"`
+	Biography  *string `json:"biography"`
+	AvatarPath *string `json:"avatar_path"`
+}
+
+func (u UserCreate) ToUser() *User {
+	return &User{
+		Name:       u.Name,
+		Email:      u.Email,
+		Password:   u.Password,
+		Biography:  u.Biography,
+		AvatarPath: u.AvatarPath,
+	}
 }

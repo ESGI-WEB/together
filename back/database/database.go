@@ -9,6 +9,8 @@ import (
 	"together/utils"
 )
 
+var CurrentDatabase *gorm.DB
+
 type Config struct {
 	Host     string
 	Port     int
@@ -101,5 +103,6 @@ func InitDB() (*DB, error) {
 		return nil, err
 	}
 
+	CurrentDatabase = newDB.DB
 	return &newDB, nil
 }
