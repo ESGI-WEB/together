@@ -16,8 +16,6 @@ services:
       DB_SSL_MODE: ${DB_SSL_MODE:-disable}
     volumes:
       - "./:/src/app"
-    networks:
-      - together-network
 
   postgres:
     image: postgres:16-alpine
@@ -29,12 +27,6 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres:/var/lib/postgresql/data
-    networks:
-      - together-network
-
-networks:
-  together-network:
-    driver: bridge
 
 volumes:
   postgres:
