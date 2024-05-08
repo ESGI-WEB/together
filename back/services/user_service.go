@@ -26,7 +26,7 @@ func (s *UserService) AddUser(user models.UserCreate) (*models.User, error) {
 		return nil, errors.ErrUserAlreadyExists
 	}
 
-	user.Password, err = HashPassword(user.Password)
+	user.Password, err = NewSecurityService().HashPassword(user.Password)
 	if err != nil {
 		return nil, err
 	}

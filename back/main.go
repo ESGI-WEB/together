@@ -4,9 +4,15 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"together/database"
-	"together/router"
+	"together/routers"
 	"together/utils"
 )
+
+var appRouters = []routers.Router{
+	&routers.HelloRouter{},
+	&routers.UserRouter{},
+	&routers.SecurityRouter{},
+}
 
 func main() {
 	fmt.Println("Starting server...")
@@ -30,7 +36,7 @@ func main() {
 		return
 	}
 
-	router.LoadRoutes(e, &router.HelloRouter{}, &router.UserRouter{})
+	routers.LoadRoutes(e, appRouters...)
 
 	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
 	e.Logger.Fatal(e.Start(addr))
