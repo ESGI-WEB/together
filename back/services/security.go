@@ -4,6 +4,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 	"os"
+	"time"
 	"together/database"
 	"together/errors"
 	"together/models"
@@ -52,8 +53,8 @@ func (s *SecurityService) Login(email, password string) (*LoginResponse, error) 
 			"name":  targetUser.Name,
 			"email": targetUser.Email,
 			"role":  targetUser.Role,
-			//"exp":   time.Now().Add(2 * time.Hour),
-			//"iat":   time.Now(),
+			"exp":   time.Now().Add(2 * time.Hour).Unix(),
+			"iat":   time.Now().Unix(),
 		},
 	)
 
