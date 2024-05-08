@@ -2,27 +2,37 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"net/http"
-	"os"
+	"github.com/labstack/echo/v4"
+	"together/database"
+	"together/router"
+	"together/utils"
 )
 
-func HomeHandler(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("Hello, World!"))
-}
-
-func getEnv(key, fallback string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return fallback
-}
-
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/", HomeHandler)
-	http.Handle("/", router)
-	addr := "0.0.0.0:" + getEnv("PORT", "8080")
+	fmt.Println("Starting server...")
+
+	e := echo.New()
+
+	// init database
+	// can also be called in func init but defer must be called in main
+	// so we keep everything together here
+	newDB, err := database.InitDB()
+	if err != nil {
+		e.Logger.Fatal(err)
+		return
+	}
+	defer newDB.CloseDB()
+
+	// auto migrate database
+	err = newDB.AutoMigrate()
+	if err != nil {
+		e.Logger.Fatal(err)
+		return
+	}
+
+	router.LoadRoutes(e, &router.HelloRouter{}, &router.UserRouter{})
+
+	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
+	e.Logger.Fatal(e.Start(addr))
 	fmt.Printf("Listening on %s\n", addr)
-	http.ListenAndServe(addr, router)
 }
