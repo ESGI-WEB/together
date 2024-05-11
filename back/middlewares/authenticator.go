@@ -10,7 +10,7 @@ import (
 	"together/services"
 )
 
-var LoggerMiddleware = func(next echo.HandlerFunc) echo.HandlerFunc {
+var AuthenticationMiddleware = func(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		bearer := c.Request().Header.Get("Authorization")
 

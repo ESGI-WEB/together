@@ -53,7 +53,7 @@ func (s *SecurityService) Login(email, password string) (*LoginResponse, error) 
 			"name":  targetUser.Name,
 			"email": targetUser.Email,
 			"role":  targetUser.Role,
-			"exp":   time.Now().Add(2 * time.Hour).Unix(),
+			"exp":   time.Now().Add(4 * time.Hour).Unix(),
 			"iat":   time.Now().Unix(),
 		},
 	)

@@ -24,7 +24,6 @@ func (c *HelloController) Hello(ctx echo.Context) error {
 
 func (c *HelloController) HelloAdmin(ctx echo.Context) error {
 	loggedUser := ctx.Get("user").(models.User)
-	message := c.helloService.GetHelloMessage()
-	message += " " + loggedUser.Name
+	message := c.helloService.GetHelloUserMessage(loggedUser)
 	return ctx.String(http.StatusOK, message)
 }
