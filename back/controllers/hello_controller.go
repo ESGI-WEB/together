@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"together/models"
 	"together/services"
 )
 
@@ -18,5 +19,11 @@ func NewHelloController() *HelloController {
 
 func (c *HelloController) Hello(ctx echo.Context) error {
 	message := c.helloService.GetHelloMessage()
+	return ctx.String(http.StatusOK, message)
+}
+
+func (c *HelloController) HelloAdmin(ctx echo.Context) error {
+	loggedUser := ctx.Get("user").(models.User)
+	message := c.helloService.GetHelloUserMessage(loggedUser)
 	return ctx.String(http.StatusOK, message)
 }
