@@ -17,12 +17,12 @@ class GroupButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       child: SizedBox(
-        width: 100, // Largeur fixe pour le bouton
+        width: 100,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon),
-            const SizedBox(width: 8.0), // Espacement entre l'icône et le texte
+            const SizedBox(width: 8.0),
             Text(text),
           ],
         ),

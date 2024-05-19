@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/partials/group_entry.dart';
-import 'package:front/groups/groups_list_screen.dart';
-
-import 'core/partials/layout.dart';
+import 'package:front/groups/groups_screen.dart';
 import 'groups/group_screen.dart';
 
 class App extends StatelessWidget {
@@ -23,14 +20,14 @@ class App extends StatelessWidget {
           case GroupScreen.routeName:
             return MaterialPageRoute(
               builder: (context) {
-                return GroupScreen(groupId: args as String);
+                return GroupScreen(id: args as String);
               },
             );
-          case GroupsListScreen.routeName:
+          case GroupsScreen.routeName:
           default:
             return MaterialPageRoute(
               builder: (context) {
-                return const GroupsListScreen();
+                return const GroupsScreen();
               },
             );
         }
