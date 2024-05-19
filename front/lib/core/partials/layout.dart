@@ -39,10 +39,10 @@ class _LayoutState extends State<Layout> {
         ],
       ),
       appBar: AppBar(
-        leading: IconButton(
+        leading: Navigator.of(context).canPop() ? IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
-        ),
+        ) : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),

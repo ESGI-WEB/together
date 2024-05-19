@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:front/groups/group_screen.dart';
 
-class GroupEntry extends StatelessWidget {
+class GroupEntry extends StatelessWidget{
   const GroupEntry({super.key, required this.groupId});
 
   final String groupId;
@@ -9,16 +10,9 @@ class GroupEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        Navigator.of(context)
-            .pushNamed("/group", arguments: ScreenArguments(groupId));
+        GroupScreen.navigateTo(context, groupId: groupId);
       },
       child: Text(groupId),
     );
   }
-}
-
-class ScreenArguments {
-  final String groupId;
-
-  ScreenArguments(this.groupId);
 }
