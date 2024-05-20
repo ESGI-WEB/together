@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class JoinGroupScreen extends StatefulWidget {
+class JoinGroupScreen extends StatelessWidget {
   static const String routeName = '/joinGroup';
 
   static Future<String?> navigateTo(BuildContext context) {
@@ -14,14 +14,9 @@ class JoinGroupScreen extends StatefulWidget {
   const JoinGroupScreen({super.key});
 
   @override
-  _JoinGroupScreenState createState() => _JoinGroupScreenState();
-}
-
-class _JoinGroupScreenState extends State<JoinGroupScreen> {
-  final TextEditingController _controller = TextEditingController();
-
-  @override
   Widget build(BuildContext context) {
+    final TextEditingController _controller = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rejoindre un Groupe'),
