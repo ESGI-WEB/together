@@ -4,6 +4,7 @@ import 'blocs/group_bloc.dart';
 import 'group_button.dart';
 import 'group_list.dart';
 import 'create_group_screen.dart';
+import 'join_group_screen.dart';
 
 class GroupsScreen extends StatelessWidget {
   static const String routeName = '/groups';
@@ -74,8 +75,21 @@ class GroupsScreen extends StatelessWidget {
                   GroupButton(
                     text: 'Rejoindre',
                     icon: Icons.person_add,
-                    onPressed: () {
-                      // Implement logic to join a group, e.g., show a dialog to select a group
+                    onPressed: () async {
+                      final groupIdOrName = await JoinGroupScreen.navigateTo(context);
+                      if (!context.mounted) return;
+                      if (groupIdOrName != null) {
+                        // Handle join group logic here
+                        // Example: context.read<GroupBloc>().add(JoinGroup(groupIdOrName));
+                        // Assuming JoinGroup event expects a group ID as int
+                        final groupId = int.tryParse(groupIdOrName);
+                        if (groupId != null) {
+                          context.read<GroupBloc>().add(JoinGroup(groupId));
+                        } else {
+                          // Handle the case where group ID is not an int
+                          // You might need to implement additional logic to search by group name
+                        }
+                      }
                     },
                   ),
                 ],

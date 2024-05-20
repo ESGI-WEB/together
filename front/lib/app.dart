@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'groups/group_screen.dart';
-import 'groups/create_group_screen.dart'; // Assurez-vous d'importer le nouveau fichier
+import 'groups/create_group_screen.dart';
+import 'groups/join_group_screen.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -24,18 +25,18 @@ class App extends StatelessWidget {
                 return GroupScreen(id: args as String);
               },
             );
-          case CreateGroupScreen.routeName: // Ajout de la nouvelle route
+          case CreateGroupScreen.routeName:
             return MaterialPageRoute(
-              builder: (context) {
-                return const CreateGroupScreen();
-              },
+              builder: (context) => const CreateGroupScreen(),
+            );
+          case JoinGroupScreen.routeName:
+            return MaterialPageRoute(
+              builder: (context) => const JoinGroupScreen(),
             );
           case GroupsScreen.routeName:
           default:
             return MaterialPageRoute(
-              builder: (context) {
-                return const GroupsScreen();
-              },
+              builder: (context) => const GroupsScreen(),
             );
         }
       },
