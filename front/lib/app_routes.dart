@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/register/register_screen.dart';
 
 import 'groups/group_screen.dart';
 import 'groups/groups_list_screen.dart';
@@ -20,10 +21,16 @@ class AppRoutes {
             return const GroupsListScreen();
           },
         );
+      case RegisterScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return RegisterScreen();
+          },
+        );
       default:
         return MaterialPageRoute(
           builder: (context) {
-            return LoginScreen();
+            return LoginScreen(defaultEmail: args as String?);
           },
         );
     }

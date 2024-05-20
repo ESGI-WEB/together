@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/services/users_services.dart';
 import 'package:front/groups/groups_list_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
+import 'package:front/register/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
-  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false, String? email}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory, arguments: email);
   }
 
-  LoginScreen({super.key});
+  final String? defaultEmail;
+
+  LoginScreen({super.key, this.defaultEmail});
 
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +30,12 @@ class LoginScreen extends StatelessWidget {
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+            if (defaultEmail != null) {
+              _emailController.text = defaultEmail!;
+              BlocProvider.of<LoginBloc>(context)
+                  .add(LoginEmailChanged(email: defaultEmail!));
+            }
+
             return Form(
               key: _formKey,
               child: Center(
@@ -43,6 +54,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       TextFormField(
                         enabled: state is! LoginLoading,
+                        controller: _emailController,
                         decoration: const InputDecoration(
                           hintText: 'Email',
                         ),
@@ -55,7 +67,7 @@ class LoginScreen extends StatelessWidget {
                             return 'Veuillez saisir un email';
                           }
 
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          if (!UsersServices.emailRegex
                               .hasMatch(value)) {
                             return 'Veuillez saisir un email valide';
                           }
@@ -92,14 +104,24 @@ class LoginScreen extends StatelessWidget {
                           return const CircularProgressIndicator();
                         }
 
-                        return ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              BlocProvider.of<LoginBloc>(context)
-                                  .add(LoginFormSubmitted());
-                            }
-                          },
-                          child: const Text('Connexion'),
+                        return Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  BlocProvider.of<LoginBloc>(context)
+                                      .add(LoginFormSubmitted());
+                                }
+                              },
+                              child: const Text('Connexion'),
+                            ),
+                            OutlinedButton(
+                              onPressed: () {
+                                RegisterScreen.navigateTo(context);
+                              },
+                              child: const Text('Inscription'),
+                            ),
+                          ],
                         );
                       }),
                     ],

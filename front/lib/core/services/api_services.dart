@@ -12,20 +12,26 @@ class ApiServices {
     'Content-Type': 'application/json; charset=UTF-8',
   };
 
-  static Future<Response> get(String path, [Map<String, String>? headers]) async {
+  static Future<Response> get(String path,
+      [Map<String, String>? headers]) async {
     final response = await http.get(
       Uri.parse(baseUrl + path),
-      headers: {}..addAll(baseHeaders)..addAll(headers ?? {}),
+      headers: {}
+        ..addAll(baseHeaders)
+        ..addAll(headers ?? {}),
     );
 
     handleResponse(response);
     return response;
   }
 
-  static Future<Response> post(String path, [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> post(String path,
+      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.post(
       Uri.parse(baseUrl + path),
-      headers: {}..addAll(baseHeaders)..addAll(headers ?? {}),
+      headers: {}
+        ..addAll(baseHeaders)
+        ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -33,10 +39,13 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> put(String path, [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> put(String path,
+      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.put(
       Uri.parse(baseUrl + path),
-      headers: {}..addAll(baseHeaders)..addAll(headers ?? {}),
+      headers: {}
+        ..addAll(baseHeaders)
+        ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -44,10 +53,13 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> patch(String path, [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> patch(String path,
+      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.patch(
       Uri.parse(baseUrl + path),
-      headers: {}..addAll(baseHeaders)..addAll(headers ?? {}),
+      headers: {}
+        ..addAll(baseHeaders)
+        ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -55,10 +67,13 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> delete(String path, [Map<String, String>? headers]) async {
+  static Future<Response> delete(String path,
+      [Map<String, String>? headers]) async {
     final response = await http.delete(
       Uri.parse(baseUrl + path),
-      headers: {}..addAll(baseHeaders)..addAll(headers ?? {}),
+      headers: {}
+        ..addAll(baseHeaders)
+        ..addAll(headers ?? {}),
     );
 
     handleResponse(response);
@@ -68,7 +83,7 @@ class ApiServices {
   static void handleResponse(Response response) {
     if (response.statusCode == 401) {
       throw UnauthorizedException();
-    } else if (response.statusCode < 200 || response.statusCode >= 400) {
+    } else if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiException(response: response, statusCode: response.statusCode);
     }
   }
