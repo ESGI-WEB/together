@@ -4,6 +4,11 @@ import 'package:front/groups/groups_list_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
+  static const String routeName = '/login';
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  }
+
   LoginScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
@@ -16,7 +21,7 @@ class LoginScreen extends StatelessWidget {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              GroupsListScreen.navigateTo(context);
+              GroupsListScreen.navigateTo(context, removeHistory: true);
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
