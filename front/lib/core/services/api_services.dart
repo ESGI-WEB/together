@@ -7,7 +7,7 @@ import 'package:http/http.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiServices {
-  static String baseUrl = dotenv.env['API_URL'] ?? '';
+  static String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:8080';
   static const Map<String, String> baseHeaders = {
     'Content-Type': 'application/json; charset=UTF-8',
   };
