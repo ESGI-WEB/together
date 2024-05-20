@@ -60,7 +60,8 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Créer',
                     icon: Icons.add,
                     onPressed: () async {
-                      final newGroup = await Navigator.of(context).push<Map<String, dynamic>>(
+                      final newGroup = await Navigator.of(context)
+                          .push<Map<String, dynamic>>(
                         MaterialPageRoute(
                           builder: (context) => const CreateGroupScreen(),
                         ),
@@ -76,7 +77,8 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Rejoindre',
                     icon: Icons.person_add,
                     onPressed: () async {
-                      final groupIdOrName = await JoinGroupScreen.navigateTo(context);
+                      final groupIdOrName =
+                          await JoinGroupScreen.navigateTo(context);
                       if (!context.mounted) return;
                       if (groupIdOrName != null) {
                         // Handle join group logic here
