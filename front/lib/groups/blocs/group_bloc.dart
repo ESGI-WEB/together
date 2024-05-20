@@ -33,11 +33,29 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     });
 
     on<CreateGroup>((event, emit) {
-      // Handle group creation logic here
+      if (state is GroupLoadSuccess) {
+        final updatedGroups = List<Map<String, dynamic>>.from((state as GroupLoadSuccess).groups);
+        updatedGroups.add(event.newGroup);
+        emit(GroupLoadSuccess(groups: updatedGroups));
+      }
     });
 
     on<JoinGroup>((event, emit) {
       // Handle joining a group logic here
+      // For simplicity, let's assume we add a member to a group
+      if (state is GroupLoadSuccess) {
+        final updatedGroups = (state as GroupLoadSuccess).groups.map((group) {
+          if (group["id"] == event.groupId) {
+            // Simulate joining a group by updating the group details
+            return {
+              ...group,
+              "members": (group["members"] ?? 0) + 1, // Example member count increment
+            };
+          }
+          return group;
+        }).toList();
+        emit(GroupLoadSuccess(groups: updatedGroups));
+      }
     });
   }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'blocs/group_bloc.dart';
-import 'goup_button.dart';
+import 'group_button.dart';
 import 'group_list.dart';
+import 'create_group_screen.dart';
 
 class GroupsScreen extends StatelessWidget {
   static const String routeName = '/groups';
@@ -58,16 +58,24 @@ class GroupsScreen extends StatelessWidget {
                   GroupButton(
                     text: 'Créer',
                     icon: Icons.add,
-                    onPressed: () {
-                      // Action à effectuer lors du clic sur le bouton "Créer"
+                    onPressed: () async {
+                      final newGroup = await Navigator.of(context).push<Map<String, dynamic>>(
+                        MaterialPageRoute(
+                          builder: (context) => const CreateGroupScreen(),
+                        ),
+                      );
+                      if (!context.mounted) return;
+                      if (newGroup != null) {
+                        context.read<GroupBloc>().add(CreateGroup(newGroup));
+                      }
                     },
                   ),
-                  const SizedBox(width: 10.0), // Espacement entre les boutons
+                  const SizedBox(width: 10.0),
                   GroupButton(
                     text: 'Rejoindre',
                     icon: Icons.person_add,
                     onPressed: () {
-                      // Action à effectuer lors du clic sur le bouton "Rejoindre"
+                      // Implement logic to join a group, e.g., show a dialog to select a group
                     },
                   ),
                 ],

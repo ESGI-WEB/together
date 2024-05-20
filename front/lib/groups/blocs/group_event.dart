@@ -1,10 +1,18 @@
 part of 'group_bloc.dart';
 
 @immutable
-sealed class GroupEvent {}
+abstract class GroupEvent {}
 
-final class LoadGroups extends GroupEvent {}
+class LoadGroups extends GroupEvent {}
 
-final class CreateGroup extends GroupEvent {}
+class CreateGroup extends GroupEvent {
+  final Map<String, dynamic> newGroup;
 
-final class JoinGroup extends GroupEvent {}
+  CreateGroup(this.newGroup);
+}
+
+class JoinGroup extends GroupEvent {
+  final int groupId;
+
+  JoinGroup(this.groupId);
+}

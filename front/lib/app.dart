@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'groups/group_screen.dart';
+import 'groups/create_group_screen.dart'; // Assurez-vous d'importer le nouveau fichier
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -21,6 +22,12 @@ class App extends StatelessWidget {
             return MaterialPageRoute(
               builder: (context) {
                 return GroupScreen(id: args as String);
+              },
+            );
+          case CreateGroupScreen.routeName: // Ajout de la nouvelle route
+            return MaterialPageRoute(
+              builder: (context) {
+                return const CreateGroupScreen();
               },
             );
           case GroupsScreen.routeName:
