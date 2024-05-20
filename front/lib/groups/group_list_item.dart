@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'group_screen.dart';
 
 class GroupListItem extends StatelessWidget {
@@ -13,7 +12,7 @@ class GroupListItem extends StatelessWidget {
     required this.name,
     required this.description,
     required this.imagePath,
-    super.key
+    super.key,
   });
 
   @override
@@ -24,8 +23,8 @@ class GroupListItem extends StatelessWidget {
       },
       leading: Image.asset(
         imagePath,
-        width: 50,
-        height: 50,
+        width: 80,
+        height: 80,
         fit: BoxFit.cover,
       ),
       title: Text(name),

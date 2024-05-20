@@ -15,10 +15,10 @@ class GroupList extends StatelessWidget {
       itemCount: groups.length,
       itemBuilder: (context, index) {
         return GroupListItem(
-            id: groups[index]["id"]!,
-            name: groups[index]["name"]!,
-            description: groups[index]["description"]!,
-            imagePath: groups[index]["imagePath"]!
+          id: groups[index]["id"]!,
+          name: groups[index]["name"]!,
+          description: groups[index]["description"]!,
+          imagePath: groups[index]["imagePath"]!,
         );
       },
       separatorBuilder: (context, index) {
