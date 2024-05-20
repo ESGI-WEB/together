@@ -16,11 +16,7 @@ final class LoginLoading extends LoginState {
   const LoginLoading({super.email, super.password});
 }
 
-final class LoginSuccess extends LoginState {
-  final JWT jwt;
-
-  const LoginSuccess({required this.jwt});
-}
+final class LoginSuccess extends LoginState {}
 
 final class LoginError extends LoginState {
   final String errorMessage;
