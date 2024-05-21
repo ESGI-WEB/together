@@ -62,26 +62,3 @@
 
 1. Je crée un évènement “Sortir au Louvre” ce weekend à 16h.
 2. Les autres membres indiquent s’ils participent ou non à l’évènement.
-
-
-# Installation
-
-## GO
-
-- Soyez sur d'avoir téléchargé Gow, qui permet d'avoir une sorte de nodemon pour Go
-```bash
-go install github.com/mitranim/gow@latest
-```
-- N'oubliez pas de redémarrer votre terminal pour que les changements soient pris en compte
-
-- Aller dans le dossier /back
-```bash
-cd back
-```
-
-- Lancer les conteneurs docker
-```bash
-docker compose up -d
-```
-
-- Se rendre sur http://localhost:8080 pour acceder à l'API
