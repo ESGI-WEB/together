@@ -11,7 +11,8 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 	groupController := controllers.NewGroupController()
 
 	group := e.Group("/groups")
-	group.POST("", groupController.CreateGroup)
-	group.GET("/:id", groupController.GetGroup)
 	group.GET("", groupController.GetAllGroups)
+	group.GET("/:id", groupController.GetGroupById)
+	group.POST("", groupController.CreateGroup)
+	group.POST("/join", groupController.JoinGroup)
 }

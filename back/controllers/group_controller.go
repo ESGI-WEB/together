@@ -23,13 +23,13 @@ func NewGroupController() *GroupController {
 }
 
 func (c *GroupController) CreateGroup(ctx echo.Context) error {
-	var jsonBody models.GroupCreate
+	var jsonBody models.Group
 	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	newGroup, err := c.GroupService.AddGroup(jsonBody)
+	newGroup, err := c.GroupService.CreateGroup(jsonBody)
 	if err != nil {
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
@@ -43,14 +43,14 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, newGroup)
 }
 
-func (c *GroupController) GetGroup(ctx echo.Context) error {
+func (c *GroupController) GetGroupById(ctx echo.Context) error {
 	id := ctx.Param("id")
 	groupID, err := strconv.Atoi(id)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	group, err := c.GroupService.GetGroupByID(uint(groupID))
+	group, err := c.GroupService.GetGroupById(uint(groupID))
 	if err != nil {
 		return ctx.NoContent(http.StatusNotFound)
 	}
@@ -65,4 +65,25 @@ func (c *GroupController) GetAllGroups(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, groups)
+}
+
+func (c *GroupController) JoinGroup(ctx echo.Context) error {
+	var jsonBody models.JoinGroupRequest
+	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	err = c.GroupService.JoinGroup(jsonBody)
+	if err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
+			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
+			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+		}
+
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.NoContent(http.StatusOK)
 }
