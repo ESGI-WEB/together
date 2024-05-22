@@ -54,17 +54,19 @@ func (s *GroupService) GetAllGroups() ([]models.Group, error) {
 
 // TODO get real current log user and fix request
 func (s *GroupService) JoinGroup(request models.JoinGroupRequest) error {
+	const fictifId = 1
+
 	if err := bcrypt.CompareHashAndPassword([]byte(request.Code), []byte(request.Code)); err != nil {
 		return errors.New("Code incorrect")
 	}
 
 	var group models.Group
-	if err := database.CurrentDatabase.First(&group, request.Code).Error; err != nil {
+	if err := database.CurrentDatabase.Where("code = ?", request.Code).First(&group).Error; err != nil {
 		return err
 	}
 
 	var user models.User
-	if err := database.CurrentDatabase.First(&user, 1).Error; err != nil {
+	if err := database.CurrentDatabase.First(fictifId).Error; err != nil {
 		return err
 	}
 
