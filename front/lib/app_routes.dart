@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'package:front/register/register_screen.dart';
 
@@ -19,6 +20,12 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (context) {
             return const GroupsScreen();
+          },
+        );
+      case CreateGroupScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const CreateGroupScreen();
           },
         );
       case RegisterScreen.routeName:

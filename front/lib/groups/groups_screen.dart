@@ -20,7 +20,7 @@ class GroupsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GroupBloc(GroupServices())..add(LoadGroups()),
+      create: (context) => GroupBloc()..add(LoadGroups()),
       child: Scaffold(
         appBar: AppBar(title: const Text('Groupes')),
         body: Stack(
@@ -61,34 +61,16 @@ class GroupsScreen extends StatelessWidget {
                   GroupButton(
                     text: 'Créer',
                     icon: Icons.add,
-                    onPressed: () async {
-                      final newGroup = await Navigator.of(context).push<Map<String, dynamic>>(
-                        MaterialPageRoute(
-                          builder: (context) => const CreateGroupScreen(),
-                        ),
-                      );
-                      if (!context.mounted) return;
-                      if (newGroup != null) {
-                        context.read<GroupBloc>().add(CreateGroup(newGroup));
-                      }
+                    onPressed: () {
+                      CreateGroupScreen.navigateTo(context);
                     },
                   ),
                   const SizedBox(width: 10.0),
                   GroupButton(
                     text: 'Rejoindre',
                     icon: Icons.person_add,
-                    onPressed: () async {
-                      final groupIdOrName = await JoinGroupScreen.navigateTo(context);
-                      if (!context.mounted) return;
-                      if (groupIdOrName != null) {
-                        final groupId = int.tryParse(groupIdOrName);
-                        if (groupId != null) {
-                          context.read<GroupBloc>().add(JoinGroup(groupId));
-                        } else {
-                          // Handle the case where group ID is not an int
-                          // You might need to implement additional logic to search by group name
-                        }
-                      }
+                    onPressed: () {
+                      JoinGroupScreen.navigateTo(context);
                     },
                   ),
                 ],

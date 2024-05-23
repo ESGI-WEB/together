@@ -9,7 +9,7 @@ type Group struct {
 	gorm.Model
 	Name        string  `json:"name" gorm:"not null"`
 	Description *string `json:"description" validate:"max=100"`
-	Code        string  `gorm:"unique, not null" validate:"required,min=5,max=10"`
+	Code        string  `json:"code" gorm:"unique, not null" validate:"required,min=5,max=10"`
 	Users       []User  `gorm:"many2many:group_users;"`
 }
 
