@@ -9,53 +9,40 @@ part 'group_event.dart';
 part 'group_state.dart';
 
 class GroupBloc extends Bloc<GroupEvent, GroupState> {
-
   GroupBloc() : super(GroupInitial()) {
-    on<LoadGroups>((event, emit) async {
-      emit(GroupLoading());
-      try {
-        final groups = await GroupServices.fetchGroups();
-        emit(GroupLoadSuccess(groups: groups));
-      } catch (error) {
-        if (error is ApiException) {
-          emit(GroupLoadError(errorMessage: error.message));
-        } else {
-          emit(GroupLoadError(errorMessage: 'Failed to load groups'));
-        }
-      }
-    });
+    on<LoadGroups>(_onLoadGroups);
+    on<CreateGroup>(_onCreateGroup);
+    on<JoinGroup>(_onJoinGroup);
+  }
 
-    on<CreateGroup>((event, emit) async {
-      emit(GroupLoading());
-      try {
-        final newGroup = await GroupServices.createGroup(event.newGroup);
-        if (state is GroupLoadSuccess) {
-          final updatedGroups = List<Group>.from((state as GroupLoadSuccess).groups)..add(newGroup);
-          emit(GroupLoadSuccess(groups: updatedGroups));
-        } else {
-          emit(GroupLoadSuccess(groups: [newGroup]));
-        }
-      } catch (error) {
-        if (error is ApiException) {
-          emit(GroupLoadError(errorMessage: error.message));
-        } else {
-          emit(GroupLoadError(errorMessage: 'Failed to create group'));
-        }
-      }
-    });
+  void _onLoadGroups(LoadGroups event, Emitter<GroupState> emit) async {
+    emit(GroupLoading());
+    try {
+      final groups = await GroupServices.fetchGroups();
+      emit(GroupLoadSuccess(groups: groups));
+    } catch (error) {
+      emit(GroupLoadError(errorMessage: error is ApiException ? error.message : 'Failed to load groups'));
+    }
+  }
 
-    on<JoinGroup>((event, emit) async {
-      emit(GroupLoading());
-      try {
-        await GroupServices.joinGroup(event.groupId);
-        add(LoadGroups()); // Reload groups after joining
-      } catch (error) {
-        if (error is ApiException) {
-          emit(GroupLoadError(errorMessage: error.message));
-        } else {
-          emit(GroupLoadError(errorMessage: 'Failed to join group'));
-        }
-      }
-    });
+  void _onCreateGroup(CreateGroup event, Emitter<GroupState> emit) async {
+    emit(GroupLoading());
+    try {
+      await GroupServices.createGroup(event.newGroup);
+      final updatedGroups = await GroupServices.fetchGroups();
+      emit(GroupLoadSuccess(groups: updatedGroups));
+    } catch (error) {
+      emit(GroupLoadError(errorMessage: error is ApiException ? error.message : 'Failed to create group'));
+    }
+  }
+
+  void _onJoinGroup(JoinGroup event, Emitter<GroupState> emit) async {
+    emit(GroupLoading());
+    try {
+      await GroupServices.joinGroup(event.groupId);
+      add(LoadGroups());
+    } catch (error) {
+      emit(GroupLoadError(errorMessage: error is ApiException ? error.message : 'Failed to join group'));
+    }
   }
 }

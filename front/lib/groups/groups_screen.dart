@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../core/services/group_services.dart';
 import 'blocs/group_bloc.dart';
 import 'create_group_screen.dart';
 import 'group_button.dart';

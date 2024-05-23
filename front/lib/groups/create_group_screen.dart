@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/groups/group_screen.dart';
 
 import 'blocs/group_bloc.dart';
 
@@ -25,12 +26,12 @@ class CreateGroupScreen extends StatelessWidget {
         appBar: AppBar(title: const Text('Créer un groupe')),
         body: Builder(
           builder: (context) {
-            final groupBloc = BlocProvider.of<GroupBloc>(context);
-
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupLoadSuccess) {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => GroupScreen(id: state.groups.last.id.toString()),
+                  ));
                 } else if (state is GroupLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
@@ -76,8 +77,8 @@ class CreateGroupScreen extends StatelessWidget {
                               "description": descriptionController.text,
                               "code": codeController.text
                             };
-
-                            groupBloc.add(CreateGroup(newGroup)); // Utilisez groupBloc ici
+                            BlocProvider.of<GroupBloc>(context)
+                                .add(CreateGroup(newGroup));
                           }
                         },
                         child: const Text('Créer'),
