@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/services/storage_service.dart';
+import 'package:front/login/login_screen.dart';
 
 class Layout extends StatefulWidget {
   const Layout({super.key, required this.body, required this.title});
@@ -47,6 +49,14 @@ class _LayoutState extends State<Layout> {
             : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              StorageService.deleteToken().then((value) => LoginScreen.navigateTo(context, removeHistory: true));
+            },
+          ),
+        ],
       ),
       body: widget.body,
     );

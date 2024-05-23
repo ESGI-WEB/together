@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 class GroupScreen extends StatefulWidget {
   static const String routeName = '/group';
 
-  static Future<void> navigateTo(BuildContext context, {required String id}) {
-    return Navigator.of(context).pushNamed(routeName, arguments: id);
+  static Future<void> navigateTo(BuildContext context,
+      {required String groupId, bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName, (route) => !removeHistory,
+        arguments: groupId);
   }
 
   final String id;
