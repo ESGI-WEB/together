@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/users_services.dart';
 import 'package:front/groups/groups_list_screen.dart';
+import 'package:front/groups/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
 
@@ -26,7 +27,7 @@ class LoginScreen extends StatelessWidget {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              GroupsListScreen.navigateTo(context, removeHistory: true);
+              GroupsScreen.navigateTo(context, removeHistory: true);
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {

@@ -9,8 +9,10 @@ import 'join_group_screen.dart';
 class GroupsScreen extends StatelessWidget {
   static const String routeName = '/groups';
 
-  static Future<void> navigateTo(BuildContext context) {
-    return Navigator.of(context).pushNamed(routeName);
+  static Future<void> navigateTo(BuildContext context,
+      {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName, (route) => !removeHistory);
   }
 
   const GroupsScreen({super.key});
