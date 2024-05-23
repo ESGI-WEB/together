@@ -8,7 +8,7 @@ final class GroupInitial extends GroupState {}
 final class GroupLoading extends GroupState {}
 
 final class GroupLoadSuccess extends GroupState {
-  final List<Map<String, dynamic>> groups;
+  final List<Group> groups;
 
   GroupLoadSuccess({required this.groups});
 }

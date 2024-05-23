@@ -46,16 +46,6 @@ class CreateGroupScreen extends StatelessWidget {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: imageController,
-                decoration: const InputDecoration(labelText: 'Image URL'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une URL d\'image';
-                  }
-                  return null;
-                },
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {

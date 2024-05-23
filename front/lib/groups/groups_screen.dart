@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../core/services/group_services.dart';
 import 'blocs/group_bloc.dart';
+import 'create_group_screen.dart';
 import 'group_button.dart';
 import 'group_list.dart';
-import 'create_group_screen.dart';
 import 'join_group_screen.dart';
 
 class GroupsScreen extends StatelessWidget {
   static const String routeName = '/groups';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName, (route) => !removeHistory);
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const GroupsScreen({super.key});
@@ -20,7 +20,7 @@ class GroupsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GroupBloc()..add(LoadGroups()),
+      create: (context) => GroupBloc(GroupServices())..add(LoadGroups()),
       child: Scaffold(
         appBar: AppBar(title: const Text('Groupes')),
         body: Stack(
@@ -62,8 +62,7 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Créer',
                     icon: Icons.add,
                     onPressed: () async {
-                      final newGroup = await Navigator.of(context)
-                          .push<Map<String, dynamic>>(
+                      final newGroup = await Navigator.of(context).push<Map<String, dynamic>>(
                         MaterialPageRoute(
                           builder: (context) => const CreateGroupScreen(),
                         ),
@@ -79,13 +78,9 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Rejoindre',
                     icon: Icons.person_add,
                     onPressed: () async {
-                      final groupIdOrName =
-                          await JoinGroupScreen.navigateTo(context);
+                      final groupIdOrName = await JoinGroupScreen.navigateTo(context);
                       if (!context.mounted) return;
                       if (groupIdOrName != null) {
-                        // Handle join group logic here
-                        // Example: context.read<GroupBloc>().add(JoinGroup(groupIdOrName));
-                        // Assuming JoinGroup event expects a group ID as int
                         final groupId = int.tryParse(groupIdOrName);
                         if (groupId != null) {
                           context.read<GroupBloc>().add(JoinGroup(groupId));

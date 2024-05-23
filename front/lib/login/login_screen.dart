@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/services/users_services.dart';
-import 'package:front/groups/groups_list_screen.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
+
+import '../core/services/user_services.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
@@ -68,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                             return 'Veuillez saisir un email';
                           }
 
-                          if (!UsersServices.emailRegex
+                          if (!UserServices.emailRegex
                               .hasMatch(value)) {
                             return 'Veuillez saisir un email valide';
                           }

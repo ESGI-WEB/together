@@ -1,34 +1,21 @@
 import 'package:flutter/material.dart';
+
+import '../core/models/group.dart';
 import 'group_screen.dart';
 
 class GroupListItem extends StatelessWidget {
-  final int id;
-  final String name;
-  final String description;
-  final String imagePath;
+  final Group group;
 
-  const GroupListItem({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.imagePath,
-    super.key,
-  });
+  const GroupListItem({required this.group, super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        GroupScreen.navigateTo(context, id: id.toString());
+        GroupScreen.navigateTo(context, id: group.id.toString());
       },
-      leading: Image.asset(
-        imagePath,
-        width: 80,
-        height: 80,
-        fit: BoxFit.cover,
-      ),
-      title: Text(name),
-      subtitle: Text(description),
+      title: Text(group.name),
+      subtitle: group.description != null ? Text(group.description!) : null,
     );
   }
 }

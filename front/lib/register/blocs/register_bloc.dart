@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/conflit_exception.dart';
 import 'package:front/core/models/user.dart';
-import 'package:front/core/services/users_services.dart';
+
+import '../../core/services/user_services.dart';
 
 part 'register_event.dart';
 
@@ -28,7 +29,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       ));
 
       try {
-        final user = await UsersServices.register(
+        final user = await UserServices.register(
             state.name, state.email, state.password);
         emit(RegisterSuccess(user: user));
       } on ConflictException catch (error) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/services/users_services.dart';
 import 'package:front/login/login_screen.dart';
 
+import '../core/services/user_services.dart';
 import 'blocs/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -77,7 +77,7 @@ class RegisterScreen extends StatelessWidget {
                           if (value == null || value.isEmpty) {
                             return 'Veuillez entrer un email';
                           }
-                          if (!UsersServices.emailRegex.hasMatch(value)) {
+                          if (!UserServices.emailRegex.hasMatch(value)) {
                             return 'Veuillez saisir un email valide';
                           }
                           return null;

@@ -1,62 +1,59 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/exceptions/api_exception.dart';
+import '../../core/models/group.dart';
+import '../../core/services/group_services.dart';
 
 part 'group_event.dart';
 part 'group_state.dart';
 
 class GroupBloc extends Bloc<GroupEvent, GroupState> {
-  GroupBloc() : super(GroupInitial()) {
+  final GroupServices groupServices;
+
+  GroupBloc(this.groupServices) : super(GroupInitial()) {
     on<LoadGroups>((event, emit) async {
       emit(GroupLoading());
 
       try {
-        // Simulate fetching data from an API or database
-        await Future.delayed(const Duration(seconds: 2));
-        final groups = [
-          {
-            "id": 1,
-            "name": "Groupe 1",
-            "description": "Description du groupe 1",
-            "imagePath": "lib/core/images/group1.jpg",
-          },
-          {
-            "id": 2,
-            "name": "Groupe 2",
-            "description": "Description du groupe 2",
-            "imagePath": "lib/core/images/group1.jpg",
-          },
-        ];
+        final groups = await groupServices.fetchGroups();
         emit(GroupLoadSuccess(groups: groups));
       } catch (error) {
-        emit(GroupLoadError(errorMessage: 'Failed to load groups'));
+        if (error is ApiException) {
+          emit(GroupLoadError(errorMessage: error.message));
+        } else {
+          emit(GroupLoadError(errorMessage: 'Failed to load groups'));
+        }
       }
     });
 
-    on<CreateGroup>((event, emit) {
+    on<CreateGroup>((event, emit) async {
       if (state is GroupLoadSuccess) {
-        final updatedGroups =
-            List<Map<String, dynamic>>.from((state as GroupLoadSuccess).groups);
-        updatedGroups.add(event.newGroup);
-        emit(GroupLoadSuccess(groups: updatedGroups));
-      }
-    });
-
-    on<JoinGroup>((event, emit) {
-      // Handle joining a group logic here
-      // For simplicity, let's assume we add a member to a group
-      if (state is GroupLoadSuccess) {
-        final updatedGroups = (state as GroupLoadSuccess).groups.map((group) {
-          if (group["id"] == event.groupId) {
-            // Simulate joining a group by updating the group details
-            return {
-              ...group,
-              "members":
-                  (group["members"] ?? 0) + 1, // Example member count increment
-            };
+        try {
+          final newGroup = await groupServices.createGroup(event.newGroup);
+          final updatedGroups = List<Group>.from((state as GroupLoadSuccess).groups)..add(newGroup);
+          emit(GroupLoadSuccess(groups: updatedGroups));
+        } catch (error) {
+          if (error is ApiException) {
+            emit(GroupLoadError(errorMessage: error.message));
+          } else {
+            emit(GroupLoadError(errorMessage: 'Failed to create group'));
           }
-          return group;
-        }).toList();
-        emit(GroupLoadSuccess(groups: updatedGroups));
+        }
+      }
+    });
+
+    on<JoinGroup>((event, emit) async {
+      if (state is GroupLoadSuccess) {
+        try {
+          await groupServices.joinGroup(event.groupId);
+          add(LoadGroups());
+        } catch (error) {
+          if (error is ApiException) {
+            emit(GroupLoadError(errorMessage: error.message));
+          } else {
+            emit(GroupLoadError(errorMessage: 'Failed to join group'));
+          }
+        }
       }
     });
   }
