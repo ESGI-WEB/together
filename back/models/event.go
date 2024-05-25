@@ -6,17 +6,37 @@ import (
 
 type Event struct {
 	gorm.Model
-	Name         string
-	Description  string
-	Date         string
-	Time         *string
-	TypeID       uint
-	Type         EventType
-	AddressID    uint
-	Address      Address
-	CategoryID   uint
-	Category     Category
-	OrganizerID  uint
-	Organizer    User   `gorm:"foreignKey:OrganizerID"`
-	Participants []User `gorm:"many2many:attends;"`
+	Name         string     `json:"name" validate:"required,min=2,max=100"`
+	Description  string     `json:"description" validate:"required"`
+	Date         string     `json:"date" validate:"required,datetime=2006-01-02"`
+	Time         *string    `json:"time" validate:"omitempty,datetime=15:04"`
+	TypeID       uint       `json:"type_id"`
+	Type         *EventType `json:"type,omitempty"`
+	AddressID    uint       `json:"address_id"`
+	Address      *Address   `json:"address,omitempty"`
+	OrganizerID  uint       `json:"organizer_id"`
+	Organizer    *User      `json:"organizer,omitempty"`
+	Participants []User     `gorm:"many2many:attends;" json:"participants,omitempty"`
+}
+
+type EventCreate struct {
+	Name        string  `json:"name" validate:"required,min=2,max=100"`
+	Description string  `json:"description" validate:"required"`
+	Date        string  `json:"date" validate:"required,datetime=2006-01-02"`
+	Time        *string `json:"time" validate:"omitempty,datetime=15:04"`
+	TypeID      uint    `json:"type_id"`
+	OrganizerID uint    `json:"-"`
+	AddressID   uint    `json:"address_id"`
+}
+
+func (e EventCreate) ToEvent() *Event {
+	return &Event{
+		Name:        e.Name,
+		Description: e.Description,
+		Date:        e.Date,
+		Time:        e.Time,
+		TypeID:      e.TypeID,
+		AddressID:   e.AddressID,
+		OrganizerID: e.OrganizerID,
+	}
 }
