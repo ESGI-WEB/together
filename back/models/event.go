@@ -20,23 +20,23 @@ type Event struct {
 }
 
 type EventCreate struct {
-	Name        string  `json:"name" validate:"required,min=2,max=100"`
-	Description string  `json:"description" validate:"required"`
-	Date        string  `json:"date" validate:"required,datetime=2006-01-02"`
-	Time        *string `json:"time" validate:"omitempty,datetime=15:04"`
-	TypeID      uint    `json:"type_id"`
-	OrganizerID uint    `json:"-"`
-	AddressID   uint    `json:"address_id"`
+	Name        string         `json:"name" validate:"required,min=2,max=100"`
+	Description string         `json:"description" validate:"required"`
+	Date        string         `json:"date" validate:"required,datetime=2006-01-02"`
+	Time        *string        `json:"time" validate:"omitempty,datetime=15:04"`
+	TypeID      uint           `json:"type_id"`
+	OrganizerID uint           `json:"-"`
+	Address     *AddressCreate `json:"address"`
 }
 
-func (e EventCreate) ToEvent() *Event {
+func (e EventCreate) ToEvent(addressId uint) *Event {
 	return &Event{
 		Name:        e.Name,
 		Description: e.Description,
 		Date:        e.Date,
 		Time:        e.Time,
 		TypeID:      e.TypeID,
-		AddressID:   e.AddressID,
+		AddressID:   addressId,
 		OrganizerID: e.OrganizerID,
 	}
 }
