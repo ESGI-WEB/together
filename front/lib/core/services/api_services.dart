@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiServices {
   static String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:8080';

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:front/core/services/events_services.dart';
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/event';
 
   static Future<void> navigateTo(BuildContext context,
       {bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName, (route) => !removeHistory);
+    return Navigator.of(context)
+        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const EventScreen({super.key});
@@ -23,7 +22,11 @@ class _EventScreenState extends State<EventScreen> {
   String name = '';
   String description = '';
   String date = '';
-  String? time;
+  String time = '';
+  String street = '';
+  String number = '';
+  String city = '';
+  String zip = '';
   int typeId = 0;
   int addressId = 0;
 
@@ -39,23 +42,8 @@ class _EventScreenState extends State<EventScreen> {
         'address_id': addressId,
       };
 
-      final response = await http.post(
-        Uri.parse('https://your-api-endpoint.com/events'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(eventData),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Succès, traiter la réponse si nécessaire
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Événement créé avec succès !')),
-        );
-      } else {
-        // Erreur, traiter la réponse si nécessaire
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur lors de la création de l\'événement.')),
-        );
-      }
+      EventsServices.createEvent(
+          name, description, date, time, typeId, street, number, city, zip);
     }
   }
 
@@ -72,7 +60,7 @@ class _EventScreenState extends State<EventScreen> {
           child: ListView(
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nom'),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer un nom';
@@ -84,7 +72,7 @@ class _EventScreenState extends State<EventScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une description';
@@ -96,7 +84,8 @@ class _EventScreenState extends State<EventScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Date (YYYY-MM-DD)'),
+                decoration:
+                    const InputDecoration(labelText: 'Date (YYYY-MM-DD)'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer une date';
@@ -108,13 +97,19 @@ class _EventScreenState extends State<EventScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Heure (HH:MM)'),
+                decoration: const InputDecoration(labelText: 'Heure (HH:MM)'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une heure';
+                  }
+                  return null;
+                },
                 onSaved: (value) {
-                  time = value;
+                  time = value!;
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Type ID'),
+                decoration: const InputDecoration(labelText: 'Type ID'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -127,22 +122,59 @@ class _EventScreenState extends State<EventScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Adresse ID'),
+                decoration: const InputDecoration(labelText: 'Numéro de rue'),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une Adresse ID';
+                    return 'Veuillez entrer un numéro de rue';
                   }
                   return null;
                 },
                 onSaved: (value) {
-                  addressId = int.parse(value!);
+                  number = value!;
                 },
               ),
-              SizedBox(height: 20),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Rue'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une rue';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  street = value!;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Ville'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une ville';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  city = value!;
+                },
+              ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Code postal'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer un code postal';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  zip = value!;
+                },
+              ),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text('Créer l\'événement'),
+                child: const Text('Créer l\'événement'),
               ),
             ],
           ),
