@@ -14,7 +14,7 @@ class ApiServices {
   };
 
   static Future<Map<String, String>> getAllBasicHeaders() async {
-    var headers = baseHeaders;
+    var headers = {...baseHeaders};
 
     final token = await StorageService.readToken();
     if (token != null) {

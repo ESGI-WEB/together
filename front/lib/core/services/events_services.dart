@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/models/event.dart';
-import 'package:front/core/services/storage_service.dart';
 
 import 'api_services.dart';
 
@@ -20,10 +19,6 @@ class EventsServices {
     String zip,
   ) async {
     try {
-      final token = await StorageService.readToken();
-      if (token == null) {
-        throw UnauthorizedException();
-      }
       final response = await ApiServices.post('/events', {
         "name": name,
         "description": description,
@@ -36,8 +31,6 @@ class EventsServices {
           "city": city,
           "zip": zip
         },
-      }, {
-        "Authorization": "Bearer $token"
       });
 
       return Event.fromJson(json.decode(response.body));
