@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
+import 'package:front/core/services/storage_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -12,12 +13,25 @@ class ApiServices {
     'Content-Type': 'application/json; charset=UTF-8',
   };
 
+  static Future<Map<String, String>> getAllBasicHeaders() async {
+    var headers = baseHeaders;
+
+    final token = await StorageService.readToken();
+    if (token != null) {
+      headers.addAll({
+        'Authorization': 'Bearer $token',
+      });
+    }
+
+    return headers;
+  }
+
   static Future<Response> get(String path,
       [Map<String, String>? headers]) async {
     final response = await http.get(
       Uri.parse(baseUrl + path),
       headers: {}
-        ..addAll(baseHeaders)
+        ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
     );
 
@@ -30,7 +44,7 @@ class ApiServices {
     final response = await http.post(
       Uri.parse(baseUrl + path),
       headers: {}
-        ..addAll(baseHeaders)
+        ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
@@ -44,7 +58,7 @@ class ApiServices {
     final response = await http.put(
       Uri.parse(baseUrl + path),
       headers: {}
-        ..addAll(baseHeaders)
+        ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
@@ -58,7 +72,7 @@ class ApiServices {
     final response = await http.patch(
       Uri.parse(baseUrl + path),
       headers: {}
-        ..addAll(baseHeaders)
+        ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
       body: body != null ? jsonEncode(body) : null,
     );
@@ -72,7 +86,7 @@ class ApiServices {
     final response = await http.delete(
       Uri.parse(baseUrl + path),
       headers: {}
-        ..addAll(baseHeaders)
+        ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
     );
 
