@@ -16,7 +16,7 @@ jobs:
       run: cp ./front/.env.prod ./front/.env
 
     - name: Echo files
-      run: ls -la
+      run: ls ./front -la
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
