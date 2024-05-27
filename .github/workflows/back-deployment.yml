@@ -13,8 +13,10 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Copy .env file
-      working-directory: ./front
-      run: cp .env.prod .env
+      run: cp ./front/.env.prod ./front/.env
+
+    - name: Echo files
+      run: ls -la
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
