@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/partials/group_entry.dart';
-import 'package:front/groups/groups_list_screen.dart';
-
-import 'core/partials/layout.dart';
-import 'groups/group_screen.dart';
+import 'package:front/app_theme.dart';
+import 'package:front/login/login_screen.dart';
+import 'app_routes.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -13,28 +11,9 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '2gether',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      onGenerateRoute: (settings) {
-        final args = settings.arguments;
-        switch (settings.name) {
-          case GroupScreen.routeName:
-            return MaterialPageRoute(
-              builder: (context) {
-                return GroupScreen(groupId: args as String);
-              },
-            );
-          case GroupsListScreen.routeName:
-          default:
-            return MaterialPageRoute(
-              builder: (context) {
-                return const GroupsListScreen();
-              },
-            );
-        }
-      },
+      theme: AppTheme.theme,
+      home: LoginScreen(),
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

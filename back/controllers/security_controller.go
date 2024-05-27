@@ -24,7 +24,7 @@ func NewSecurityController() *SecurityController {
 func (c *SecurityController) Login(ctx echo.Context) error {
 	var jsonBody struct {
 		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required,min=8,max=50"`
+		Password string `json:"password" validate:"required,min=8"`
 	}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {

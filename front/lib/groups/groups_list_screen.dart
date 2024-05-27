@@ -4,10 +4,10 @@ import 'package:front/core/partials/layout.dart';
 
 class GroupsListScreen extends StatelessWidget {
   static const String routeName = '/groups';
-
-  static Future<void> navigateTo(BuildContext context) {
-    return Navigator.of(context).pushNamed(routeName);
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
+
   const GroupsListScreen({super.key});
 
   @override
