@@ -25,7 +25,6 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: back
         target: prod
         push: true
         tags: rg.fr-par.scw.cloud/esgi-together-challenge/back:latest
