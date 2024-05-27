@@ -2,7 +2,7 @@ name: Back deployment
 
 on:
   push:
-    branches: [ "feature/add-admin-panel" ]
+    branches: [ "main" ]
 
 jobs:
   build:
