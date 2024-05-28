@@ -63,8 +63,7 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Créer',
                     icon: Icons.add,
                     onPressed: () {
-                      CreateGroupScreen.navigateTo(context,
-                          removeHistory: true);
+                      CreateGroupScreen.navigateTo(context);
                     },
                   ),
                   const SizedBox(width: 10.0),
@@ -72,7 +71,7 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Rejoindre',
                     icon: Icons.person_add,
                     onPressed: () {
-                      JoinGroupScreen.navigateTo(context, removeHistory: true);
+                      JoinGroupScreen.navigateTo(context);
                     },
                   ),
                 ],
