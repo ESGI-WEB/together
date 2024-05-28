@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/core/models/jwt-data.dart';
+import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/login/login_screen.dart';
 
@@ -14,6 +17,21 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   int _currentIndex = 0;
+  JwtData? _authenticatedData;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAuthenticatedData();
+  }
+
+  Future<void> _getAuthenticatedData() async {
+    var jwtData = await StorageService.readJwtDataFromToken();
+
+    setState(() {
+      _authenticatedData = jwtData;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +59,28 @@ class _LayoutState extends State<Layout> {
         ],
       ),
       appBar: AppBar(
-        leading: Navigator.of(context).canPop() ? IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ) : null,
+        leading: Navigator.of(context).canPop()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          _authenticatedData != null && _authenticatedData?.role == UserRole.admin.name
+              ? IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    AdminHomeScreen.navigateTo(context);
+                  },
+                )
+              : Container(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              StorageService.deleteToken().then((value) => LoginScreen.navigateTo(context, removeHistory: true));
+              StorageService.deleteToken().then((value) =>
+                  LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
         ],

@@ -13,7 +13,10 @@ var AllFeatureSlugs = []FeatureSlug{
 }
 
 type FeatureFlipping struct {
-	Slug        FeatureSlug `json:"slug" gorm:"primaryKey"`
-	Description *string     `json:"description" gorm:"default:null"`
-	Enabled     bool        `json:"enabled" gorm:"default:false;not null"`
+	Slug    FeatureSlug `json:"slug" gorm:"primaryKey"`
+	Enabled bool        `json:"enabled" gorm:"default:false;not null"`
+}
+
+type EditFeatureFlipping struct {
+	Enabled *bool `json:"enabled" validate:"required"`
 }
