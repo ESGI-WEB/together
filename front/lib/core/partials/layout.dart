@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/storage_service.dart';
+import 'package:front/event/event_screen.dart';
 import 'package:front/login/login_screen.dart';
 
 class Layout extends StatefulWidget {
@@ -63,6 +64,12 @@ class _LayoutState extends State<Layout> {
           ),
 
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          EventScreen.navigateTo(context);
+        },
+        child: const Icon(Icons.add),
       ),
       body: widget.body,
     );

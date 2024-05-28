@@ -4,6 +4,8 @@ import 'package:front/groups/groups_screen.dart';
 import 'package:front/groups/join_group_screen.dart';
 import 'package:front/register/register_screen.dart';
 
+import 'event/event_screen.dart';
+import 'package:front/event/event_detail_screen.dart';
 import 'groups/group_screen.dart';
 import 'login/login_screen.dart';
 
@@ -33,6 +35,18 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (context) {
             return const JoinGroupScreen();
+          },
+        );
+      case EventScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const EventScreen();
+          },
+        );
+      case EventDetailScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return EventDetailScreen(eventId: args as int);
           },
         );
       case RegisterScreen.routeName:
