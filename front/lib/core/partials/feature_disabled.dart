@@ -42,13 +42,6 @@ class FeatureDisabledPage extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-              ),
               child: const Text('Retour'),
             ),
             const SizedBox(height: 20),
