@@ -3,13 +3,17 @@ package models
 type FeatureSlug string
 
 const (
-	FSlugLogin    FeatureSlug = "login"
-	FSlugRegister FeatureSlug = "register"
+	FSlugRegister    FeatureSlug = "register"
+	FSlugCreateGroup FeatureSlug = "create_group"
+	FSlugCreateEvent FeatureSlug = "create_event"
+	FSlugChat        FeatureSlug = "chat"
 )
 
 var AllFeatureSlugs = []FeatureSlug{
-	FSlugLogin,
 	FSlugRegister,
+	FSlugCreateGroup,
+	FSlugCreateEvent,
+	FSlugChat,
 }
 
 type FeatureFlipping struct {

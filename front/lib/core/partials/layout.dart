@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
 import 'package:front/core/models/jwt-data.dart';
@@ -68,7 +69,7 @@ class _LayoutState extends State<Layout> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
-          _authenticatedData != null && _authenticatedData?.role == UserRole.admin.name
+          kIsWeb && _authenticatedData != null && _authenticatedData?.role == UserRole.admin.name
               ? IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () {

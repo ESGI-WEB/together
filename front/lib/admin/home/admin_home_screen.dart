@@ -20,9 +20,8 @@ class AdminHomeScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 10),
             ElevatedButton.icon(
               icon: const Icon(Icons.lock_open),
               label: const Text(

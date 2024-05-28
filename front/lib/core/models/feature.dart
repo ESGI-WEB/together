@@ -14,4 +14,17 @@ class Feature {
     );
   }
 
+  toJson() {
+    return {
+      'slug': slug,
+      'enabled': enabled,
+    };
+  }
+
+  copyWith({required bool enabled}) {
+    return Feature(
+      slug: slug,
+      enabled: enabled,
+    );
+  }
 }
