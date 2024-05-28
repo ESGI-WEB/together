@@ -10,8 +10,10 @@ import 'join_group_screen.dart';
 class GroupsScreen extends StatelessWidget {
   static const String routeName = '/groups';
 
-  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static Future<void> navigateTo(BuildContext context,
+      {bool removeHistory = false}) {
+    return Navigator.of(context)
+        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const GroupsScreen({super.key});
@@ -61,7 +63,8 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Créer',
                     icon: Icons.add,
                     onPressed: () {
-                      CreateGroupScreen.navigateTo(context, removeHistory: true);
+                      CreateGroupScreen.navigateTo(context,
+                          removeHistory: true);
                     },
                   ),
                   const SizedBox(width: 10.0),

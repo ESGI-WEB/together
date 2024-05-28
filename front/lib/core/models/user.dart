@@ -26,7 +26,8 @@ class User {
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),
       updatedAt: DateTime.parse(json['UpdatedAt']),
-      deletedAt: json['DeletedAt'] != null ? DateTime.parse(json['deleted_at']) : null,
+      deletedAt:
+          json['DeletedAt'] != null ? DateTime.parse(json['deleted_at']) : null,
       name: json['name'],
       email: json['email'],
       role: json['role'],
@@ -34,5 +35,4 @@ class User {
       avatarPath: json['avatar_path'],
     );
   }
-
 }

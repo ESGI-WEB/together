@@ -1,5 +1,5 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/exceptions/api_exception.dart';
 import '../../core/models/group.dart';
@@ -22,7 +22,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       final groups = await GroupServices.fetchGroups();
       emit(GroupsLoadSuccess(groups: groups));
     } catch (error) {
-      emit(GroupsLoadError(errorMessage: error is ApiException ? error.message : 'Failed to load groups'));
+      emit(GroupsLoadError(
+          errorMessage:
+              error is ApiException ? error.message : 'Failed to load groups'));
     }
   }
 
@@ -33,7 +35,10 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       final updatedGroups = await GroupServices.fetchGroups();
       emit(GroupsLoadSuccess(groups: updatedGroups));
     } catch (error) {
-      emit(GroupsLoadError(errorMessage: error is ApiException ? error.message : 'Failed to create group'));
+      emit(GroupsLoadError(
+          errorMessage: error is ApiException
+              ? error.message
+              : 'Failed to create group'));
     }
   }
 
@@ -44,7 +49,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       final updatedGroups = await GroupServices.fetchGroups();
       emit(GroupsLoadSuccess(groups: updatedGroups));
     } catch (error) {
-      emit(GroupsLoadError(errorMessage: error is ApiException ? error.message : 'Failed to join group'));
+      emit(GroupsLoadError(
+          errorMessage:
+              error is ApiException ? error.message : 'Failed to join group'));
     }
   }
 
@@ -54,8 +61,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       final group = await GroupServices.getGroupById(event.groupId);
       emit(GroupLoadSingleSuccess(group: group));
     } catch (error) {
-      emit(GroupsLoadError(errorMessage: error is ApiException ? error.message : 'Failed to load group'));
+      emit(GroupsLoadError(
+          errorMessage:
+              error is ApiException ? error.message : 'Failed to load group'));
     }
   }
-
 }

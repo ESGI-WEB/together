@@ -26,11 +26,14 @@ class Group {
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),
       updatedAt: DateTime.parse(json['UpdatedAt']),
-      deletedAt: json['DeletedAt'] != null ? DateTime.parse(json['DeletedAt']) : null,
+      deletedAt:
+          json['DeletedAt'] != null ? DateTime.parse(json['DeletedAt']) : null,
       name: json['name'],
       description: json['description'],
       code: json['code'],
-      users: json['users'] != null ? List<User>.from(json['users'].map((user) => User.fromJson(user))) : null,
+      users: json['users'] != null
+          ? List<User>.from(json['users'].map((user) => User.fromJson(user)))
+          : null,
     );
   }
 

@@ -20,9 +20,7 @@ class GroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-      GroupBloc()
-        ..add(LoadGroup(groupId)),
+      create: (context) => GroupBloc()..add(LoadGroup(groupId)),
       child: Scaffold(
         appBar: AppBar(title: Text('Group $groupId')),
         body: BlocBuilder<GroupBloc, GroupState>(
@@ -34,8 +32,10 @@ class GroupScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(group.name),
-                    const SizedBox(height: 10), // Add some spacing between name and description
-                    Text(group.description ?? ''),                  ],
+                    const SizedBox(height: 10),
+                    // Add some spacing between name and description
+                    Text(group.description ?? ''),
+                  ],
                 ),
               );
             } else if (state is GroupsLoadError) {

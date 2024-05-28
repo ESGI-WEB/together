@@ -7,8 +7,10 @@ import 'group_screen.dart';
 class JoinGroupScreen extends StatelessWidget {
   static const String routeName = '/joinGroup';
 
-  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static Future<void> navigateTo(BuildContext context,
+      {bool removeHistory = false}) {
+    return Navigator.of(context)
+        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const JoinGroupScreen({super.key});
@@ -28,7 +30,8 @@ class JoinGroupScreen extends StatelessWidget {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
-                  GroupScreen.navigateTo(context, groupId: state.groups.last.id);
+                  GroupScreen.navigateTo(context,
+                      groupId: state.groups.last.id);
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
@@ -48,9 +51,7 @@ class JoinGroupScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        final code = {
-                          "code": codeController.text
-                        };
+                        final code = {"code": codeController.text};
                         BlocProvider.of<GroupBloc>(context)
                             .add(JoinGroup(code));
                       },

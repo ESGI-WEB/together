@@ -8,8 +8,12 @@ import '../core/services/user_services.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
-  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false, String? email}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory, arguments: email);
+
+  static Future<void> navigateTo(BuildContext context,
+      {bool removeHistory = false, String? email}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName, (route) => !removeHistory,
+        arguments: email);
   }
 
   final String? defaultEmail;
@@ -68,8 +72,7 @@ class LoginScreen extends StatelessWidget {
                             return 'Veuillez saisir un email';
                           }
 
-                          if (!UserServices.emailRegex
-                              .hasMatch(value)) {
+                          if (!UserServices.emailRegex.hasMatch(value)) {
                             return 'Veuillez saisir un email valide';
                           }
 

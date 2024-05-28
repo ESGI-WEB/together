@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/services/storage_service.dart';
+
 import '../../core/services/user_services.dart';
 
 part 'login_event.dart';
-
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -28,9 +28,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await StorageService.writeToken(jwt.token);
         emit(LoginSuccess());
       } on UnauthorizedException catch (error) {
-        emit(LoginError(errorMessage: error.message, email: state.email, password: state.password));
+        emit(LoginError(
+            errorMessage: error.message,
+            email: state.email,
+            password: state.password));
       } on ApiException {
-        emit(LoginError(errorMessage: "Une erreur s'est produite", email: state.email, password: state.password));
+        emit(LoginError(
+            errorMessage: "Une erreur s'est produite",
+            email: state.email,
+            password: state.password));
       }
     });
   }

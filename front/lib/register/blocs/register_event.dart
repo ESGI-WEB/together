@@ -10,5 +10,6 @@ class RegisterFormChanged extends RegisterEvent {
   final String email;
   final String password;
 
-  RegisterFormChanged({required this.name, required this.email, required this.password});
+  RegisterFormChanged(
+      {required this.name, required this.email, required this.password});
 }

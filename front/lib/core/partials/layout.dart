@@ -53,7 +53,8 @@ class _LayoutState extends State<Layout> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              StorageService.deleteToken().then((value) => LoginScreen.navigateTo(context, removeHistory: true));
+              StorageService.deleteToken().then((value) =>
+                  LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
         ],
