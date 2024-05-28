@@ -43,8 +43,7 @@ class Group {
       'Name': name,
       'Description': description,
       'Code': code,
-      'Users': [],
+      'Users': users,
     };
   }
 }
-//users?.map((user) => user.toJson()).toList()

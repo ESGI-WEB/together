@@ -28,11 +28,9 @@ class CreateGroupScreen extends StatelessWidget {
           builder: (context) {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
-                if (state is GroupLoadSuccess) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => GroupScreen(groupId: state.groups.last.id),
-                  ));
-                } else if (state is GroupLoadError) {
+                if (state is GroupsLoadSuccess) {
+                  GroupScreen.navigateTo(context, groupId: state.groups.last.id);
+                } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
                   );

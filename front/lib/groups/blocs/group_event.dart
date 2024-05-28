@@ -12,9 +12,9 @@ class CreateGroup extends GroupEvent {
 }
 
 class JoinGroup extends GroupEvent {
-  final int groupId;
+  final Map<String, dynamic> code;
 
-  JoinGroup(this.groupId);
+  JoinGroup(this.code);
 }
 
 class LoadGroup extends GroupEvent {

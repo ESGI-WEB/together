@@ -7,16 +7,16 @@ final class GroupInitial extends GroupState {}
 
 final class GroupLoading extends GroupState {}
 
-final class GroupLoadSuccess extends GroupState {
+final class GroupsLoadSuccess extends GroupState {
   final List<Group> groups;
 
-  GroupLoadSuccess({required this.groups});
+  GroupsLoadSuccess({required this.groups});
 }
 
-final class GroupLoadError extends GroupState {
+final class GroupsLoadError extends GroupState {
   final String errorMessage;
 
-  GroupLoadError({required this.errorMessage});
+  GroupsLoadError({required this.errorMessage});
 }
 
 final class GroupLoadSingleSuccess extends GroupState {

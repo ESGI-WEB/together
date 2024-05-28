@@ -1,45 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/groups/blocs/group_bloc.dart';
+
+import 'group_screen.dart';
 
 class JoinGroupScreen extends StatelessWidget {
   static const String routeName = '/joinGroup';
 
-  static Future<String?> navigateTo(BuildContext context) {
-    return Navigator.of(context).push<String>(
-      MaterialPageRoute(
-        builder: (context) => const JoinGroupScreen(),
-      ),
-    );
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const JoinGroupScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
+    final TextEditingController codeController = TextEditingController();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rejoindre un Groupe'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                labelText: 'Code du groupe',
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                final groupIdOrName = _controller.text;
-                Navigator.of(context).pop(groupIdOrName);
+    return BlocProvider<GroupBloc>(
+      create: (context) => GroupBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Rejoindre un Groupe'),
+        ),
+        body: Builder(
+          builder: (context) {
+            return BlocListener<GroupBloc, GroupState>(
+              listener: (context, state) {
+                if (state is GroupsLoadSuccess) {
+                  GroupScreen.navigateTo(context, groupId: state.groups.last.id);
+                } else if (state is GroupsLoadError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.errorMessage)),
+                  );
+                }
               },
-              child: const Text('Rejoindre'),
-            ),
-          ],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: codeController,
+                      decoration: const InputDecoration(
+                        labelText: 'Code du groupe',
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        final code = {
+                          "code": codeController.text
+                        };
+                        BlocProvider.of<GroupBloc>(context)
+                            .add(JoinGroup(code));
+                      },
+                      child: const Text('Rejoindre'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -32,7 +32,7 @@ class GroupsScreen extends StatelessWidget {
                   );
                 }
 
-                if (state is GroupLoadError) {
+                if (state is GroupsLoadError) {
                   return Center(
                     child: Text(
                       state.errorMessage,
@@ -41,7 +41,7 @@ class GroupsScreen extends StatelessWidget {
                   );
                 }
 
-                if (state is GroupLoadSuccess) {
+                if (state is GroupsLoadSuccess) {
                   return Positioned.fill(
                     child: GroupList(groups: state.groups),
                   );
@@ -61,7 +61,7 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Créer',
                     icon: Icons.add,
                     onPressed: () {
-                      CreateGroupScreen.navigateTo(context);
+                      CreateGroupScreen.navigateTo(context, removeHistory: true);
                     },
                   ),
                   const SizedBox(width: 10.0),
@@ -69,7 +69,7 @@ class GroupsScreen extends StatelessWidget {
                     text: 'Rejoindre',
                     icon: Icons.person_add,
                     onPressed: () {
-                      JoinGroupScreen.navigateTo(context);
+                      JoinGroupScreen.navigateTo(context, removeHistory: true);
                     },
                   ),
                 ],

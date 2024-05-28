@@ -38,7 +38,7 @@ class GroupScreen extends StatelessWidget {
                     Text(group.description ?? ''),                  ],
                 ),
               );
-            } else if (state is GroupLoadError) {
+            } else if (state is GroupsLoadError) {
               return Center(child: Text(state.errorMessage));
             } else {
               return const Center(child: CircularProgressIndicator());

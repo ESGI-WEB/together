@@ -32,8 +32,8 @@ class GroupServices {
     }
   }
 
-  static Future<void> joinGroup(int groupId) async {
-    final response = await ApiServices.post('/groups/$groupId/join', {});
+  static Future<void> joinGroup(Map<String, dynamic> code) async {
+    final response = await ApiServices.post('/groups/join', code);
     if (response.statusCode != 200) {
       throw ApiException(
         message: 'Failed to join group',
