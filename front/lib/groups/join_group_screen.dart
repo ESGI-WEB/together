@@ -17,13 +17,14 @@ class JoinGroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TextEditingController codeController = TextEditingController();
 
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Rejoindre un Groupe'),
+          title: const Text('Rejoindre un groupe'),
         ),
         body: Builder(
           builder: (context) {
@@ -40,24 +41,35 @@ class JoinGroupScreen extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: codeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Code du groupe',
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: codeController,
+                        decoration: const InputDecoration(
+                          labelText: 'Code du groupe',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un code.';
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        final code = {"code": codeController.text};
-                        BlocProvider.of<GroupBloc>(context)
-                            .add(JoinGroup(code));
-                      },
-                      child: const Text('Rejoindre'),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            final code = {"code": codeController.text};
+                            BlocProvider.of<GroupBloc>(context)
+                                .add(JoinGroup(code));
+                          }
+                        },
+                        child: const Text('Rejoindre'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
