@@ -84,4 +84,23 @@ cd back
 docker compose up -d
 ```
 
-- Se rendre sur http://localhost:8080 pour acceder à l'API
+- Se rendre sur http://localhost:8080 pour acceder à l'API une fois que le serveur go est lancé (peut prendre quelques secondes)
+
+## Flutter
+- Aller dans le dossier /front
+```bash
+cd front
+```
+
+- copier le .env.prod en .env et modifier la variable d'environnement API_URL par l'ip de votre pc sur le port 8080 (ipconfig sur windows, ifconfig sur linux)
+```bash
+cp .env.prod .env
+```
+Quelque chose comme 192.123.123.123:8080
+
+- Lancer l'application sur votre emulateur ou votre téléphone
+- Pour lancer l'app web en parallele sur chrome (ou autre) en mode dev
+```bash
+flutter run -d chrome
+```
+Attention ! Faut pour ca bien mettre l'ip de votre pc dans le fichier .env et non le localhost de l'emulateur (pas 10.0.2.2:8080)
