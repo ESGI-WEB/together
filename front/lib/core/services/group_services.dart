@@ -42,4 +42,17 @@ class GroupServices {
       );
     }
   }
+
+  static Future<Group> getGroupById(int groupId) async {
+    final response = await ApiServices.get('/groups/$groupId');
+    if (response.statusCode == 200) {
+      return Group.fromJson(json.decode(response.body));
+    } else {
+      throw ApiException(
+        message: 'Failed to load group',
+        statusCode: response.statusCode,
+        response: response,
+      );
+    }
+  }
 }

@@ -30,7 +30,7 @@ class CreateGroupScreen extends StatelessWidget {
               listener: (context, state) {
                 if (state is GroupLoadSuccess) {
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => GroupScreen(id: state.groups.last.id.toString()),
+                    builder: (context) => GroupScreen(groupId: state.groups.last.id),
                   ));
                 } else if (state is GroupLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(

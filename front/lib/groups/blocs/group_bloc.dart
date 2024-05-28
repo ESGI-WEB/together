@@ -13,6 +13,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     on<LoadGroups>(_onLoadGroups);
     on<CreateGroup>(_onCreateGroup);
     on<JoinGroup>(_onJoinGroup);
+    on<LoadGroup>(_onLoadGroup);
   }
 
   void _onLoadGroups(LoadGroups event, Emitter<GroupState> emit) async {
@@ -45,4 +46,15 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       emit(GroupLoadError(errorMessage: error is ApiException ? error.message : 'Failed to join group'));
     }
   }
+
+  void _onLoadGroup(LoadGroup event, Emitter<GroupState> emit) async {
+    emit(GroupLoading());
+    try {
+      final group = await GroupServices.getGroupById(event.groupId);
+      emit(GroupLoadSingleSuccess(group: group));
+    } catch (error) {
+      emit(GroupLoadError(errorMessage: error is ApiException ? error.message : 'Failed to load group'));
+    }
+  }
+
 }

@@ -1,29 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class GroupScreen extends StatefulWidget {
+import 'blocs/group_bloc.dart';
+
+class GroupScreen extends StatelessWidget {
   static const String routeName = '/group';
 
   static Future<void> navigateTo(BuildContext context,
-      {required String id, bool removeHistory = false}) {
+      {required int groupId, bool removeHistory = false}) {
     return Navigator.of(context).pushNamedAndRemoveUntil(
         routeName, (route) => !removeHistory,
-        arguments: id);
+        arguments: groupId);
   }
 
-  final String id;
+  final int groupId;
 
-  const GroupScreen({super.key, required this.id});
+  const GroupScreen({Key? key, required this.groupId}) : super(key: key);
 
-  @override
-  State<GroupScreen> createState() => _GroupScreenState();
-}
-
-class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Group ${widget.id}')),
-      body: Center(child: Text('Group ${widget.id}')),
+    return BlocProvider(
+      create: (context) =>
+      GroupBloc()
+        ..add(LoadGroup(groupId)),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Group $groupId')),
+        body: BlocBuilder<GroupBloc, GroupState>(
+          builder: (context, state) {
+            if (state is GroupLoadSingleSuccess) {
+              final group = state.group;
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(group.name),
+                    const SizedBox(height: 10), // Add some spacing between name and description
+                    Text(group.description ?? ''),                  ],
+                ),
+              );
+            } else if (state is GroupLoadError) {
+              return Center(child: Text(state.errorMessage));
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
     );
   }
 }

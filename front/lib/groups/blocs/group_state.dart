@@ -18,3 +18,9 @@ final class GroupLoadError extends GroupState {
 
   GroupLoadError({required this.errorMessage});
 }
+
+final class GroupLoadSingleSuccess extends GroupState {
+  final Group group;
+
+  GroupLoadSingleSuccess({required this.group});
+}

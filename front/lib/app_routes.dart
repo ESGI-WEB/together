@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
+import 'package:front/groups/create_group_screen.dart';
 import 'package:front/register/register_screen.dart';
 
 import 'groups/group_screen.dart';
 import 'login/login_screen.dart';
 
 class AppRoutes {
-  static Route<dynamic> generateRoute (RouteSettings settings) {
+  static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
       case GroupScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return GroupScreen(id: args as String);
+            return GroupScreen(groupId: args as int);
           },
         );
       case GroupsScreen.routeName:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../core/models/group.dart';
 import 'group_screen.dart';
 
@@ -12,7 +11,7 @@ class GroupListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        GroupScreen.navigateTo(context, id: group.id.toString());
+        GroupScreen.navigateTo(context, groupId: group.id);
       },
       title: Text(group.name),
       subtitle: group.description != null ? Text(group.description!) : null,
