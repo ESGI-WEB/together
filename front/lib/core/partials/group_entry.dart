@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:front/groups/group_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 
-class GroupEntry extends StatelessWidget{
+class GroupEntry extends StatelessWidget {
   const GroupEntry({super.key, required this.groupId});
 
   final String groupId;
@@ -10,7 +10,7 @@ class GroupEntry extends StatelessWidget{
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        GroupScreen.navigateTo(context, groupId: groupId);
+        ChatScreen.navigateTo(context, groupId: groupId);
       },
       child: Text(groupId),
     );
