@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/register/register_screen.dart';
 
 import 'admin/features/features_screen.dart';
@@ -17,6 +18,12 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (context) {
             return GroupScreen(groupId: args as String);
+          },
+        );
+      case ChatScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return ChatScreen(groupId: args as String);
           },
         );
       case GroupsListScreen.routeName:

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"together/database"
 	"together/routers"
 	"together/utils"
@@ -21,6 +22,7 @@ func main() {
 	fmt.Println("Starting server...")
 
 	e := echo.New()
+	e.Logger.SetLevel(log.DEBUG)
 
 	// cors authorize flutter web dev
 	fmt.Printf("APP_MODE: %s\n", utils.GetEnv("APP_MODE", "production"))
