@@ -61,13 +61,17 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 
 func (c *EventController) GetEvent(ctx echo.Context) error {
 	eventIDParam := ctx.Param("id")
-	eventID, err := strconv.ParseUint(eventIDParam, 10, 32)
+	eventID, err := strconv.Atoi(eventIDParam)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	event, err := c.EventService.GetEventByID(uint(eventID))
 	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil {
 		return ctx.NoContent(http.StatusNotFound)
 	}
 

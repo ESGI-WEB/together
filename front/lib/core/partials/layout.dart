@@ -42,26 +42,29 @@ class _LayoutState extends State<Layout> {
         ],
       ),
       appBar: AppBar(
-        leading: Navigator.of(context).canPop() ? IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ) : null,
+        leading: Navigator.of(context).canPop()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              StorageService.deleteToken().then((value) => LoginScreen.navigateTo(context, removeHistory: true));
+              StorageService.deleteToken().then((value) =>
+                  LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
         ],
       ),
-      floatingActionButton: ElevatedButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
           EventScreen.navigateTo(context);
         },
-        child: const Text("+"),
+        child: const Icon(Icons.add),
       ),
       body: widget.body,
     );

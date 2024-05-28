@@ -222,7 +222,7 @@ class _EventScreenState extends State<EventScreen> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: const Text('Créer l\'événement'),
+                child: const Text("Créer l'évènement"),
               ),
             ],
           ),
