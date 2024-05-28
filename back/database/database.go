@@ -87,7 +87,7 @@ func InitDB() (*DB, error) {
 		Port:     port,
 		User:     utils.GetEnv("DB_USER", "postgres"),
 		Password: utils.GetEnv("DB_PASSWORD", "postgres"),
-		Name:     utils.GetEnv("DB_NAME", "postgres"),
+		Name:     utils.GetEnv("DB_NAME", "app"),
 		SSLMode:  utils.GetEnv("DB_SSL_MODE", "disable"),
 	}
 
