@@ -30,6 +30,34 @@ class _EventScreenState extends State<EventScreen> {
   int typeId = 0;
   int addressId = 0;
 
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        date =
+            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        time =
+            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+      });
+    }
+  }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -84,28 +112,27 @@ class _EventScreenState extends State<EventScreen> {
                 },
               ),
               TextFormField(
-                decoration:
-                    const InputDecoration(labelText: 'Date (YYYY-MM-DD)'),
+                decoration: const InputDecoration(labelText: 'Date'),
+                readOnly: true,
+                onTap: () => _selectDate(context),
+                controller: TextEditingController(text: date),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une date';
+                    return 'Veuillez sélectionner une date';
                   }
                   return null;
-                },
-                onSaved: (value) {
-                  date = value!;
                 },
               ),
               TextFormField(
-                decoration: const InputDecoration(labelText: 'Heure (HH:MM)'),
+                decoration: const InputDecoration(labelText: 'Heure'),
+                readOnly: true,
+                onTap: () => _selectTime(context),
+                controller: TextEditingController(text: time),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une heure';
+                    return 'Veuillez sélectionner une heure';
                   }
                   return null;
-                },
-                onSaved: (value) {
-                  time = value!;
                 },
               ),
               TextFormField(
