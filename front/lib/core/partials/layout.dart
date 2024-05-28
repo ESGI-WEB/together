@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/storage_service.dart';
+import 'package:front/event/event_screen.dart';
 import 'package:front/login/login_screen.dart';
 
 class Layout extends StatefulWidget {
@@ -41,20 +42,29 @@ class _LayoutState extends State<Layout> {
         ],
       ),
       appBar: AppBar(
-        leading: Navigator.of(context).canPop() ? IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ) : null,
+        leading: Navigator.of(context).canPop()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              StorageService.deleteToken().then((value) => LoginScreen.navigateTo(context, removeHistory: true));
+              StorageService.deleteToken().then((value) =>
+                  LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          EventScreen.navigateTo(context);
+        },
+        child: const Icon(Icons.add),
       ),
       body: widget.body,
     );
