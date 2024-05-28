@@ -42,6 +42,7 @@ ENV PATH="$FLUTTER_SDK_LOCATION/bin:$FLUTTER_SDK_LOCATION/bin/cache/dart-sdk/bin
 RUN flutter doctor -v
 
 COPY ./front $APP_LOCATION
+COPY ./front/.env.prod $APP_LOCATION/.env
 WORKDIR $APP_LOCATION
 
 RUN flutter clean
