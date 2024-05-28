@@ -66,8 +66,13 @@ func (c *GroupController) GetGroupById(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, group)
 }
 
-func (c *GroupController) GetAllGroups(ctx echo.Context) error {
-	groups, err := c.GroupService.GetAllGroups()
+func (c *GroupController) GetAllMyGroups(ctx echo.Context) error {
+	user, ok := ctx.Get("user").(models.User)
+	if !ok || user.ID == 0 {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	groups, err := c.GroupService.GetAllMyGroups(user.ID)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

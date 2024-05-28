@@ -36,9 +36,12 @@ func (s *GroupService) GetGroupById(id uint) (*models.Group, error) {
 	return &group, nil
 }
 
-func (s *GroupService) GetAllGroups() ([]models.Group, error) {
+func (s *GroupService) GetAllMyGroups(userID uint) ([]models.Group, error) {
 	var groups []models.Group
-	if err := database.CurrentDatabase.Preload("Users").Find(&groups).Error; err != nil {
+	if err := database.CurrentDatabase.Joins("JOIN group_users ON group_users.group_id = groups.id").
+		Where("group_users.user_id = ?", userID).
+		Preload("Users").
+		Find(&groups).Error; err != nil {
 		return nil, err
 	}
 	return groups, nil
