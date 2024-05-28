@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_detail_screen.dart';
-import 'package:front/core/models/event.dart';
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/event';

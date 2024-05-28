@@ -1,3 +1,5 @@
+import "address.dart";
+
 class Event {
   final int id;
   final DateTime createdAt;
@@ -39,5 +41,34 @@ class Event {
         typeId: json['type_id'],
         organizerId: json['organizer_id'],
         addressId: json['address_id']);
+  }
+}
+
+class EventCreate {
+  String name;
+  String description;
+  String date;
+  String time;
+  int typeId;
+  AddressCreate address;
+
+  EventCreate({
+    required this.name,
+    required this.description,
+    required this.date,
+    required this.time,
+    required this.typeId,
+    required this.address,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'date': date,
+      'time': time,
+      'type_id': typeId,
+      'address': address.toJson(),
+    };
   }
 }
