@@ -28,7 +28,7 @@ class JoinGroupScreen extends StatelessWidget {
             TextField(
               controller: _controller,
               decoration: const InputDecoration(
-                labelText: 'ID ou nom du groupe',
+                labelText: 'Code du groupe',
               ),
             ),
             const SizedBox(height: 20),
