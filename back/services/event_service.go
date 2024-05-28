@@ -27,3 +27,12 @@ func (s *EventService) AddEvent(event models.EventCreate, id uint) (*models.Even
 
 	return newEvent, nil
 }
+
+func (s *EventService) GetEventByID(eventID uint) (*models.Event, error) {
+	var event models.Event
+	result := database.CurrentDatabase.First(&event, eventID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &event, nil
+}

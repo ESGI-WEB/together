@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"strconv"
 	"together/models"
 	"together/services"
 	"together/utils"
@@ -56,4 +57,19 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusCreated, newEvent)
+}
+
+func (c *EventController) GetEvent(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.ParseUint(eventIDParam, 10, 32)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	return ctx.JSON(http.StatusOK, event)
 }
