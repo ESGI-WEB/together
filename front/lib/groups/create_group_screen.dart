@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen.dart';
-
 import 'blocs/group_bloc.dart';
+import 'dart:math';
 
 class CreateGroupScreen extends StatelessWidget {
   static const String routeName = '/createGroup';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
   }
 
   const CreateGroupScreen({super.key});
@@ -22,6 +20,13 @@ class CreateGroupScreen extends StatelessWidget {
     final descriptionController = TextEditingController();
     final codeController = TextEditingController();
 
+    String generateRandomCode() {
+      const length = 10;
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      final rand = Random();
+      return List.generate(length, (index) => chars[rand.nextInt(chars.length)]).join();
+    }
+
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
       child: Scaffold(
@@ -31,8 +36,7 @@ class CreateGroupScreen extends StatelessWidget {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
-                  GroupScreen.navigateTo(context,
-                      groupId: state.groups.last.id);
+                  GroupScreen.navigateTo(context, groupId: state.groups.last.id);
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
@@ -57,12 +61,19 @@ class CreateGroupScreen extends StatelessWidget {
                       ),
                       TextFormField(
                         controller: descriptionController,
-                        decoration:
-                            const InputDecoration(labelText: 'Description'),
+                        decoration: const InputDecoration(labelText: 'Description'),
                       ),
                       TextFormField(
                         controller: codeController,
-                        decoration: const InputDecoration(labelText: 'Code'),
+                        decoration: InputDecoration(
+                          labelText: 'Code',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () {
+                              codeController.text = generateRandomCode();
+                            },
+                          ),
+                        ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Veuillez entrer un code';
@@ -79,10 +90,9 @@ class CreateGroupScreen extends StatelessWidget {
                             final newGroup = {
                               "name": nameController.text,
                               "description": descriptionController.text,
-                              "code": codeController.text
+                              "code": codeController.text,
                             };
-                            BlocProvider.of<GroupBloc>(context)
-                                .add(CreateGroup(newGroup));
+                            BlocProvider.of<GroupBloc>(context).add(CreateGroup(newGroup));
                           }
                         },
                         child: const Text('Créer'),
