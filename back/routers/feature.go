@@ -17,9 +17,7 @@ func (r *FeatureRouter) SetupRoutes(e *echo.Echo) {
 	group.GET("", featureController.List, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
 	})
-	group.GET("/:slug", featureController.View, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
-	})
+	group.GET("/:slug", featureController.View)
 	group.PATCH("/:slug", featureController.Edit, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
 	})

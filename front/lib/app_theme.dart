@@ -19,11 +19,15 @@ class AppTheme {
           ),
         ),
       ),
-      textTheme: const TextTheme(
-        displayLarge: TextStyle(
+      textTheme: TextTheme(
+        displayLarge: const TextStyle(
           color: Colors.deepPurple,
           fontSize: 22,
           fontWeight: FontWeight.bold,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 18,
+          color: Colors.grey[700],
         ),
       ),
     );

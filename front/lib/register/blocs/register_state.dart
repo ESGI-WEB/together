@@ -18,6 +18,11 @@ class RegisterLoading extends RegisterState {
       {required super.name, required super.email, required super.password});
 }
 
+class RegisterCheckingAvailability extends RegisterState {
+  const RegisterCheckingAvailability(
+      {required super.name, required super.email, required super.password});
+}
+
 class RegisterSuccess extends RegisterState {
   final User user;
 
@@ -32,4 +37,9 @@ class RegisterError extends RegisterState {
       required super.name,
       required super.email,
       required super.password});
+}
+
+class RegisterFeatureDisabled extends RegisterState {
+  const RegisterFeatureDisabled(
+      {required super.name, required super.email, required super.password});
 }

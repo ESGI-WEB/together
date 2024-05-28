@@ -16,7 +16,7 @@ class FeaturesTileBloc extends Bloc<FeaturesTileEvent, FeaturesTileState> {
       try {
         emit(FeaturesTileSuccess(feature: await FeatureFlippingServices.updateFeatureFlipping(event.feature)));
       } on ApiException {
-        emit(FeaturesTileDataLoadError(errorMessage: 'An error occurred while retrieving data.'));
+        emit(FeaturesTileDataLoadError(errorMessage: 'Une erreur est survenue en essayant de mettre à jour la fonctionnalité'));
       }
     });
   }

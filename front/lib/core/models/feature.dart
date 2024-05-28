@@ -28,3 +28,8 @@ class Feature {
     );
   }
 }
+
+
+enum FeatureEnum {
+  register,
+}
