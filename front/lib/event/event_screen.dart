@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
+import 'package:front/event/event_detail_screen.dart';
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/event';
@@ -70,8 +71,28 @@ class _EventScreenState extends State<EventScreen> {
         'address_id': addressId,
       };
 
-      EventsServices.createEvent(
-          name, description, date, time, typeId, street, number, city, zip);
+      try {
+        final event = await EventsServices.createEvent(
+          name,
+          description,
+          date,
+          time,
+          typeId,
+          street,
+          number,
+          city,
+          zip,
+        );
+        Navigator.of(context).pushNamed(
+          EventDetailScreen.routeName,
+          arguments: event.id,
+        );
+      } catch (e) {
+        // Handle error (show a snackbar or dialog)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create event: $e')),
+        );
+      }
     }
   }
 

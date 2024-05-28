@@ -44,4 +44,19 @@ class EventsServices {
       }
     }
   }
+
+  static Future<Event> getEventById(int id) async {
+    try {
+      final response = await ApiServices.get('/events/$id');
+      return Event.fromJson(json.decode(response.body));
+    } catch (e) {
+      if (e is UnauthorizedException) {
+        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
+      } else if (e is ApiException) {
+        rethrow;
+      } else {
+        rethrow;
+      }
+    }
+  }
 }
