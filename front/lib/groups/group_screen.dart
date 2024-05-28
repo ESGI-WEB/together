@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/partials/layout.dart';
 import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -21,8 +22,8 @@ class GroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupBloc()..add(LoadGroup(groupId)),
-      child: Scaffold(
-        appBar: AppBar(title: Text('Group $groupId')),
+      child: Layout(
+        title: "group",
         body: BlocBuilder<GroupBloc, GroupState>(
           builder: (context, state) {
             if (state is GroupLoadSingleSuccess) {
@@ -33,7 +34,6 @@ class GroupScreen extends StatelessWidget {
                   children: [
                     Text(group.name),
                     const SizedBox(height: 10),
-                    // Add some spacing between name and description
                     Text(group.description ?? ''),
                   ],
                 ),

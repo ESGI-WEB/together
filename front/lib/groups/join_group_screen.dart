@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/blocs/group_bloc.dart';
 
+import '../core/partials/layout.dart';
 import 'group_screen.dart';
 
 class JoinGroupScreen extends StatelessWidget {
@@ -22,10 +23,8 @@ class JoinGroupScreen extends StatelessWidget {
 
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Rejoindre un groupe'),
-        ),
+      child: Layout(
+        title: "Rejoindre un groupe",
         body: Builder(
           builder: (context) {
             return BlocListener<GroupBloc, GroupState>(

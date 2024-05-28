@@ -43,13 +43,17 @@ class _LayoutState extends State<Layout> {
       appBar: AppBar(
         leading: Navigator.of(context).canPop()
             ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: const Icon(Icons.arrow_circle_left_outlined, color: Colors.black),
                 onPressed: () => Navigator.of(context).pop(),
               )
             : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Image.asset("assets/images/logo.png"),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
@@ -57,6 +61,7 @@ class _LayoutState extends State<Layout> {
                   LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
+
         ],
       ),
       body: widget.body,
