@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_detail_screen.dart';
+import 'package:front/core/models/event.dart';
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/event';
@@ -29,7 +30,6 @@ class _EventScreenState extends State<EventScreen> {
   String city = '';
   String zip = '';
   int typeId = 0;
-  int addressId = 0;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -62,30 +62,23 @@ class _EventScreenState extends State<EventScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      final eventData = {
-        'name': name,
-        'description': description,
-        'date': date,
-        'time': time,
-        'type_id': typeId,
-        'address_id': addressId,
-      };
+      final event = EventCreate(
+        name: name,
+        description: description,
+        date: date,
+        time: time,
+        typeId: typeId,
+        street: street,
+        number: number,
+        city: city,
+        zip: zip,
+      );
 
       try {
-        final event = await EventsServices.createEvent(
-          name,
-          description,
-          date,
-          time,
-          typeId,
-          street,
-          number,
-          city,
-          zip,
-        );
+        final createdEvent = await EventsServices.createEvent(event);
         Navigator.of(context).pushNamed(
           EventDetailScreen.routeName,
-          arguments: event.id,
+          arguments: createdEvent.id,
         );
       } catch (e) {
         // Handle error (show a snackbar or dialog)
