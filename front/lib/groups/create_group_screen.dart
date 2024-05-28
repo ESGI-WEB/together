@@ -66,6 +66,8 @@ class CreateGroupScreen extends StatelessWidget {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Veuillez entrer un code';
+                          } else if (value.length < 5 || value.length > 20) {
+                            return 'Le code doit contenir entre 5 et 20 caractères';
                           }
                           return null;
                         },
