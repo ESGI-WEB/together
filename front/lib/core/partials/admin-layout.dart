@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/groups/groups_list_screen.dart';
 
-import '../../admin/features/features_screen.dart';
-
 class AdminLayout extends StatelessWidget {
   final String title;
   final Widget body;
