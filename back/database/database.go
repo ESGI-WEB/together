@@ -28,7 +28,6 @@ type DB struct {
 var allModels = []interface{}{
 	&models.Address{},
 	&models.Attend{},
-	&models.Category{},
 	&models.Event{},
 	&models.Group{},
 	&models.Message{},

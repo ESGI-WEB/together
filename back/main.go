@@ -13,6 +13,8 @@ var appRouters = []routers.Router{
 	&routers.UserRouter{},
 	&routers.SecurityRouter{},
 	&routers.FeatureRouter{},
+	&routers.EventRouter{},
+	&routers.AddressRouter{},
 }
 
 func main() {
