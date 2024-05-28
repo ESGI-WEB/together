@@ -32,7 +32,7 @@ class CreateGroupScreen extends StatelessWidget {
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
                   GroupScreen.navigateTo(context,
-                      groupId: state.groups.last.id, removeHistory: true);
+                      groupId: state.groups.last.id);
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),

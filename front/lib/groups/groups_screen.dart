@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/partials/layout.dart';
 import 'blocs/group_bloc.dart';
 import 'create_group_screen.dart';
 import 'group_button.dart';
@@ -22,8 +23,8 @@ class GroupsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupBloc()..add(LoadGroups()),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Groupes')),
+      child: Layout(
+        title: "Groupes",
         body: Stack(
           children: [
             BlocBuilder<GroupBloc, GroupState>(

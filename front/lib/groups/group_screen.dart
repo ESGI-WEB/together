@@ -15,7 +15,7 @@ class GroupScreen extends StatelessWidget {
 
   final int groupId;
 
-  const GroupScreen({Key? key, required this.groupId}) : super(key: key);
+  const GroupScreen({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
