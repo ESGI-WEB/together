@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/chat/chat_screen.dart';
-import 'package:front/core/partials/layout.dart';
+import 'package:front/core/partials/group_layout.dart';
 
 import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {
-  static const String routeName = '/group';
+  static const String routeName = '/group/event';
 
   static Future<void> navigateTo(BuildContext context,
       {required int groupId, bool removeHistory = false}) {
@@ -23,7 +23,7 @@ class GroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupBloc()..add(LoadGroup(groupId)),
-      child: Layout(
+      child: GroupLayout(
         title: "group",
         body: BlocBuilder<GroupBloc, GroupState>(
           builder: (context, state) {
