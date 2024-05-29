@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'package:front/groups/join_group_screen.dart';
+import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/register/register_screen.dart';
 
+import 'admin/features/features_screen.dart';
 import 'event/event_screen.dart';
 import 'package:front/event/event_detail_screen.dart';
 import 'groups/group_screen.dart';
@@ -31,6 +34,12 @@ class AppRoutes {
             return const CreateGroupScreen();
           },
         );
+      case ChatScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return ChatScreen(groupId: args as String);
+          },
+        );
       case JoinGroupScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
@@ -53,6 +62,18 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (context) {
             return RegisterScreen();
+          },
+        );
+      case AdminHomeScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const AdminHomeScreen();
+          },
+        );
+      case FeaturesScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const FeaturesScreen();
           },
         );
       default:

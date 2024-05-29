@@ -36,3 +36,8 @@ class User {
     );
   }
 }
+
+enum UserRole {
+  admin,
+  user,
+}

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:front/core/partials/feature_disabled.dart';
+import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
-
-import '../core/services/user_services.dart';
 import 'blocs/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => RegisterBloc(),
+      create: (context) => RegisterBloc()..add(RegisterAvailabilityChecked()),
       child: Scaffold(
         body: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
@@ -32,7 +33,11 @@ class RegisterScreen extends StatelessWidget {
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(
               builder: (context, state) {
-            return Form(
+                if (state is RegisterFeatureDisabled) {
+                  return const FeatureDisabledPage();
+                }
+
+                return Form(
               key: _formKey,
               child: Center(
                 child: SizedBox(
@@ -40,6 +45,11 @@ class RegisterScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SvgPicture.asset(
+                        'assets/images/talks.svg',
+                        width: 200,
+                      ),
+                      const SizedBox(height: 10),
                       Text("S'inscrire",
                           style: Theme.of(context).textTheme.displayLarge),
                       const SizedBox(height: 10),

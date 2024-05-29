@@ -1,4 +1,6 @@
-class ConflictException extends Error {
+import 'api_exception.dart';
+
+class ConflictException extends ApiException {
   final String message;
 
   ConflictException({this.message = 'Conflit'});
