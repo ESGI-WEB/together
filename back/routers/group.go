@@ -24,4 +24,7 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("/join", groupController.JoinGroup, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next)
 	})
+	group.GET("/:id/next-event", groupController.GetNextEvent, func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware(next)
+	})
 }

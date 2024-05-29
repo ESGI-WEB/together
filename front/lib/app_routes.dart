@@ -8,7 +8,7 @@ import 'package:front/groups/join_group_screen.dart';
 import 'package:front/register/register_screen.dart';
 
 import 'admin/features/features_screen.dart';
-import 'event/event_screen.dart';
+import 'event/event_create_screen.dart';
 import 'login/login_screen.dart';
 
 class AppRoutes {

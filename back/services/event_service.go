@@ -12,14 +12,14 @@ func NewEventService() *EventService {
 	return &EventService{}
 }
 
-func (s *EventService) AddEvent(event models.EventCreate, id uint) (*models.Event, error) {
-	validate := validator.New()
+func (s *EventService) AddEvent(event models.EventCreate) (*models.Event, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
 	err := validate.Struct(event)
 	if err != nil {
 		return nil, err
 	}
 
-	newEvent := event.ToEvent(id)
+	newEvent := event.ToEvent()
 	create := database.CurrentDatabase.Create(&newEvent)
 	if create.Error != nil {
 		return nil, create.Error

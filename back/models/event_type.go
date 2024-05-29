@@ -6,5 +6,4 @@ type EventType struct {
 	gorm.Model
 	Name        string
 	Description string
-	Icon        string
 }

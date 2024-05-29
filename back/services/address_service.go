@@ -13,7 +13,7 @@ func NewAddressService() *AddressService {
 }
 
 func (s *AddressService) AddAddress(address models.AddressCreate) (*models.Address, error) {
-	validate := validator.New()
+	validate := validator.New(validator.WithRequiredStructEnabled())
 	err := validate.Struct(address)
 	if err != nil {
 		return nil, err

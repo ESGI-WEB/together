@@ -76,10 +76,7 @@ class _EventScreenState extends State<EventScreen> {
       try {
         final createdEvent = await EventsServices.createEvent(event);
         // todo à remplacer par un emit lors de l'utilisation de blocs
-        Navigator.of(context).pushNamed(
-          EventDetailScreen.routeName,
-          arguments: createdEvent.id,
-        );
+        EventDetailScreen.navigateTo(context, eventId: createdEvent.id);
       } catch (e) {
         // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(
