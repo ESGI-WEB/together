@@ -37,7 +37,7 @@ class AppRoutes {
       case ChatScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return ChatScreen(groupId: args as String);
+            return ChatScreen(groupId: args as int);
           },
         );
       case JoinGroupScreen.routeName:

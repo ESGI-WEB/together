@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/group.dart';
 
-import '../core/models/group.dart';
 import 'group_screen.dart';
 
 class GroupListItem extends StatelessWidget {

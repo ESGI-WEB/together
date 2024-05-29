@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
-import 'package:front/core/models/jwt-data.dart';
+import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_screen.dart';

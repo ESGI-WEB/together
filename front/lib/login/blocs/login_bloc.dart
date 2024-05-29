@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/services/storage_service.dart';
-
-import '../../core/services/user_services.dart';
+import 'package:front/core/services/user_services.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';

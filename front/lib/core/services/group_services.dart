@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import '../exceptions/api_exception.dart';
-import '../models/group.dart';
+import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/models/group.dart';
 import 'api_services.dart';
 
 class GroupServices {

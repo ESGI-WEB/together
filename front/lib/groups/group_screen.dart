@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/chat/chat_screen.dart';
+import 'package:front/core/partials/layout.dart';
 
-import '../core/partials/layout.dart';
 import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {

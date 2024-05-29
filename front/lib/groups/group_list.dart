@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:front/core/models/group.dart';
 
-import '../core/models/group.dart';
 import 'group_list_item.dart';
 
 class GroupList extends StatelessWidget {
