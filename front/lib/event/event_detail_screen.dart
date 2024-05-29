@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/partials/layout.dart';
+import 'package:front/core/partials/app_layout.dart';
 
 class EventDetailScreen extends StatelessWidget {
   static const String routeName = '/event-view';
@@ -20,7 +20,7 @@ class EventDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Layout(
+    return AppLayout(
       title: 'Évènement',
       body: Text("évènement"),
     );
