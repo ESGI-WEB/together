@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
-import 'package:front/core/partials/group_layout.dart';
 import 'package:front/event/event_detail_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
+import 'package:front/groups/group_home_screen.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'package:front/groups/join_group_screen.dart';
 import 'package:front/register/register_screen.dart';
@@ -27,10 +27,10 @@ class AppRoutes {
             return const CreateGroupScreen();
           },
         );
-      case GroupLayout.routeName:
+      case GroupHomeScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return GroupLayout(
+            return GroupHomeScreen(
               groupId: args as int,
               title: 'Groupe $args',
             );

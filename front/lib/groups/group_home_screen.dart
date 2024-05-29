@@ -9,7 +9,7 @@ import 'package:front/event/event_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
 
-class GroupLayout extends StatefulWidget {
+class GroupHomeScreen extends StatefulWidget {
   static const String routeName = '/group';
 
   static Future<void> navigateTo(BuildContext context,
@@ -19,7 +19,7 @@ class GroupLayout extends StatefulWidget {
         arguments: groupId);
   }
 
-  const GroupLayout({
+  const GroupHomeScreen({
     super.key,
     required this.groupId,
     required this.title,
@@ -29,10 +29,10 @@ class GroupLayout extends StatefulWidget {
   final String title;
 
   @override
-  State<GroupLayout> createState() => _GroupLayoutState();
+  State<GroupHomeScreen> createState() => _GroupHomeScreenState();
 }
 
-class _GroupLayoutState extends State<GroupLayout> {
+class _GroupHomeScreenState extends State<GroupHomeScreen> {
   int _currentIndex = 0;
   JwtData? _authenticatedData;
   late List<Widget> widgets;
