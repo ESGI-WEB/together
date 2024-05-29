@@ -35,6 +35,7 @@ var allModels = []interface{}{
 	&models.PollAnswerChoice{},
 	&models.Reaction{},
 	&models.User{},
+	&models.FeatureFlipping{},
 }
 
 func (db *DB) Connect() error {
@@ -66,7 +67,49 @@ func (db *DB) Close() error {
 }
 
 func (db *DB) AutoMigrate() error {
-	return db.DB.AutoMigrate(allModels...)
+	err := db.DB.AutoMigrate(allModels...)
+	if err != nil {
+		return err
+	}
+
+	return db.FillFeatureFlipping()
+}
+
+func (db *DB) FillFeatureFlipping() error {
+	// First get already inserted features
+	var features []models.FeatureFlipping
+	err := db.DB.Find(&features).Error
+	if err != nil {
+		return err
+	}
+
+	// delete extra features not used anymore
+	err = db.DB.Where("slug NOT IN ?", models.AllFeatureSlugs).Delete(&models.FeatureFlipping{}).Error
+	if err != nil {
+		return err
+	}
+
+	// Insert missing features not already inserted
+	for _, feature := range models.AllFeatureSlugs {
+		var found bool
+		for _, f := range features {
+			if f.Slug == feature {
+				found = true
+				break
+			}
+		}
+		if !found {
+			newFeature := models.FeatureFlipping{
+				Slug: feature,
+			}
+			err = db.DB.Create(&newFeature).Error
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
 
 func (db *DB) CloseDB() {

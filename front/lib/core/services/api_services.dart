@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/exceptions/feature_disabled_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:http/http.dart' as http;
@@ -97,6 +98,8 @@ class ApiServices {
   static void handleResponse(Response response) {
     if (response.statusCode == 401) {
       throw UnauthorizedException();
+    } else if (response.statusCode == 503) {
+      throw FeatureDisabledException();
     } else if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiException(response: response, statusCode: response.statusCode);
     }

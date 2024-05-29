@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/core/services/users_services.dart';
 import 'package:front/groups/groups_list_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
@@ -7,8 +8,12 @@ import 'package:front/register/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
-  static Future<void> navigateTo(BuildContext context, {bool removeHistory = false, String? email}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(routeName, (route) => !removeHistory, arguments: email);
+
+  static Future<void> navigateTo(BuildContext context,
+      {bool removeHistory = false, String? email}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName, (route) => !removeHistory,
+        arguments: email);
   }
 
   final String? defaultEmail;
@@ -44,6 +49,10 @@ class LoginScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SvgPicture.asset(
+                        'assets/images/login.svg',
+                        width: 200,
+                      ),
                       Text('Se connecter',
                           style: Theme.of(context).textTheme.displayLarge),
                       const SizedBox(height: 10),
@@ -67,8 +76,7 @@ class LoginScreen extends StatelessWidget {
                             return 'Veuillez saisir un email';
                           }
 
-                          if (!UsersServices.emailRegex
-                              .hasMatch(value)) {
+                          if (!UsersServices.emailRegex.hasMatch(value)) {
                             return 'Veuillez saisir un email valide';
                           }
 

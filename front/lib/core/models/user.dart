@@ -34,5 +34,9 @@ class User {
       avatarPath: json['avatar_path'],
     );
   }
+}
 
+enum UserRole {
+  admin,
+  user,
 }

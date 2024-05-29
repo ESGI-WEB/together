@@ -10,7 +10,7 @@ import (
 	"together/services"
 )
 
-var AuthenticationMiddleware = func(next echo.HandlerFunc) echo.HandlerFunc {
+var AuthenticationMiddleware = func(next echo.HandlerFunc, roles ...models.Role) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		bearer := c.Request().Header.Get("Authorization")
 
@@ -33,6 +33,20 @@ var AuthenticationMiddleware = func(next echo.HandlerFunc) echo.HandlerFunc {
 		database.CurrentDatabase.Find(&existingUser, userID)
 		if existingUser.ID == 0 {
 			return c.JSON(http.StatusUnauthorized, "unauthorized")
+		}
+
+		if len(roles) > 0 {
+			roleFound := false
+			for _, role := range roles {
+				if existingUser.Role == role {
+					roleFound = true
+					break
+				}
+			}
+
+			if roleFound == false {
+				return c.JSON(http.StatusUnauthorized, "unauthorized")
+			}
 		}
 
 		c.Set("user", existingUser)

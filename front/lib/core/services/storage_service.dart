@@ -1,4 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:front/core/models/jwt-data.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class StorageService {
   static const jwtKey = 'jwt_token';
@@ -14,5 +16,14 @@ class StorageService {
 
   static Future<void> deleteToken() async {
     await _storage.delete(key: jwtKey);
+  }
+
+  static Future<JwtData?> readJwtDataFromToken() async {
+    final token = await readToken();
+    if (token == null) {
+      return null;
+    }
+
+    return JwtData.fromJson(JwtDecoder.decode(token));
   }
 }

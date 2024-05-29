@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/core/models/jwt-data.dart';
+import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_screen.dart';
 import 'package:front/login/login_screen.dart';
@@ -15,6 +19,21 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> {
   int _currentIndex = 0;
+  JwtData? _authenticatedData;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAuthenticatedData();
+  }
+
+  Future<void> _getAuthenticatedData() async {
+    var jwtData = await StorageService.readJwtDataFromToken();
+
+    setState(() {
+      _authenticatedData = jwtData;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +70,14 @@ class _LayoutState extends State<Layout> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          kIsWeb && _authenticatedData != null && _authenticatedData?.role == UserRole.admin.name
+              ? IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    AdminHomeScreen.navigateTo(context);
+                  },
+                )
+              : Container(),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {

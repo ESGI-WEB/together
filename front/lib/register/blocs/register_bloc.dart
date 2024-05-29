@@ -3,7 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/conflit_exception.dart';
+import 'package:front/core/exceptions/feature_disabled_exception.dart';
+import 'package:front/core/models/feature.dart';
 import 'package:front/core/models/user.dart';
+import 'package:front/core/services/feature_flipping_services.dart';
 import 'package:front/core/services/users_services.dart';
 
 part 'register_event.dart';
@@ -20,6 +23,29 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       ));
     });
 
+    on<RegisterAvailabilityChecked>((event, emit) async {
+      try {
+        var registerFeature = await FeatureFlippingServices.getFeatureFlipping(
+            FeatureEnum.register.name);
+
+        if (!registerFeature.enabled) {
+          emit(RegisterFeatureDisabled(
+            email: state.email,
+            password: state.password,
+            name: state.name,
+          ));
+        }
+      } catch (error) {
+        emit(RegisterError(
+          errorMessage:
+              error is ApiException ? error.message : 'Une erreur est survenue',
+          email: state.email,
+          password: state.password,
+          name: state.name,
+        ));
+      }
+    });
+
     on<RegisterFormSubmitted>((event, emit) async {
       emit(RegisterLoading(
         email: state.email,
@@ -31,16 +57,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         final user = await UsersServices.register(
             state.name, state.email, state.password);
         emit(RegisterSuccess(user: user));
-      } on ConflictException catch (error) {
-        emit(RegisterError(
-          errorMessage: error.message,
+      } on FeatureDisabledException {
+        emit(RegisterFeatureDisabled(
           email: state.email,
           password: state.password,
           name: state.name,
         ));
-      } on ApiException {
+      } catch (error) {
         emit(RegisterError(
-          errorMessage: "Une erreur est survenue.",
+          errorMessage:
+              error is ApiException ? error.message : 'Une erreur est survenue',
           email: state.email,
           password: state.password,
           name: state.name,
