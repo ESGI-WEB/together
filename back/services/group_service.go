@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
+	"time"
 	"together/database"
 	"together/models"
 )
@@ -15,7 +16,7 @@ func NewGroupService() *GroupService {
 }
 
 func (s *GroupService) CreateGroup(group models.Group) (*models.Group, error) {
-	validate := validator.New()
+	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(group); err != nil {
 		return nil, err
 	}
@@ -72,4 +73,43 @@ func (s *GroupService) JoinGroup(request models.JoinGroupRequest) error {
 	}
 
 	return nil
+}
+
+type GroupUserRoles string
+
+func (s *GroupService) IsUserInGroup(userId, groupId uint) (bool, error) {
+	var group models.Group
+
+	err := database.CurrentDatabase.Joins(
+		"JOIN group_users ON group_users.group_id = groups.id AND group_users.user_id = ?", userId,
+	).Where("groups.id = ?", groupId).First(&group).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return group.ID != 0, nil
+}
+
+func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
+	var event models.Event
+
+	err := database.CurrentDatabase.
+		Where("group_id = ?", groupId).
+		Where("date >= ?", time.Now().Format(models.DateFormat)).
+		Where("time is null or time >= ?", time.Now().Format(models.TimeFormat)).
+		Order("date").
+		Order("time").
+		First(&event).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &event, nil
 }

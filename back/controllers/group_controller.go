@@ -104,3 +104,18 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 
 	return ctx.NoContent(http.StatusOK)
 }
+
+func (c *GroupController) GetNextEvent(ctx echo.Context) error {
+	id := ctx.Param("id")
+	groupID, err := strconv.Atoi(id)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	event, err := c.GroupService.GetNextEvent(uint(groupID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, event)
+}

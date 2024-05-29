@@ -7,7 +7,7 @@ import 'package:front/chat/chat_screen.dart';
 import 'package:front/register/register_screen.dart';
 
 import 'admin/features/features_screen.dart';
-import 'event/event_screen.dart';
+import 'event/event_create_screen.dart';
 import 'package:front/event/event_detail_screen.dart';
 import 'groups/group_screen.dart';
 import 'login/login_screen.dart';

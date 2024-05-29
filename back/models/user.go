@@ -21,7 +21,6 @@ type User struct {
 	PollAnswerChoices []PollAnswerChoice `gorm:"many2many:poll_answer_choice_users" json:"poll_answer_choices,omitempty"`
 }
 
-// TODO find a better solution for this
 type UserCreate struct {
 	Name       string  `json:"name" validate:"required,min=2,max=50"`
 	Email      string  `json:"email" validate:"email,required"`

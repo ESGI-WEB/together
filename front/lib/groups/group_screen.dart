@@ -23,35 +23,40 @@ class GroupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupBloc()..add(LoadGroup(groupId)),
-      child: Layout(
-        title: "group",
-        body: BlocBuilder<GroupBloc, GroupState>(
-          builder: (context, state) {
-            if (state is GroupLoadSingleSuccess) {
-              final group = state.group;
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(group.name),
-                    const SizedBox(height: 10),
-                    Text(group.description ?? ''),
-                    ElevatedButton(
-                      onPressed: () {
-                        ChatScreen.navigateTo(context, groupId: group.id);
-                      },
-                      child: const Text('Chat'),
+      child: BlocBuilder<GroupBloc, GroupState>(
+        builder: (context, state) {
+          return Layout(
+            title:
+                state is GroupLoadSingleSuccess ? state.group.name : 'Groupe',
+            body: Builder(
+              builder: (context) {
+                if (state is GroupLoadSingleSuccess) {
+                  final group = state.group;
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(group.name),
+                        const SizedBox(height: 10),
+                        Text(group.description ?? ''),
+                        ElevatedButton(
+                          onPressed: () {
+                            ChatScreen.navigateTo(context, groupId: group.id);
+                          },
+                          child: const Text('Chat'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            } else if (state is GroupsLoadError) {
-              return Center(child: Text(state.errorMessage));
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+                  );
+                } else if (state is GroupsLoadError) {
+                  return Center(child: Text(state.errorMessage));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
+          );
+        },
       ),
     );
   }

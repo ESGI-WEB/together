@@ -1,9 +1,14 @@
 package utils
 
-import "reflect"
+import (
+	"reflect"
+)
 
 func GetJSONFieldName(obj interface{}, fieldName string) string {
 	objType := reflect.TypeOf(obj)
+	if objType.Kind() == reflect.Ptr {
+		objType = objType.Elem()
+	}
 
 	for i := 0; i < objType.NumField(); i++ {
 		field := objType.Field(i)
