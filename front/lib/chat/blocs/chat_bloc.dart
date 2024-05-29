@@ -10,39 +10,20 @@ import 'chat_event.dart';
 import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  late IOWebSocketChannel _channel;
+  IOWebSocketChannel? _channel;
   String? _token;
-  late StreamSubscription _subscription;
+  StreamSubscription? _subscription;
 
   ChatBloc() : super(ChatInitialState()) {
     on<FetchMessagesEvent>((event, emit) async {
-      _token ??= await StorageService.readToken();
-
-      if (_token != null) {
-        emit(ChatLoadingState());
-        _channel = await ChatService.getChannel();
-        emit(ChatLoadedState(messages: []));
-        _subscription = _channel.stream.listen(
-          _handleWebSocketMessage,
-          onError: (error) {
-            print('WebSocket Error: $error');
-            emit(ChatErrorState(error: error.toString()));
-          },
-          onDone: () {
-            print('WebSocket closed');
-          },
-        );
-      }
+      await openChannel();
     });
 
     on<SendMessageEvent>((event, emit) async {
-      _token ??= await StorageService.readToken();
-
-      if (_token != null) {
-        Map<String, String> messageObject = {'content': event.message};
-        String jsonMessage = json.encode(messageObject);
-        _channel.sink.add(jsonMessage);
-      }
+      final channel = await openChannel();
+      Map<String, String> messageObject = {'content': event.message};
+      String jsonMessage = json.encode(messageObject);
+      channel.sink.add(jsonMessage);
     });
   }
 
@@ -54,10 +35,37 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
+  Future<IOWebSocketChannel> openChannel() async {
+    final thisChannel = _channel;
+    if (thisChannel != null) {
+      return thisChannel;
+    }
+
+    _token ??= await StorageService.readToken();
+
+    // At this point, the channel is null, thus we should get a new channel
+    emit(ChatLoadingState());
+    final channel = await ChatService.getChannel();
+
+    _subscription = channel.stream.listen(
+      _handleWebSocketMessage,
+      onError: (error) {
+        emit(ChatErrorState(error: error.toString()));
+        _channel = null;
+      },
+      onDone: () {
+        _channel = null;
+      },
+    );
+
+    _channel = channel;
+    return channel;
+  }
+
   @override
   Future<void> close() async {
-    _subscription.cancel();
-    _channel.sink.close();
+    _subscription?.cancel();
+    _channel?.sink.close();
     super.close();
   }
 }
