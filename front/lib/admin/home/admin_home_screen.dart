@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/core/partials/admin-layout.dart';
+import 'package:front/core/partials/admin_layout.dart';
 
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});

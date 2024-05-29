@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/features/blocs/features_bloc.dart';
-import 'package:front/core/partials/admin-layout.dart';
+import 'package:front/core/partials/admin_layout.dart';
 import 'package:front/core/partials/features_tile/features_tile.dart';
 
 class FeaturesScreen extends StatelessWidget {

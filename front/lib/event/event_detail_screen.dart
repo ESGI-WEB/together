@@ -7,7 +7,7 @@ class EventDetailScreen extends StatelessWidget {
 
   final int eventId;
 
-  const EventDetailScreen({required this.eventId, Key? key}) : super(key: key);
+  const EventDetailScreen({required this.eventId, super.key});
 
   Future<Event> _fetchEventDetails() async {
     return await EventsServices.getEventById(eventId);
@@ -36,7 +36,7 @@ class EventDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Nom: ${event.name}',
-                      style: Theme.of(context).textTheme.headline6),
+                      style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 8),
                   Text('Description: ${event.description}'),
                   const SizedBox(height: 8),

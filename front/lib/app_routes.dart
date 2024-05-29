@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:front/groups/create_group_screen.dart';
+import 'package:front/groups/groups_screen.dart';
+import 'package:front/groups/join_group_screen.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/register/register_screen.dart';
@@ -7,7 +10,6 @@ import 'admin/features/features_screen.dart';
 import 'event/event_screen.dart';
 import 'package:front/event/event_detail_screen.dart';
 import 'groups/group_screen.dart';
-import 'groups/groups_list_screen.dart';
 import 'login/login_screen.dart';
 
 class AppRoutes {
@@ -17,19 +19,31 @@ class AppRoutes {
       case GroupScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return GroupScreen(groupId: args as String);
+            return GroupScreen(groupId: args as int);
+          },
+        );
+      case GroupsScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const GroupsScreen();
+          },
+        );
+      case CreateGroupScreen.routeName:
+        return MaterialPageRoute(
+          builder: (context) {
+            return const CreateGroupScreen();
           },
         );
       case ChatScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return ChatScreen(groupId: args as String);
+            return ChatScreen(groupId: args as int);
           },
         );
-      case GroupsListScreen.routeName:
+      case JoinGroupScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return const GroupsListScreen();
+            return const JoinGroupScreen();
           },
         );
       case EventScreen.routeName:

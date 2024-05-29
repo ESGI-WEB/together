@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
-import 'package:front/core/models/jwt-data.dart';
+import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_screen.dart';
@@ -63,13 +63,17 @@ class _LayoutState extends State<Layout> {
       appBar: AppBar(
         leading: Navigator.of(context).canPop()
             ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: const Icon(Icons.arrow_circle_left_outlined, color: Colors.black),
                 onPressed: () => Navigator.of(context).pop(),
               )
             : null,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Image.asset("assets/images/logo.png"),
+          ),
           kIsWeb && _authenticatedData != null && _authenticatedData?.role == UserRole.admin.name
               ? IconButton(
                   icon: const Icon(Icons.settings),
@@ -85,6 +89,7 @@ class _LayoutState extends State<Layout> {
                   LoginScreen.navigateTo(context, removeHistory: true));
             },
           ),
+
         ],
       ),
       floatingActionButton: FloatingActionButton(

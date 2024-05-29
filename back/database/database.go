@@ -100,7 +100,8 @@ func (db *DB) FillFeatureFlipping() error {
 		}
 		if !found {
 			newFeature := models.FeatureFlipping{
-				Slug: feature,
+				Slug:    feature,
+				Enabled: true,
 			}
 			err = db.DB.Create(&newFeature).Error
 			if err != nil {

@@ -50,7 +50,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     String message = json.decode(data)['content'];
     List<String> updatedMessages = List.from(state.messages)..add(message);
     if (!isClosed) {
-      emit(ChatLoadedState(messages: updatedMessages));
+      emit(ChatLoadedState(messages: updatedMessages)); // TODO, c'est correct mais mal detecté
     }
   }
 

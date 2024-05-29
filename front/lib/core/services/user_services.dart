@@ -8,7 +8,7 @@ import 'package:front/core/models/user.dart';
 
 import 'api_services.dart';
 
-class UsersServices {
+class UserServices {
   static RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
 
   static Future<JWT> login(String email, String password) async {

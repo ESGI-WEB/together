@@ -1,5 +1,3 @@
-import 'package:front/core/models/user.dart';
-
 class JwtData {
   final int id;
   final String name;
