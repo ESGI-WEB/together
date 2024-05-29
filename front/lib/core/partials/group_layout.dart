@@ -1,16 +1,31 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_screen.dart';
+import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
 
 class GroupLayout extends StatefulWidget {
-  const GroupLayout({super.key, required this.body, required this.title});
+  static const String routeName = '/group';
 
-  final Widget body;
+  static Future<void> navigateTo(BuildContext context,
+      {required int groupId, bool removeHistory = false}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+        routeName, (route) => !removeHistory,
+        arguments: groupId);
+  }
+
+  const GroupLayout({
+    super.key,
+    required this.groupId,
+    required this.title,
+  });
+
+  final int groupId;
   final String title;
 
   @override
@@ -20,11 +35,17 @@ class GroupLayout extends StatefulWidget {
 class _GroupLayoutState extends State<GroupLayout> {
   int _currentIndex = 0;
   JwtData? _authenticatedData;
+  late List<Widget> widgets;
 
   @override
   void initState() {
     super.initState();
     _getAuthenticatedData();
+
+    widgets = <Widget>[
+      GroupScreen(groupId: widget.groupId),
+      ChatScreen(groupId: widget.groupId),
+    ];
   }
 
   Future<void> _getAuthenticatedData() async {
@@ -100,7 +121,7 @@ class _GroupLayoutState extends State<GroupLayout> {
         },
         child: const Icon(Icons.add),
       ),
-      body: widget.body,
+      body: widgets[_currentIndex],
     );
   }
 }
