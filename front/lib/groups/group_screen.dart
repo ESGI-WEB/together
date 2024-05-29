@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/chat/chat_screen.dart';
 
 import '../core/partials/layout.dart';
 import 'blocs/group_bloc.dart';
@@ -35,6 +36,12 @@ class GroupScreen extends StatelessWidget {
                     Text(group.name),
                     const SizedBox(height: 10),
                     Text(group.description ?? ''),
+                    ElevatedButton(
+                      onPressed: () {
+                        ChatScreen.navigateTo(context, groupId: group.id);
+                      },
+                      child: const Text('Chat'),
+                    ),
                   ],
                 ),
               );

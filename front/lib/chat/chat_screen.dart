@@ -10,7 +10,7 @@ class ChatScreen extends StatefulWidget {
 
   static Future<void> navigateTo(
     BuildContext context, {
-    required String groupId,
+    required int groupId,
     bool removeHistory = false,
   }) {
     return Navigator.of(context).pushNamedAndRemoveUntil(
@@ -20,7 +20,7 @@ class ChatScreen extends StatefulWidget {
     );
   }
 
-  final String groupId;
+  final int groupId;
 
   const ChatScreen({super.key, required this.groupId});
 
@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
       create: (context) => ChatBloc(),
       child: Layout(
         title: 'Chat du groupe ${widget.groupId}',
-        body: ChatList(groupId: widget.groupId),
+        body: ChatList(groupId: widget.groupId.toString()),
       ),
     );
   }
