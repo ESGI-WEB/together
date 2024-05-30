@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:front/admin/home/admin_home_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/login/login_screen.dart';
+import 'package:front/admin/admin_screen.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({super.key, required this.body, required this.title});
@@ -57,7 +57,7 @@ class _AppLayoutState extends State<AppLayout> {
               ? IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () {
-                    AdminHomeScreen.navigateTo(context);
+                    AdminScreen.navigateTo(context);
                   },
                 )
               : Container(),

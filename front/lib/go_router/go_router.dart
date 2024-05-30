@@ -1,0 +1,85 @@
+import 'package:front/event/event_detail_screen.dart';
+import 'package:front/groups/create_group_screen.dart';
+import 'package:front/groups/group_screen.dart';
+import 'package:front/groups/groups_screen.dart';
+import 'package:front/groups/join_group_screen.dart';
+import 'package:front/login/login_screen.dart';
+import 'package:front/register/register_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:front/admin/admin_screen.dart';
+import 'package:front/admin/features/features_screen.dart';
+import 'package:front/event/event_create_screen.dart';
+
+
+final goRouter = GoRouter(
+  // TODO error screen
+  //errorBuilder: (context, state) => ErrorScreen(state.error),
+  initialLocation: '/groups',
+  routes: [
+    GoRoute(
+      name: 'groups',
+      path: '/groups',
+      builder: (context, state) => const GroupsScreen(),
+      routes: [
+        GoRoute(
+          name: 'group',
+          path: ':id',
+          builder: (context, state) => GroupScreen(id: state.pathParameters['groupId'] as int),
+        ),
+        GoRoute(
+          name: 'create_group',
+          path: 'create',
+          builder: (context, state) => const CreateGroupScreen(),
+        ),
+        GoRoute(
+          name: 'join_group',
+          path: 'join',
+          builder: (context, state) => const JoinGroupScreen(),
+        ),
+      ],
+    ),
+    GoRoute(
+      name: 'events',
+      path: '/events',
+      builder: (context, state) => const EventScreen(),
+      routes: [
+        GoRoute(
+          name: 'event',
+          path: ':id',
+          builder: (context, state) {
+            return EventDetailScreen(id: state.pathParameters['eventId'] as int);
+          },
+        ),
+        GoRoute(
+          name: 'create_event',
+          path: 'create',
+          builder: (context, state) {
+            return const EventScreen();
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      name: 'register',
+      path: '/register',
+      builder: (context, state) => RegisterScreen(),
+    ),
+    GoRoute(
+      name: 'login',
+      path: '/login',
+      builder: (context, state) => LoginScreen(),
+    ),
+    GoRoute(
+      name: 'admin',
+      path: '/admin',
+      builder: (context, state) => const AdminScreen(),
+      routes: [
+        GoRoute(
+          name: 'features',
+          path: 'features',
+          builder: (context, state) => const FeaturesScreen(),
+        ),
+      ],
+    ),
+  ],
+);

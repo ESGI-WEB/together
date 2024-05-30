@@ -31,7 +31,7 @@ class LoginScreen extends StatelessWidget {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              GroupsScreen.navigateTo(context, removeHistory: true);
+              GroupsScreen.navigateTo(context);
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {

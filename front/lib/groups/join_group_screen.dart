@@ -5,7 +5,7 @@ import 'package:front/groups/blocs/group_bloc.dart';
 import 'package:front/groups/group_home_screen.dart';
 
 class JoinGroupScreen extends StatelessWidget {
-  static const String routeName = '/joinGroup';
+  static const String routeName = '/join_group';
 
   static Future<void> navigateTo(BuildContext context,
       {bool removeHistory = false}) {
@@ -30,7 +30,7 @@ class JoinGroupScreen extends StatelessWidget {
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
                   GroupHomeScreen.navigateTo(context,
-                      groupId: state.groups.last.id);
+                      id: state.groups.last.id);
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),

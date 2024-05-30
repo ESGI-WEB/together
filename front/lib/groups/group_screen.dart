@@ -4,14 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {
-  final int groupId;
+  final int id;
 
-  const GroupScreen({super.key, required this.groupId});
+  const GroupScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GroupBloc()..add(LoadGroup(groupId)),
+      create: (context) => GroupBloc()..add(LoadGroup(id)),
       child: BlocBuilder<GroupBloc, GroupState>(
         builder: (context, state) {
           if (state is GroupLoadSingleSuccess) {

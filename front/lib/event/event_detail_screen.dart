@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/partials/app_layout.dart';
 
-class EventDetailScreen extends StatelessWidget {
-  static const String routeName = '/event-view';
+import '../go_router/go_router.dart';
 
-  static Future<void> navigateTo(
-    BuildContext context, {
-    required int eventId,
-    bool removeHistory = false,
-  }) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName, (route) => !removeHistory,
-        arguments: eventId);
+class EventDetailScreen extends StatelessWidget {
+  static const String routeName = '/event';
+
+  static void navigateTo(BuildContext context, {required int id}) {
+    goRouter.goNamed('$routeName/$id');
   }
 
-  final int eventId;
+  final int id;
 
-  const EventDetailScreen({super.key, required this.eventId});
+  const EventDetailScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
-    return AppLayout(
+    return const AppLayout(
       title: 'Évènement',
       body: Text("évènement"),
     );

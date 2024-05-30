@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:front/admin/home/admin_home_screen.dart';
+import 'package:front/admin/admin_screen.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
@@ -8,15 +8,13 @@ import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_create_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
+import 'package:front/go_router/go_router.dart';
 
 class GroupHomeScreen extends StatefulWidget {
   static const String routeName = '/group';
 
-  static Future<void> navigateTo(BuildContext context,
-      {required int groupId, bool removeHistory = false}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName, (route) => !removeHistory,
-        arguments: groupId);
+  static void navigateTo(BuildContext context, {required int id}) {
+    goRouter.goNamed('$routeName/$id');
   }
 
   const GroupHomeScreen({
@@ -43,7 +41,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
     _getAuthenticatedData();
 
     widgets = <Widget>[
-      GroupScreen(groupId: widget.groupId),
+      GroupScreen(id: widget.groupId),
       ChatScreen(groupId: widget.groupId),
     ];
   }
@@ -102,7 +100,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
               ? IconButton(
                   icon: const Icon(Icons.settings),
                   onPressed: () {
-                    AdminHomeScreen.navigateTo(context);
+                    AdminScreen.navigateTo(context);
                   },
                 )
               : Container(),
