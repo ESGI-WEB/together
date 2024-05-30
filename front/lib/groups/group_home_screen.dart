@@ -10,6 +10,8 @@ import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
+import '../event/event_screen.dart';
+
 class GroupHomeScreen extends StatefulWidget {
   static const String routeName = 'group';
 
@@ -115,7 +117,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          EventScreen.navigateTo(context);
+          EventScreen.navigateTo(context, id: widget.groupId);
         },
         child: const Icon(Icons.add),
       ),

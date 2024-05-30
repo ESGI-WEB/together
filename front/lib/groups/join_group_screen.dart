@@ -21,8 +21,7 @@ class JoinGroupScreen extends StatelessWidget {
 
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
-      child: AppLayout(
-        title: "Rejoindre un groupe",
+      child: Scaffold(
         body: Builder(
           builder: (context) {
             return BlocListener<GroupBloc, GroupState>(

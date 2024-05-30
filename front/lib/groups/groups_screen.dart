@@ -22,8 +22,7 @@ class GroupsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupBloc()..add(LoadGroups()),
-      child: AppLayout(
-        title: "Groupes",
+      child: Scaffold(
         body: Stack(
           children: [
             BlocBuilder<GroupBloc, GroupState>(

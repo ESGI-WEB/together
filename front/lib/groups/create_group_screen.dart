@@ -34,8 +34,7 @@ class CreateGroupScreen extends StatelessWidget {
 
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
-      child: AppLayout(
-        title: 'Créer un groupe',
+      child: Scaffold(
         body: Builder(
           builder: (context) {
             return BlocListener<GroupBloc, GroupState>(
