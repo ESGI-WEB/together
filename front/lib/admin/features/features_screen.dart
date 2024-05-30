@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/features/blocs/features_bloc.dart';
 import 'package:front/core/partials/admin_layout.dart';
 import 'package:front/core/partials/features_tile/features_tile.dart';
-import 'package:front/go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class FeaturesScreen extends StatelessWidget {
   static const String routeName = '/features';
 
   static void navigateTo(BuildContext context) {
-    goRouter.goNamed(routeName);
+    context.goNamed(routeName);
   }
 
   const FeaturesScreen({super.key});

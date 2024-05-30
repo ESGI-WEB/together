@@ -8,13 +8,13 @@ import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_create_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
-import 'package:front/go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class GroupHomeScreen extends StatefulWidget {
-  static const String routeName = '/group';
+  static const String routeName = 'group';
 
   static void navigateTo(BuildContext context, {required int id}) {
-    goRouter.goNamed('$routeName/$id');
+    context.goNamed(routeName, pathParameters: {'id': id.toString()});
   }
 
   const GroupHomeScreen({
@@ -41,7 +41,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
     _getAuthenticatedData();
 
     widgets = <Widget>[
-      GroupScreen(id: widget.groupId),
+      GroupScreen(id: widget.groupId.toString()),
       ChatScreen(groupId: widget.groupId),
     ];
   }
@@ -108,7 +108,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
             icon: const Icon(Icons.logout),
             onPressed: () {
               StorageService.deleteToken().then((value) =>
-                  LoginScreen.navigateTo(context, removeHistory: true));
+                  LoginScreen.navigateTo(context));
             },
           ),
         ],

@@ -3,16 +3,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/app_layout.dart';
-import 'package:front/go_router/go_router.dart';
 import 'package:front/groups/group_home_screen.dart';
+import 'package:go_router/go_router.dart';
 
 import 'blocs/group_bloc.dart';
 
 class CreateGroupScreen extends StatelessWidget {
-  static const String routeName = '/create_group';
+  static const String routeName = 'create_group';
 
   static void navigateTo(BuildContext context) {
-    goRouter.goNamed(routeName);
+    context.goNamed(routeName);
   }
 
   const CreateGroupScreen({super.key});

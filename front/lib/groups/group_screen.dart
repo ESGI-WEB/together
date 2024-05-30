@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {
-  final int id;
+  final String id;
 
   const GroupScreen({super.key, required this.id});
 

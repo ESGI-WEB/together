@@ -4,15 +4,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/core/partials/feature_disabled.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'blocs/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
-  static const String routeName = '/register';
+  static const String routeName = 'register';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   RegisterScreen({super.key});
@@ -27,8 +26,7 @@ class RegisterScreen extends StatelessWidget {
         body: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
             if (state is RegisterSuccess) {
-              LoginScreen.navigateTo(context,
-                  removeHistory: true, email: state.user.email);
+              LoginScreen.navigateTo(context, email: state.user.email);
             }
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(

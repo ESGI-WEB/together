@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_detail_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/group_screen.dart';
@@ -10,11 +12,18 @@ import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/event/event_create_screen.dart';
 
-
 final goRouter = GoRouter(
   // TODO error screen
   //errorBuilder: (context, state) => ErrorScreen(state.error),
+  debugLogDiagnostics: true,
   initialLocation: '/groups',
+  redirect: (BuildContext context, GoRouterState state) async {
+    if (await StorageService.isUserLogged()) {
+      return null;
+    } else {
+      return '/login';
+    }
+  },
   routes: [
     GoRoute(
       name: 'groups',
@@ -24,7 +33,9 @@ final goRouter = GoRouter(
         GoRoute(
           name: 'group',
           path: ':id',
-          builder: (context, state) => GroupScreen(id: state.pathParameters['groupId'] as int),
+          builder: (context, state) {
+            return GroupScreen(id: state.pathParameters['id']!);
+          }
         ),
         GoRoute(
           name: 'create_group',
@@ -47,7 +58,7 @@ final goRouter = GoRouter(
           name: 'event',
           path: ':id',
           builder: (context, state) {
-            return EventDetailScreen(id: state.pathParameters['eventId'] as int);
+            return EventDetailScreen(id: state.pathParameters['id']!);
           },
         ),
         GoRoute(
@@ -67,7 +78,7 @@ final goRouter = GoRouter(
     GoRoute(
       name: 'login',
       path: '/login',
-      builder: (context, state) => LoginScreen(),
+      builder: (context, state) => LoginScreen(defaultEmail: state.uri.queryParameters['defaultEmail']),
     ),
     GoRoute(
       name: 'admin',

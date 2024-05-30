@@ -18,7 +18,7 @@ class JoinGroup extends GroupEvent {
 }
 
 class LoadGroup extends GroupEvent {
-  final int groupId;
+  final String groupId;
 
   LoadGroup(this.groupId);
 }

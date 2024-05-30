@@ -65,7 +65,7 @@ class _AppLayoutState extends State<AppLayout> {
             icon: const Icon(Icons.logout),
             onPressed: () {
               StorageService.deleteToken().then((value) =>
-                  LoginScreen.navigateTo(context, removeHistory: true));
+                  LoginScreen.navigateTo(context));
             },
           ),
         ],

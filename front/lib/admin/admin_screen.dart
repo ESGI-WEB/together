@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/core/partials/admin_layout.dart';
-import 'package:front/go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -9,7 +9,7 @@ class AdminScreen extends StatelessWidget {
   static const String routeName = '/admin';
 
   static void navigateTo(BuildContext context) {
-    goRouter.goNamed(routeName);
+    context.goNamed(routeName);
   }
 
   @override

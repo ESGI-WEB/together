@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_detail_screen.dart';
-
-import '../go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/create_event';
 
   static void navigateTo(BuildContext context) {
-    goRouter.goNamed(routeName);
+    context.goNamed(routeName);
   }
 
   const EventScreen({super.key});

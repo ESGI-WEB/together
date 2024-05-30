@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/partials/app_layout.dart';
-
-import '../go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
 
 class EventDetailScreen extends StatelessWidget {
   static const String routeName = '/event';
 
+  final String id;
+
   static void navigateTo(BuildContext context, {required int id}) {
-    goRouter.goNamed('$routeName/$id');
+    context.goNamed(routeName, pathParameters: {'id': id.toString()});
   }
-
-  final int id;
-
+  
   const EventDetailScreen({super.key, required this.id});
 
   @override

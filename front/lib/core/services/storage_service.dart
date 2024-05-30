@@ -26,4 +26,15 @@ class StorageService {
 
     return JwtData.fromJson(JwtDecoder.decode(token));
   }
+
+  static Future<bool> isUserLogged() async {
+    final token = await readToken();
+    if (token == null) {
+      return false;
+    }
+    if (JwtDecoder.isExpired(token)) {
+      return false;
+    }
+    return true;
+  }
 }

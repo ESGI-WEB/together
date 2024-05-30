@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/app_layout.dart';
 import 'package:front/groups/blocs/group_bloc.dart';
 import 'package:front/groups/group_home_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class JoinGroupScreen extends StatelessWidget {
-  static const String routeName = '/join_group';
+  static const String routeName = 'join_group';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   const JoinGroupScreen({super.key});
