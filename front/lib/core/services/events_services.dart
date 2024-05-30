@@ -12,6 +12,7 @@ class EventCreate {
   String date;
   String time;
   int typeId;
+  int groupId;
   String street;
   String number;
   String city;
@@ -27,6 +28,7 @@ class EventCreate {
     required this.number,
     required this.city,
     required this.zip,
+    required this.groupId,
   });
 
   Map<String, dynamic> toJson() {
@@ -36,6 +38,7 @@ class EventCreate {
       'date': date,
       'time': time,
       'type_id': typeId,
+      'group_id': groupId,
       "address": {"street": street, "number": number, "city": city, "zip": zip},
     };
   }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/event_type.dart';
+import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_detail_screen.dart';
 
@@ -6,12 +8,17 @@ class EventScreen extends StatefulWidget {
   static const String routeName = '/event';
 
   static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+      {bool removeHistory = false, required int groupId}) {
+    return Navigator.of(context).pushNamedAndRemoveUntil(
+      routeName,
+      (route) => !removeHistory,
+      arguments: groupId,
+    );
   }
 
-  const EventScreen({super.key});
+  final int groupId;
+
+  const EventScreen({super.key, required this.groupId});
 
   @override
   State<EventScreen> createState() => _EventScreenState();
@@ -29,6 +36,29 @@ class _EventScreenState extends State<EventScreen> {
   String city = '';
   String zip = '';
   int typeId = 0;
+  int groupId = 0;
+  List<EventType> eventTypes = [];
+  EventType? selectedEventType;
+
+  @override
+  void initState() {
+    super.initState();
+    groupId = widget.groupId;
+    _fetchEventTypes();
+  }
+
+  Future<void> _fetchEventTypes() async {
+    try {
+      final eventTypesData = await EventTypeServices.getEventTypes();
+      setState(() {
+        eventTypes = eventTypesData;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load event types: $e')),
+      );
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -67,6 +97,7 @@ class _EventScreenState extends State<EventScreen> {
         date: date,
         time: time,
         typeId: typeId,
+        groupId: groupId,
         street: street,
         number: number,
         city: city,
@@ -75,10 +106,8 @@ class _EventScreenState extends State<EventScreen> {
 
       try {
         final createdEvent = await EventsServices.createEvent(event);
-        // todo à remplacer par un emit lors de l'utilisation de blocs
         EventDetailScreen.navigateTo(context, eventId: createdEvent.id);
       } catch (e) {
-        // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create event: $e')),
         );
@@ -146,17 +175,26 @@ class _EventScreenState extends State<EventScreen> {
                   return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Type ID'),
-                keyboardType: TextInputType.number,
+              DropdownButtonFormField<EventType>(
+                decoration:
+                    const InputDecoration(labelText: 'Type d\'événement'),
+                items: eventTypes.map((EventType type) {
+                  return DropdownMenuItem<EventType>(
+                    value: type,
+                    child: Text(type.name),
+                  );
+                }).toList(),
+                onChanged: (EventType? value) {
+                  setState(() {
+                    selectedEventType = value;
+                    typeId = value?.id ?? 0;
+                  });
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un Type ID';
+                  if (value == null) {
+                    return 'Veuillez sélectionner un type d\'événement';
                   }
                   return null;
-                },
-                onSaved: (value) {
-                  typeId = int.parse(value!);
                 },
               ),
               TextFormField(

@@ -117,7 +117,7 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          EventScreen.navigateTo(context);
+          EventScreen.navigateTo(context, groupId: widget.groupId);
         },
         child: const Icon(Icons.add),
       ),

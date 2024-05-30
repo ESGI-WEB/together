@@ -45,7 +45,9 @@ class AppRoutes {
       case EventScreen.routeName:
         return MaterialPageRoute(
           builder: (context) {
-            return const EventScreen();
+            return EventScreen(
+              groupId: args as int,
+            );
           },
         );
       case EventDetailScreen.routeName:
