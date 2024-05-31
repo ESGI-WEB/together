@@ -18,10 +18,10 @@ class CustomAppBar extends StatefulWidget {
   });
 
   @override
-  State<CustomAppBar> createState() => _AppLayoutState();
+  State<CustomAppBar> createState() => _CustomAppBarState();
 }
 
-class _AppLayoutState extends State<CustomAppBar> {
+class _CustomAppBarState extends State<CustomAppBar> {
   JwtData? _authenticatedData;
 
   @override
@@ -66,6 +66,7 @@ class _AppLayoutState extends State<CustomAppBar> {
             : Container(),
         IconButton(
           icon: const Icon(Icons.logout),
+          color: Colors.black,
           onPressed: () {
             StorageService.deleteToken()
                 .then((value) => LoginScreen.navigateTo(context));

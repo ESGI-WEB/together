@@ -4,20 +4,20 @@ import 'package:go_router/go_router.dart';
 
 import 'event_screen.dart';
 
-class EventCreateScreen extends StatefulWidget {
-  static const String routeName = '/create_event';
+class CreateEventScreen extends StatefulWidget {
+  static const String routeName = 'create_event';
 
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);
   }
 
-  const EventCreateScreen({super.key});
+  const CreateEventScreen({super.key});
 
   @override
-  State<EventCreateScreen> createState() => _EventCreateScreenState();
+  State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _EventCreateScreenState extends State<EventCreateScreen> {
+class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String name = '';
@@ -76,7 +76,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
       try {
         final createdEvent = await EventsServices.createEvent(event);
         // todo à remplacer par un emit lors de l'utilisation de blocs
-        EventScreen.navigateTo(context, id: createdEvent.id);
+        EventScreen.navigateTo(context, id: createdEvent.id.toString());
       } catch (e) {
         // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/core/partials/CustomAppBar.dart';
+import 'package:front/core/partials/custom_app_bar.dart';
+import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/event/event_create_screen.dart';
+import 'package:front/event/create_event_screen.dart';
 import 'package:front/event/event_screen.dart';
-import 'package:front/event/events_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
@@ -40,13 +40,36 @@ final goRouter = GoRouter(
           path: '/groups',
           builder: (context, state) => const GroupsScreen(),
           routes: [
-            GoRoute(
-              name: 'group',
-              path: ':id',
-              builder: (context, state) {
-                return GroupScreen(id: state.pathParameters['id']!);
-              },
-            ),
+            ShellRoute(
+                builder:
+                    (BuildContext context, GoRouterState state, Widget child) {
+                  return CustomBottomBar(
+                      groupId: state.pathParameters['id']!, child: child);
+                },
+                routes: [
+                  GoRoute(
+                      name: 'group',
+                      path: ':id',
+                      builder: (context, state) {
+                        return GroupScreen(id: state.pathParameters['id']!);
+                      },
+                      routes: [
+                        GoRoute(
+                          name: 'event',
+                          path: ':id',
+                          builder: (context, state) {
+                            return EventScreen(id: state.pathParameters['id']!);
+                          },
+                        ),
+                        GoRoute(
+                          name: 'create_event',
+                          path: 'create',
+                          builder: (context, state) {
+                            return const CreateEventScreen();
+                          },
+                        ),
+                      ]),
+                ]),
             GoRoute(
               name: 'create_group',
               path: 'create',
@@ -56,27 +79,6 @@ final goRouter = GoRouter(
               name: 'join_group',
               path: 'join',
               builder: (context, state) => const JoinGroupScreen(),
-            ),
-          ],
-        ),
-        GoRoute(
-          name: 'events',
-          path: '/events',
-          builder: (context, state) => const EventsScreen(),
-          routes: [
-            GoRoute(
-              name: 'event',
-              path: ':id',
-              builder: (context, state) {
-                return EventScreen(id: state.pathParameters['id']!);
-              },
-            ),
-            GoRoute(
-              name: 'create_event',
-              path: 'create',
-              builder: (context, state) {
-                return const EventCreateScreen();
-              },
             ),
           ],
         ),

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/groups/group_home_screen.dart';
+import 'package:front/groups/group_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/group_bloc.dart';
@@ -39,7 +39,7 @@ class CreateGroupScreen extends StatelessWidget {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
-                  GroupHomeScreen.navigateTo(context, id: state.groups.last.id);
+                  GroupScreen.navigateTo(context, id: state.groups.last.id.toString());
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
