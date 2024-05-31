@@ -56,16 +56,16 @@ final goRouter = GoRouter(
                       routes: [
                         GoRoute(
                           name: 'event',
-                          path: ':id',
+                          path: 'events/:eventId',
                           builder: (context, state) {
-                            return EventScreen(id: state.pathParameters['id']!);
+                            return EventScreen(id: state.pathParameters['eventId']!);
                           },
                         ),
                         GoRoute(
                           name: 'create_event',
-                          path: 'create',
+                          path: 'create_event',
                           builder: (context, state) {
-                            return const CreateEventScreen();
+                            return CreateEventScreen(groupId: state.pathParameters['id']!);
                           },
                         ),
                       ]),

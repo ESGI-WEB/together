@@ -7,11 +7,13 @@ import 'event_screen.dart';
 class CreateEventScreen extends StatefulWidget {
   static const String routeName = 'create_event';
 
-  static void navigateTo(BuildContext context) {
-    context.goNamed(routeName);
-  }
+  final String groupId;
 
-  const CreateEventScreen({super.key});
+  const CreateEventScreen({required this.groupId, super.key});
+
+  static void navigateTo(BuildContext context, String groupId) {
+    context.goNamed(routeName, pathParameters: {'id': groupId});
+  }
 
   @override
   State<CreateEventScreen> createState() => _CreateEventScreenState();
@@ -40,7 +42,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     if (picked != null) {
       setState(() {
         date =
-            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+        '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -53,7 +55,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     if (picked != null) {
       setState(() {
         time =
-            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+        '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -89,9 +91,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Créer un événement'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:front/event/create_event_screen.dart';
-import 'package:front/event/event_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class GroupScreen extends StatelessWidget {
@@ -22,7 +21,7 @@ class GroupScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          CreateEventScreen.navigateTo(context);
+          CreateEventScreen.navigateTo(context, id);
         },
         child: const Icon(Icons.add),
       ),
