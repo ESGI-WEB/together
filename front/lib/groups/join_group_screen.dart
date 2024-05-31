@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/partials/app_layout.dart';
 import 'package:front/groups/blocs/group_bloc.dart';
 import 'package:front/groups/group_home_screen.dart';
 import 'package:go_router/go_router.dart';

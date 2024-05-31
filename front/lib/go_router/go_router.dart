@@ -11,8 +11,9 @@ import 'package:front/login/login_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import '../event/event_screen.dart';
-import '../event/events_screen.dart';
+import 'package:front/core/partials/CustomAppBar.dart';
+import 'package:front/event/event_screen.dart';
+import 'package:front/event/events_screen.dart';
 
 final goRouter = GoRouter(
   // TODO error screen
@@ -29,11 +30,8 @@ final goRouter = GoRouter(
   routes: [
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return Scaffold(
-          body: child,
-          appBar: AppBar(
-            title: const Text("AppBar"),
-          ),
+        return AppLayout(
+          child: Center(child: child),
         );
       },
       routes: [
