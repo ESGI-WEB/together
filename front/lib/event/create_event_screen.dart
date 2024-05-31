@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
-import 'package:front/event/event_detail_screen.dart';
+import 'package:go_router/go_router.dart';
 
-class EventScreen extends StatefulWidget {
-  static const String routeName = '/event';
+import 'event_screen.dart';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+class CreateEventScreen extends StatefulWidget {
+  static const String routeName = 'create_event';
+
+  final String groupId;
+
+  const CreateEventScreen({required this.groupId, super.key});
+
+  static void navigateTo(BuildContext context, String groupId) {
+    context.goNamed(routeName, pathParameters: {'id': groupId});
   }
 
-  const EventScreen({super.key});
-
   @override
-  State<EventScreen> createState() => _EventScreenState();
+  State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String name = '';
@@ -40,7 +42,7 @@ class _EventScreenState extends State<EventScreen> {
     if (picked != null) {
       setState(() {
         date =
-            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+        '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -53,7 +55,7 @@ class _EventScreenState extends State<EventScreen> {
     if (picked != null) {
       setState(() {
         time =
-            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+        '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -76,7 +78,7 @@ class _EventScreenState extends State<EventScreen> {
       try {
         final createdEvent = await EventsServices.createEvent(event);
         // todo à remplacer par un emit lors de l'utilisation de blocs
-        EventDetailScreen.navigateTo(context, eventId: createdEvent.id);
+        EventScreen.navigateTo(context, id: createdEvent.id.toString());
       } catch (e) {
         // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +91,6 @@ class _EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Créer un événement'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

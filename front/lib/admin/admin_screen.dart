@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/core/partials/admin_layout.dart';
+import 'package:go_router/go_router.dart';
 
-class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({super.key});
+class AdminScreen extends StatelessWidget {
+  const AdminScreen({super.key});
 
-  static const String routeName = '/admin';
+  static const String routeName = 'admin';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   @override

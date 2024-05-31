@@ -1,37 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'blocs/group_bloc.dart';
+import 'package:front/event/create_event_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class GroupScreen extends StatelessWidget {
-  final int groupId;
+  static const String routeName = 'group';
 
-  const GroupScreen({super.key, required this.groupId});
+  final String id;
+
+  static void navigateTo(BuildContext context, {required String id}) {
+    context.goNamed(routeName, pathParameters: {'id': id});
+  }
+
+  const GroupScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GroupBloc()..add(LoadGroup(groupId)),
-      child: BlocBuilder<GroupBloc, GroupState>(
-        builder: (context, state) {
-          if (state is GroupLoadSingleSuccess) {
-            final group = state.group;
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(group.name),
-                  const SizedBox(height: 10),
-                  Text(group.description ?? ''),
-                ],
-              ),
-            );
-          } else if (state is GroupsLoadError) {
-            return Center(child: Text(state.errorMessage));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return Scaffold(
+      body: const Center(
+        child: Text("Accueil du group"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          CreateEventScreen.navigateTo(context, id);
         },
+        child: const Icon(Icons.add),
       ),
     );
   }

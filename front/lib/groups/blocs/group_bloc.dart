@@ -57,7 +57,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   void _onLoadGroup(LoadGroup event, Emitter<GroupState> emit) async {
     emit(GroupLoading());
     try {
-      final group = await GroupServices.getGroupById(event.groupId);
+      final group = await GroupServices.getGroupById(event.groupId as int);
       emit(GroupLoadSingleSuccess(group: group));
     } catch (error) {
       emit(GroupsLoadError(
