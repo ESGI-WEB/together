@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
 
 import 'blocs/group_bloc.dart';
 
@@ -23,6 +24,7 @@ class GroupScreen extends StatelessWidget {
                   Text(group.name),
                   const SizedBox(height: 10),
                   Text(group.description ?? ''),
+                  NextEventOfGroup(groupId: groupId)
                 ],
               ),
             );

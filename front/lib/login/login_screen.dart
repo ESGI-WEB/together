@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/groups/groups_screen.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = '/login';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false, String? email}) {
+  static Future<void> navigateTo(
+    BuildContext context, {
+    bool removeHistory = false,
+    String? email,
+  }) {
     return Navigator.of(context).pushNamedAndRemoveUntil(
         routeName, (route) => !removeHistory,
         arguments: email);
@@ -18,7 +20,10 @@ class LoginScreen extends StatelessWidget {
 
   final String? defaultEmail;
 
-  LoginScreen({super.key, this.defaultEmail});
+  LoginScreen({
+    super.key,
+    this.defaultEmail,
+  });
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
@@ -41,98 +46,103 @@ class LoginScreen extends StatelessWidget {
                   .add(LoginEmailChanged(email: defaultEmail!));
             }
 
-            return Form(
-              key: _formKey,
-              child: Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/login.svg',
-                        width: 200,
-                      ),
-                      Text('Se connecter',
-                          style: Theme.of(context).textTheme.displayLarge),
-                      const SizedBox(height: 10),
-                      if (state is LoginError)
+            return Center(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    padding: const EdgeInsets.all(50),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Image(
+                          image: AssetImage('assets/images/login.gif'),
+                          width: 200,
+                        ),
                         Text(
-                          state.errorMessage,
-                          style: const TextStyle(color: Colors.red),
+                          'Se connecter',
+                          style: Theme.of(context).textTheme.displayMedium,
                         ),
-                      TextFormField(
-                        enabled: state is! LoginLoading,
-                        controller: _emailController,
-                        decoration: const InputDecoration(
-                          hintText: 'Email',
+                        const SizedBox(height: 10),
+                        if (state is LoginError)
+                          Text(
+                            state.errorMessage,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        TextFormField(
+                          enabled: state is! LoginLoading,
+                          controller: _emailController,
+                          decoration: const InputDecoration(
+                            hintText: 'Email',
+                          ),
+                          onChanged: (value) {
+                            BlocProvider.of<LoginBloc>(context)
+                                .add(LoginEmailChanged(email: value));
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez saisir un email';
+                            }
+
+                            if (!UserServices.emailRegex.hasMatch(value)) {
+                              return 'Veuillez saisir un email valide';
+                            }
+
+                            return null;
+                          },
                         ),
-                        onChanged: (value) {
-                          BlocProvider.of<LoginBloc>(context)
-                              .add(LoginEmailChanged(email: value));
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez saisir un email';
-                          }
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          enabled: state is! LoginLoading,
+                          decoration: const InputDecoration(
+                            hintText: 'Mot de passe',
+                          ),
+                          onChanged: (value) {
+                            BlocProvider.of<LoginBloc>(context)
+                                .add(LoginPasswordChanged(password: value));
+                          },
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez saisir un mot de passe';
+                            }
 
-                          if (!UserServices.emailRegex.hasMatch(value)) {
-                            return 'Veuillez saisir un email valide';
-                          }
+                            if (value.length < 8) {
+                              return 'Ajouter au moins 8 caractères';
+                            }
 
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        enabled: state is! LoginLoading,
-                        decoration: const InputDecoration(
-                          hintText: 'Mot de passe',
+                            return null;
+                          },
                         ),
-                        onChanged: (value) {
-                          BlocProvider.of<LoginBloc>(context)
-                              .add(LoginPasswordChanged(password: value));
-                        },
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez saisir un mot de passe';
+                        const SizedBox(height: 50),
+                        Builder(builder: (context) {
+                          if (state is LoginLoading) {
+                            return const CircularProgressIndicator();
                           }
 
-                          if (value.length < 8) {
-                            return 'Ajouter au moins 8 caractères';
-                          }
-
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Builder(builder: (context) {
-                        if (state is LoginLoading) {
-                          return const CircularProgressIndicator();
-                        }
-
-                        return Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  BlocProvider.of<LoginBloc>(context)
-                                      .add(LoginFormSubmitted());
-                                }
-                              },
-                              child: const Text('Connexion'),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                RegisterScreen.navigateTo(context);
-                              },
-                              child: const Text('Inscription'),
-                            ),
-                          ],
-                        );
-                      }),
-                    ],
+                          return Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    BlocProvider.of<LoginBloc>(context)
+                                        .add(LoginFormSubmitted());
+                                  }
+                                },
+                                child: const Text('Connexion'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  RegisterScreen.navigateTo(context);
+                                },
+                                child: const Text('Inscription'),
+                              ),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                 ),
               ),

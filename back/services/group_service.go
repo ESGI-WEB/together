@@ -98,6 +98,8 @@ func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
 	var event models.Event
 
 	err := database.CurrentDatabase.
+		Preload("Participants").
+		Preload("Address").
 		Where("group_id = ?", groupId).
 		Where("date >= ?", time.Now().Format(models.DateFormat)).
 		Where("time is null or time >= ?", time.Now().Format(models.TimeFormat)).

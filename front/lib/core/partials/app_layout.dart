@@ -39,12 +39,13 @@ class _AppLayoutState extends State<AppLayout> {
       appBar: AppBar(
         leading: Navigator.of(context).canPop()
             ? IconButton(
-                icon: const Icon(Icons.arrow_circle_left_outlined,
-                    color: Colors.black),
+                icon: const Icon(
+                  Icons.arrow_circle_left_outlined,
+                  color: Colors.black,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               )
             : null,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
           Padding(

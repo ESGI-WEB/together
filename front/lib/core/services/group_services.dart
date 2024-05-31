@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
 import 'api_services.dart';
 
@@ -50,6 +51,19 @@ class GroupServices {
     } else {
       throw ApiException(
         message: 'Failed to load group',
+        statusCode: response.statusCode,
+        response: response,
+      );
+    }
+  }
+
+  static Future<Event> getGroupNextEvent(int groupId) async {
+    final response = await ApiServices.get('/groups/$groupId/next-event');
+    if (response.statusCode == 200 && response.body.isNotEmpty) {
+      return Event.fromJson(json.decode(response.body));
+    } else {
+      throw ApiException(
+        message: 'Failed to load next event',
         statusCode: response.statusCode,
         response: response,
       );

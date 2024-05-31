@@ -20,7 +20,7 @@ class EventDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppLayout(
+    return const AppLayout(
       title: 'Évènement',
       body: Text("évènement"),
     );
