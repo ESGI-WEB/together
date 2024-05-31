@@ -7,30 +7,53 @@ import 'package:front/core/services/storage_service.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
 
-class AppLayout extends StatefulWidget {
-  const AppLayout({super.key, required this.child});
-
+class CustomAppBar extends StatefulWidget {
+  final bool canPop;
   final Widget child;
 
-  @override
-  State<AppLayout> createState() => _AppLayoutState();
+  const CustomAppBar({
+    super.key,
+    required this.child,
+    this.canPop = false,
+  });
 
-  static PreferredSizeWidget buildAppBar(
-      BuildContext context, JwtData? authenticatedData) {
+  @override
+  State<CustomAppBar> createState() => _AppLayoutState();
+}
+
+class _AppLayoutState extends State<CustomAppBar> {
+  JwtData? _authenticatedData;
+
+  @override
+  void initState() {
+    super.initState();
+    _getAuthenticatedData();
+  }
+
+  Future<void> _getAuthenticatedData() async {
+    var jwtData = await StorageService.readJwtDataFromToken();
+    setState(() {
+      _authenticatedData = jwtData;
+    });
+  }
+
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    JwtData? authenticatedData,
+  ) {
     return AppBar(
-      leading: context.canPop()
+      centerTitle: true,
+      title: Image.asset("assets/images/logo.png", width: 100.0),
+      leading: widget.canPop
           ? IconButton(
-              icon: const Icon(Icons.arrow_circle_left_outlined,
-                  color: Colors.black),
-              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
+              onPressed: () => context.pop(),
             )
           : null,
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Image.asset("assets/images/logo.png"),
-        ),
         kIsWeb &&
                 authenticatedData != null &&
                 authenticatedData.role == UserRole.admin.name
@@ -51,28 +74,11 @@ class AppLayout extends StatefulWidget {
       ],
     );
   }
-}
-
-class _AppLayoutState extends State<AppLayout> {
-  JwtData? _authenticatedData;
-
-  @override
-  void initState() {
-    super.initState();
-    _getAuthenticatedData();
-  }
-
-  Future<void> _getAuthenticatedData() async {
-    var jwtData = await StorageService.readJwtDataFromToken();
-    setState(() {
-      _authenticatedData = jwtData;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppLayout.buildAppBar(context, _authenticatedData),
+      appBar: _buildAppBar(context, _authenticatedData),
       body: widget.child,
     );
   }

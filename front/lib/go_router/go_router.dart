@@ -29,8 +29,9 @@ final goRouter = GoRouter(
   routes: [
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return AppLayout(
-          child: Center(child: child),
+        return CustomAppBar(
+          canPop: state.uri.toString() != '/groups',
+          child: child,
         );
       },
       routes: [
