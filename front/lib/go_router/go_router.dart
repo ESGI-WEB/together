@@ -36,7 +36,7 @@ final goRouter = GoRouter(
       },
       routes: [
         GoRoute(
-          name: 'groups',
+          name: GroupsScreen.routeName,
           path: '/groups',
           builder: (context, state) => const GroupsScreen(),
           routes: [
@@ -48,21 +48,21 @@ final goRouter = GoRouter(
                 },
                 routes: [
                   GoRoute(
-                      name: 'group',
+                      name: GroupScreen.routeName,
                       path: ':id',
                       builder: (context, state) {
                         return GroupScreen(id: state.pathParameters['id']!);
                       },
                       routes: [
                         GoRoute(
-                          name: 'event',
+                          name: EventScreen.routeName,
                           path: 'events/:eventId',
                           builder: (context, state) {
                             return EventScreen(id: state.pathParameters['eventId']!);
                           },
                         ),
                         GoRoute(
-                          name: 'create_event',
+                          name: CreateEventScreen.routeName,
                           path: 'create_event',
                           builder: (context, state) {
                             return CreateEventScreen(groupId: state.pathParameters['id']!);
@@ -71,24 +71,24 @@ final goRouter = GoRouter(
                       ]),
                 ]),
             GoRoute(
-              name: 'create_group',
+              name: CreateGroupScreen.routeName,
               path: 'create',
               builder: (context, state) => const CreateGroupScreen(),
             ),
             GoRoute(
-              name: 'join_group',
+              name: JoinGroupScreen.routeName,
               path: 'join',
               builder: (context, state) => const JoinGroupScreen(),
             ),
           ],
         ),
         GoRoute(
-          name: 'admin',
+          name: AdminScreen.routeName,
           path: '/admin',
           builder: (context, state) => const AdminScreen(),
           routes: [
             GoRoute(
-              name: 'features',
+              name: FeaturesScreen.routeName,
               path: 'features',
               builder: (context, state) => const FeaturesScreen(),
             ),
@@ -97,12 +97,12 @@ final goRouter = GoRouter(
       ],
     ),
     GoRoute(
-      name: 'register',
+      name: RegisterScreen.routeName,
       path: '/register',
       builder: (context, state) => RegisterScreen(),
     ),
     GoRoute(
-      name: 'login',
+      name: LoginScreen.routeName,
       path: '/login',
       builder: (context, state) =>
           LoginScreen(defaultEmail: state.uri.queryParameters['defaultEmail']),

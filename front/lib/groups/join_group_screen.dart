@@ -5,7 +5,7 @@ import 'package:front/groups/group_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class JoinGroupScreen extends StatelessWidget {
-  static const String routeName = 'join_group';
+  static const String routeName = 'join';
 
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);

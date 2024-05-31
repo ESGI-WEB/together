@@ -6,7 +6,7 @@ import 'package:front/core/partials/features_tile/features_tile.dart';
 import 'package:go_router/go_router.dart';
 
 class FeaturesScreen extends StatelessWidget {
-  static const String routeName = '/features';
+  static const String routeName = 'features';
 
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);
