@@ -4,9 +4,7 @@ import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/feature.dart';
 import 'package:front/core/services/feature_flipping_services.dart';
 
-
-part 'features_tile_event.dart';
-part 'features_tile_state.dart';
+part 'features_tile_event.dart';part 'features_tile_state.dart';
 
 class FeaturesTileBloc extends Bloc<FeaturesTileEvent, FeaturesTileState> {
   FeaturesTileBloc() : super(FeaturesTileInitial()) {
@@ -14,9 +12,13 @@ class FeaturesTileBloc extends Bloc<FeaturesTileEvent, FeaturesTileState> {
       emit(FeaturesTileLoading());
 
       try {
-        emit(FeaturesTileSuccess(feature: await FeatureFlippingServices.updateFeatureFlipping(event.feature)));
+        emit(FeaturesTileSuccess(
+            feature: await FeatureFlippingServices.updateFeatureFlipping(
+                event.feature)));
       } on ApiException {
-        emit(FeaturesTileDataLoadError(errorMessage: 'Une erreur est survenue en essayant de mettre à jour la fonctionnalité'));
+        emit(FeaturesTileDataLoadError(
+            errorMessage:
+                'Une erreur est survenue en essayant de mettre à jour la fonctionnalité'));
       }
     });
   }

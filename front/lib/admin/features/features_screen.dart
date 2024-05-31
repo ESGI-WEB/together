@@ -17,11 +17,11 @@ class FeaturesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdminLayout(
-      title: 'Fonctionnalités',
-      body: BlocProvider(
-        create: (context) => FeaturesBloc()..add(FeaturesLoaded()),
-        child: BlocBuilder<FeaturesBloc, FeaturesState>(
-          builder: (context, state) {
+        title: 'Fonctionnalités',
+        body: BlocProvider(
+          create: (context) => FeaturesBloc()..add(FeaturesLoaded()),
+          child: BlocBuilder<FeaturesBloc, FeaturesState>(
+              builder: (context, state) {
             if (state is FeaturesLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -45,9 +45,7 @@ class FeaturesScreen extends StatelessWidget {
             }
 
             return const SizedBox();
-          }
-        ),
-      )
-    );
+          }),
+        ));
   }
 }

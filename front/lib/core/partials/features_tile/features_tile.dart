@@ -40,11 +40,13 @@ class _FeaturesTileState extends State<FeaturesTile> {
               title: Text(feature.slug.capitalize()),
               trailing: Switch(
                 value: feature.enabled,
-                onChanged: state is FeaturesTileLoading ? null : (bool value) {
-                  BlocProvider.of<FeaturesTileBloc>(context).add(
-                      FeaturesTileChanged(
-                          feature: feature.copyWith(enabled: value)));
-                },
+                onChanged: state is FeaturesTileLoading
+                    ? null
+                    : (bool value) {
+                        BlocProvider.of<FeaturesTileBloc>(context).add(
+                            FeaturesTileChanged(
+                                feature: feature.copyWith(enabled: value)));
+                      },
               ),
             );
           },

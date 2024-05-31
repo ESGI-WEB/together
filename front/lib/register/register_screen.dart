@@ -5,6 +5,7 @@ import 'package:front/core/partials/feature_disabled.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
+
 import 'blocs/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -31,11 +32,11 @@ class RegisterScreen extends StatelessWidget {
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(
               builder: (context, state) {
-                if (state is RegisterFeatureDisabled) {
-                  return const FeatureDisabledPage();
-                }
+            if (state is RegisterFeatureDisabled) {
+              return const FeatureDisabledPage();
+            }
 
-                return Form(
+            return Form(
               key: _formKey,
               child: Center(
                 child: SizedBox(

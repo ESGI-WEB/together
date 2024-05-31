@@ -9,7 +9,7 @@ class EventScreen extends StatelessWidget {
   static void navigateTo(BuildContext context, {required int id}) {
     context.goNamed(routeName, pathParameters: {'id': id.toString()});
   }
-  
+
   const EventScreen({super.key, required this.id});
 
   @override

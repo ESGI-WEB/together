@@ -7,7 +7,7 @@ class EventsScreen extends StatelessWidget {
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);
   }
-  
+
   const EventsScreen({super.key});
 
   @override

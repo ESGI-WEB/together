@@ -5,7 +5,6 @@ import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/event/event_create_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -109,8 +108,8 @@ class _GroupHomeScreenState extends State<GroupHomeScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
-              StorageService.deleteToken().then((value) =>
-                  LoginScreen.navigateTo(context));
+              StorageService.deleteToken()
+                  .then((value) => LoginScreen.navigateTo(context));
             },
           ),
         ],

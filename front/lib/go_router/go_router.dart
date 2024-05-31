@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
+import 'package:front/core/partials/CustomAppBar.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/event_create_screen.dart';
+import 'package:front/event/event_screen.dart';
+import 'package:front/event/events_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
@@ -10,10 +13,6 @@ import 'package:front/groups/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:front/core/partials/CustomAppBar.dart';
-import 'package:front/event/event_screen.dart';
-import 'package:front/event/events_screen.dart';
 
 final goRouter = GoRouter(
   // TODO error screen
