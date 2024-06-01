@@ -1,20 +1,7 @@
-abstract class ChatState {
-  Iterable get messages => [];
-}
+abstract class ChatState {}
 
-class ChatInitialState extends ChatState {}
-
-class ChatLoadingState extends ChatState {}
-
-class ChatLoadedState extends ChatState {
-  @override
+class MessagesState extends ChatState {
   final List<String> messages;
 
-  ChatLoadedState({required this.messages});
-}
-
-class ChatErrorState extends ChatState {
-  final String error;
-
-  ChatErrorState({required this.error});
+  MessagesState({required this.messages});
 }

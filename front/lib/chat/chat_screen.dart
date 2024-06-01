@@ -5,7 +5,8 @@ import 'blocs/chat_bloc.dart';
 import 'chat_list.dart';
 
 class ChatScreen extends StatefulWidget {
-  final int groupId;
+  static const String routeName = 'messaging';
+  final String groupId;
 
   const ChatScreen({super.key, required this.groupId});
 

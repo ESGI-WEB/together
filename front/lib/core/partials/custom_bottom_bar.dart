@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/groups/group_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
@@ -10,7 +12,7 @@ class CustomBottomBar extends StatefulWidget {
   const CustomBottomBar({
     super.key,
     required this.child,
-    required this.groupId
+    required this.groupId,
   });
 
   @override
@@ -43,10 +45,13 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
-        Navigator.pushNamed(context, '/messaging');
+        context.pushNamed(
+          ChatScreen.routeName,
+          pathParameters: {'id': widget.groupId},
+        );
         break;
       case 2:
-        Navigator.pushNamed(context, '/profile');
+        // context.goNamed(ProfileScreen.routeName, pathParameters: {'id': widget.groupId});
         break;
     }
   }

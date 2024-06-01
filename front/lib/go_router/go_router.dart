@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
@@ -41,10 +42,15 @@ final goRouter = GoRouter(
           builder: (context, state) => const GroupsScreen(),
           routes: [
             ShellRoute(
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
+                builder: (
+                  BuildContext context,
+                  GoRouterState state,
+                  Widget child,
+                ) {
                   return CustomBottomBar(
-                      groupId: state.pathParameters['id']!, child: child);
+                    groupId: state.pathParameters['id']!,
+                    child: child,
+                  );
                 },
                 routes: [
                   GoRoute(
@@ -58,14 +64,27 @@ final goRouter = GoRouter(
                           name: EventScreen.routeName,
                           path: 'events/:eventId',
                           builder: (context, state) {
-                            return EventScreen(id: state.pathParameters['eventId']!);
+                            return EventScreen(
+                              id: state.pathParameters['eventId']!,
+                            );
                           },
                         ),
                         GoRoute(
                           name: CreateEventScreen.routeName,
                           path: 'create_event',
                           builder: (context, state) {
-                            return CreateEventScreen(groupId: state.pathParameters['id']!);
+                            return CreateEventScreen(
+                              groupId: state.pathParameters['id']!,
+                            );
+                          },
+                        ),
+                        GoRoute(
+                          name: ChatScreen.routeName,
+                          path: 'messaging',
+                          builder: (context, state) {
+                            return ChatScreen(
+                              groupId: state.pathParameters['id']!,
+                            );
                           },
                         ),
                       ]),

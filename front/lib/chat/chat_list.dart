@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/chat/blocs/chat_event.dart';
 
 import 'blocs/chat_bloc.dart';
-import 'blocs/chat_event.dart';
 import 'blocs/chat_state.dart';
 
 class ChatList extends StatefulWidget {
@@ -15,58 +15,62 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  String _message = '';
+  final TextEditingController _messageController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    context.read<ChatBloc>().add(FetchMessagesEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ChatBloc, ChatState>(
-      builder: (context, state) {
-        if (state is ChatLoadingState) {
-          return const CircularProgressIndicator();
-        } else if (state is ChatLoadedState) {
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
+    return Column(
+      children: [
+        Expanded(
+          child: BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              if (state is MessagesState) {
+                return ListView.builder(
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     return Text(state.messages[index]);
                   },
+                );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            },
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _messageController,
+                  decoration: const InputDecoration(
+                    hintText: 'Écrire un message',
+                  ),
                 ),
               ),
-              TextFormField(
-                onChanged: (value) {
-                  _message = value;
-                },
-              ),
+              const SizedBox(width: 20),
               ElevatedButton(
                 onPressed: () {
-                  context
-                      .read<ChatBloc>()
-                      .add(SendMessageEvent(message: _message));
-                  _message = '';
+                  String message = _messageController.text.trim();
+                  if (message.isNotEmpty) {
+                    context
+                        .read<ChatBloc>()
+                        .add(SendMessageEvent(message: message));
+                    _messageController.clear();
+                  }
                 },
-                child: const Text('Envoyer'),
+                child: const Icon(Icons.send),
               ),
             ],
-          );
-        } else if (state is ChatErrorState) {
-          return const Text("Une erreur est survenue");
-        }
-        return const Text("Empty");
-      },
+          ),
+        ),
+      ],
     );
-  }
-
-  @override
-  void dispose() {
-    context.read<ChatBloc>().close();
-    super.dispose();
   }
 }
