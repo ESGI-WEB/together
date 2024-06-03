@@ -14,7 +14,7 @@ class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({required this.groupId, super.key});
 
   static void navigateTo(BuildContext context, String groupId) {
-    context.goNamed(routeName, pathParameters: {'id': groupId});
+    context.goNamed(routeName, pathParameters: {'groupId': groupId});
   }
 
   @override
@@ -103,9 +103,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
       try {
         final createdEvent = await EventsServices.createEvent(event);
-        // Vérifiez que l'ID de l'événement est bien récupéré
-        print('Created event ID: ${createdEvent.id}');
-        // Naviguez vers la page EventScreen avec les bons paramètres
         EventScreen.navigateTo(context,
             groupId: widget.groupId, eventId: createdEvent.id.toString());
       } catch (e) {

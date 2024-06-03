@@ -5,13 +5,13 @@ import 'package:go_router/go_router.dart';
 class GroupScreen extends StatelessWidget {
   static const String routeName = 'group';
 
-  final String id;
+  final String groupId;
 
-  static void navigateTo(BuildContext context, {required String id}) {
-    context.goNamed(routeName, pathParameters: {'id': id});
+  static void navigateTo(BuildContext context, {required String groupId}) {
+    context.goNamed(routeName, pathParameters: {'groupId': groupId});
   }
 
-  const GroupScreen({super.key, required this.id});
+  const GroupScreen({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class GroupScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          CreateEventScreen.navigateTo(context, id);
+          CreateEventScreen.navigateTo(context, groupId);
         },
         child: const Icon(Icons.add),
       ),

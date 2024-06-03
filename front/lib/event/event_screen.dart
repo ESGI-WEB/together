@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/event.dart';
+import 'package:front/core/services/events_services.dart';
 import 'package:go_router/go_router.dart';
-
-import '../core/models/event.dart';
-import '../core/services/events_services.dart';
 
 class EventScreen extends StatelessWidget {
   static const String routeName = 'events';
 
   final String eventId;
+  final String groupId;
 
   static void navigateTo(BuildContext context,
       {required String groupId, required String eventId}) {
     context.goNamed(routeName,
-        pathParameters: {'id': groupId, 'eventId': eventId});
+        pathParameters: {'groupId': groupId, 'eventId': eventId});
   }
 
-  const EventScreen({super.key, required this.eventId});
+  const EventScreen({super.key, required this.groupId, required this.eventId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Évènement"),
-      ),
       body: FutureBuilder<Event>(
         future: EventsServices.getEventById(int.parse(eventId)),
         builder: (context, snapshot) {

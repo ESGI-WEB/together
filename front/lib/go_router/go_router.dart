@@ -42,22 +42,25 @@ final goRouter = GoRouter(
                 builder:
                     (BuildContext context, GoRouterState state, Widget child) {
                   return CustomBottomBar(
-                      groupId: state.pathParameters['id']!, child: child);
+                      groupId: state.pathParameters['groupId']!, child: child);
                 },
                 routes: [
                   GoRoute(
                       name: GroupScreen.routeName,
-                      path: ':id',
+                      path: ':groupId',
                       builder: (context, state) {
-                        return GroupScreen(id: state.pathParameters['id']!);
+                        return GroupScreen(
+                            groupId: state.pathParameters['groupId']!);
                       },
                       routes: [
                         GoRoute(
                           name: EventScreen.routeName,
                           path: 'events/:eventId',
                           builder: (context, state) {
+                            final groupId = state.pathParameters['groupId']!;
+                            final eventId = state.pathParameters['eventId']!;
                             return EventScreen(
-                                eventId: state.pathParameters['eventId']!);
+                                groupId: groupId, eventId: eventId);
                           },
                         ),
                         GoRoute(
@@ -65,7 +68,7 @@ final goRouter = GoRouter(
                           path: 'create_event',
                           builder: (context, state) {
                             return CreateEventScreen(
-                                groupId: state.pathParameters['id']!);
+                                groupId: state.pathParameters['groupId']!);
                           },
                         ),
                       ]),

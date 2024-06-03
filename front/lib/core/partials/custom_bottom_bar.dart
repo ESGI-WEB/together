@@ -7,11 +7,8 @@ class CustomBottomBar extends StatefulWidget {
   final Widget child;
   final String groupId;
 
-  const CustomBottomBar({
-    super.key,
-    required this.child,
-    required this.groupId
-  });
+  const CustomBottomBar(
+      {super.key, required this.child, required this.groupId});
 
   @override
   State<CustomBottomBar> createState() => _CustomBottomBarState();
@@ -40,7 +37,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     });
     switch (index) {
       case 0:
-        GroupScreen.navigateTo(context, id: widget.groupId);
+        GroupScreen.navigateTo(context, groupId: widget.groupId);
         break;
       case 1:
         Navigator.pushNamed(context, '/messaging');
