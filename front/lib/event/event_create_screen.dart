@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_detail_screen.dart';
+import 'package:http/http.dart' as http;
 
 class EventScreen extends StatefulWidget {
   static const String routeName = '/event';
@@ -39,6 +42,8 @@ class _EventScreenState extends State<EventScreen> {
   int groupId = 0;
   List<EventType> eventTypes = [];
   EventType? selectedEventType;
+  List<Map<String, String>> addressSuggestions = [];
+  TextEditingController addressController = TextEditingController();
 
   @override
   void initState() {
@@ -56,6 +61,43 @@ class _EventScreenState extends State<EventScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load event types: $e')),
+      );
+    }
+  }
+
+  Future<void> _fetchAddressSuggestions(String query) async {
+    if (query.isEmpty) {
+      setState(() {
+        addressSuggestions = [];
+      });
+      return;
+    }
+
+    final url =
+        Uri.parse('http://api-adresse.data.gouv.fr/search?q=$query&limit=5');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final features = data['features'] as List;
+        setState(() {
+          addressSuggestions = features.map((feature) {
+            final properties = feature['properties'] as Map<String, dynamic>;
+            return {
+              'label': properties['label'] as String,
+              'street': properties['street']?.toString() ?? '',
+              'city': properties['city']?.toString() ?? '',
+              'postcode': properties['postcode']?.toString() ?? '',
+              'housenumber': properties['housenumber']?.toString() ?? '',
+            };
+          }).toList();
+        });
+      } else {
+        throw Exception('Failed to load addresses');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load addresses: $e')),
       );
     }
   }
@@ -175,6 +217,43 @@ class _EventScreenState extends State<EventScreen> {
                   return null;
                 },
               ),
+              TextFormField(
+                controller: addressController,
+                decoration: const InputDecoration(labelText: 'Adresse'),
+                onChanged: (value) {
+                  _fetchAddressSuggestions(value);
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer une adresse';
+                  }
+                  return null;
+                },
+              ),
+              if (addressSuggestions.isNotEmpty)
+                DropdownButton<String>(
+                  isExpanded: true,
+                  items: addressSuggestions.map((suggestion) {
+                    return DropdownMenuItem<String>(
+                      value: suggestion['label'],
+                      child: Text(suggestion['label']!),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      final selectedAddress = addressSuggestions.firstWhere(
+                          (suggestion) => suggestion['label'] == value);
+                      print("hello");
+                      print(selectedAddress);
+                      addressController.text = selectedAddress['label']!;
+                      street = selectedAddress['street']!;
+                      city = selectedAddress['city']!;
+                      zip = selectedAddress['postcode']!;
+                      number = selectedAddress['housenumber']!;
+                      addressSuggestions = [];
+                    });
+                  },
+                ),
               DropdownButtonFormField<EventType>(
                 decoration:
                     const InputDecoration(labelText: 'Type d\'événement'),
@@ -195,56 +274,6 @@ class _EventScreenState extends State<EventScreen> {
                     return 'Veuillez sélectionner un type d\'événement';
                   }
                   return null;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Numéro de rue'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un numéro de rue';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  number = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Rue'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une rue';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  street = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Ville'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une ville';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  city = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Code postal'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un code postal';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  zip = value!;
                 },
               ),
               const SizedBox(height: 20),
