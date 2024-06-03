@@ -2,29 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
-import 'package:front/event/event_detail_screen.dart';
+import 'package:go_router/go_router.dart';
 
-class EventScreen extends StatefulWidget {
-  static const String routeName = '/event';
+import 'event_screen.dart';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false, required int groupId}) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-      routeName,
-      (route) => !removeHistory,
-      arguments: groupId,
-    );
+class CreateEventScreen extends StatefulWidget {
+  static const String routeName = 'create_event';
+
+  final String groupId;
+
+  const CreateEventScreen({required this.groupId, super.key});
+
+  static void navigateTo(BuildContext context, String groupId) {
+    context.goNamed(routeName, pathParameters: {'id': groupId});
   }
 
-  final int groupId;
-
-  const EventScreen({super.key, required this.groupId});
-
   @override
-  State<EventScreen> createState() => _EventScreenState();
+  State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String name = '';
@@ -43,7 +40,7 @@ class _EventScreenState extends State<EventScreen> {
   @override
   void initState() {
     super.initState();
-    groupId = widget.groupId;
+    groupId = int.parse(widget.groupId);
     _fetchEventTypes();
   }
 
@@ -106,7 +103,11 @@ class _EventScreenState extends State<EventScreen> {
 
       try {
         final createdEvent = await EventsServices.createEvent(event);
-        EventDetailScreen.navigateTo(context, eventId: createdEvent.id);
+        // Vérifiez que l'ID de l'événement est bien récupéré
+        print('Created event ID: ${createdEvent.id}');
+        // Naviguez vers la page EventScreen avec les bons paramètres
+        EventScreen.navigateTo(context,
+            groupId: widget.groupId, eventId: createdEvent.id.toString());
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create event: $e')),
@@ -118,9 +119,6 @@ class _EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Créer un événement'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

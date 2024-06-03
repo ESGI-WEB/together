@@ -5,7 +5,6 @@ import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/feature_disabled_exception.dart';
 import 'package:front/core/models/feature.dart';
 import 'package:front/core/models/user.dart';
-
 import 'package:front/core/services/feature_flipping_services.dart';
 import 'package:front/core/services/user_services.dart';
 

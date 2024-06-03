@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/partials/app_layout.dart';
 import 'package:front/groups/blocs/group_bloc.dart';
-import 'package:front/groups/group_home_screen.dart';
+import 'package:front/groups/group_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class JoinGroupScreen extends StatelessWidget {
-  static const String routeName = '/joinGroup';
+  static const String routeName = 'join';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   const JoinGroupScreen({super.key});
@@ -22,15 +20,13 @@ class JoinGroupScreen extends StatelessWidget {
 
     return BlocProvider<GroupBloc>(
       create: (context) => GroupBloc(),
-      child: AppLayout(
-        title: "Rejoindre un groupe",
+      child: Scaffold(
         body: Builder(
           builder: (context) {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
-                  GroupHomeScreen.navigateTo(context,
-                      groupId: state.groups.last.id);
+                  GroupScreen.navigateTo(context, id: state.groups.last.id.toString());
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),
