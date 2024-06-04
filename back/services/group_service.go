@@ -98,9 +98,12 @@ func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
 	var event models.Event
 
 	err := database.CurrentDatabase.
+		Preload("Participants").
+		Preload("Address").
 		Where("group_id = ?", groupId).
+		// display only if date is later or eq today and if time, check that date is later or time is later (meaning date is today)
 		Where("date >= ?", time.Now().Format(models.DateFormat)).
-		Where("time is null or time >= ?", time.Now().Format(models.TimeFormat)).
+		Where("time is null or (date > ? or time >= ?)", time.Now().Format(models.DateFormat), time.Now().Format(models.TimeFormat)).
 		Order("date").
 		Order("time").
 		First(&event).Error

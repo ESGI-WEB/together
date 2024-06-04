@@ -117,5 +117,9 @@ func (c *GroupController) GetNextEvent(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	if event == nil {
+		return ctx.NoContent(http.StatusOK) // nothing found but successfully executed
+	}
+
 	return ctx.JSON(http.StatusOK, event)
 }

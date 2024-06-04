@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type Address struct {
 	gorm.Model
-	Street    string
-	Number    string
-	City      string
-	Zip       string
-	Latitude  *float64
-	Longitude *float64
+	Street    string   `json:"street"`
+	Number    string   `json:"number"`
+	City      string   `json:"city"`
+	Zip       string   `json:"zip"`
+	Latitude  *float64 `json:"latitude"`
+	Longitude *float64 `json:"longitude"`
 }
 
 type AddressCreate struct {

@@ -5,7 +5,7 @@ import 'package:front/groups/group_screen.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
-  final String groupId;
+  final int groupId;
 
   const CustomBottomBar({
     super.key,

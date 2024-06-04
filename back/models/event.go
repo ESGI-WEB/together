@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// YYYY-MM-DD
 const DateFormat = "2006-01-02"
 const TimeFormat = "15:04"
 

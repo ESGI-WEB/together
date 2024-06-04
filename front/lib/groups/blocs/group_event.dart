@@ -22,3 +22,9 @@ class LoadGroup extends GroupEvent {
 
   LoadGroup(this.groupId);
 }
+
+class LoadGroupNextEvent extends GroupEvent {
+  final int groupId;
+
+  LoadGroupNextEvent(this.groupId);
+}

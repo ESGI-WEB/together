@@ -76,3 +76,29 @@ func (c *EventController) GetEvent(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, event)
 }
+
+func (c *EventController) GetEventAttends(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	pagination := utils.PaginationFromContext(ctx)
+	hasAttendedParam := ctx.QueryParam("has_attended")
+	var hasAttended *bool
+	if hasAttendedParam != "" {
+		hasAttendedBool, err := strconv.ParseBool(hasAttendedParam)
+		if err != nil {
+			return ctx.NoContent(http.StatusBadRequest)
+		}
+		hasAttended = &hasAttendedBool
+	}
+
+	attends, err := c.EventService.GetEventAttends(uint(eventID), *pagination, hasAttended)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, attends)
+}
