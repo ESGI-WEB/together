@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/user_services.dart';
@@ -56,10 +57,13 @@ class LoginScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Image(
-                          image: AssetImage('assets/images/login.gif'),
-                          width: 200,
+                        const ClipOval(
+                          child: Image(
+                            image: AssetImage('assets/images/login.gif'),
+                            width: 150,
+                          ),
                         ),
+                        const SizedBox(height: 20),
                         Text(
                           'Se connecter',
                           style: Theme.of(context).textTheme.displayMedium,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/home/admin_home_screen.dart';
-import 'package:front/event/event_detail_screen.dart';
+import 'package:front/event/event_screen/event_detail_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/group_home_screen.dart';
 import 'package:front/groups/groups_screen.dart';

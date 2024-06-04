@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/labstack/gommon/random"
 	"together/database"
 	"together/errors"
 	"together/models"
@@ -31,6 +32,11 @@ func (s *UserService) AddUser(user models.UserCreate) (*models.User, error) {
 		return nil, err
 	}
 
+	if user.ColorHex == nil || *user.ColorHex == "" {
+		colorHex := s.GenerateAvatarColorHex()
+		user.ColorHex = &colorHex
+	}
+
 	newUser := user.ToUser()
 	create := database.CurrentDatabase.Create(&newUser)
 	if create.Error != nil {
@@ -38,4 +44,9 @@ func (s *UserService) AddUser(user models.UserCreate) (*models.User, error) {
 	}
 
 	return newUser, nil
+}
+
+func (s *UserService) GenerateAvatarColorHex() string {
+	color := "#" + random.String(6, "0123456789ABCDEF")
+	return color
 }

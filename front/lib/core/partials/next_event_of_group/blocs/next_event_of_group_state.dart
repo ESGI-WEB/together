@@ -1,6 +1,11 @@
 part of 'next_event_of_group_bloc.dart';
 
-enum NextEventOfGroupStatus { initial, loading, success, error }
+enum NextEventOfGroupStatus {
+  initial,
+  loading,
+  success,
+  error,
+}
 
 class NextEventOfGroupState {
   final NextEventOfGroupStatus status;

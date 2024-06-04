@@ -4,7 +4,7 @@ import 'package:front/core/partials/add_event_card.dart';
 import 'package:front/core/partials/event_card.dart';
 import 'package:front/core/partials/next_event_of_group/blocs/next_event_of_group_bloc.dart';
 import 'package:front/event/event_create_screen.dart';
-import 'package:front/event/event_detail_screen.dart';
+import 'package:front/event/event_screen/event_detail_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NextEventOfGroup extends StatelessWidget {

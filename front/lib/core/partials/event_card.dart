@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/extensions/string.dart';
 import 'package:front/core/models/event.dart';
-import 'package:intl/intl.dart';
+import 'package:front/core/partials/date_tile.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
@@ -52,36 +51,7 @@ class EventCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              DateFormat('dd').format(event.date),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displaySmall
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                            ),
-                            Text(
-                              DateFormat.MMMM('fr_FR')
-                                  .format(event.date)
-                                  .capitalize(),
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  DateTile(event: event),
                 ],
               ),
               const SizedBox(height: 8),

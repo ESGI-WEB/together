@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:front/core/partials/feature_disabled.dart';
+import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
 import 'blocs/register_bloc.dart';
@@ -34,7 +34,12 @@ class RegisterScreen extends StatelessWidget {
           child: BlocBuilder<RegisterBloc, RegisterState>(
               builder: (context, state) {
                 if (state is RegisterFeatureDisabled) {
-                  return const FeatureDisabledPage();
+                  return ErrorOccurred(
+                    image: SvgPicture.asset(
+                      'assets/images/503.svg',
+                      height: 200,
+                    ),
+                  );
                 }
 
                 return Form(

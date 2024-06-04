@@ -1,3 +1,5 @@
+import "package:front/core/models/user.dart";
+
 import "address.dart";
 
 class Event {
@@ -13,6 +15,8 @@ class Event {
   final int organizerId;
   final int addressId;
   final Address? address;
+  final User? organizer;
+  // final List<> participants;
 
   Event({
     required this.id,
@@ -27,6 +31,7 @@ class Event {
     required this.organizerId,
     required this.addressId,
     this.address,
+    this.organizer,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -45,6 +50,8 @@ class Event {
       addressId: json['address_id'],
       address:
           json['address'] != null ? Address.fromJson(json['address']) : null,
+      organizer:
+          json['organizer'] != null ? User.fromJson(json['organizer']) : null,
     );
   }
 }

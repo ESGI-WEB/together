@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -13,7 +15,7 @@ Future main() async {
     await dotenv.load(fileName: ".env");
   }
 
-  await initializeDateFormatting('fr_FR');
+  await initializeDateFormatting(Platform.localeName);
 
   runApp(const App());
 }
