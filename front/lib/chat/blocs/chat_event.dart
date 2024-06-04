@@ -6,6 +6,10 @@ class NewMessageReceivedEvent extends ChatEvent {
   NewMessageReceivedEvent({required this.message});
 }
 
+class WebSocketErrorEvent extends ChatEvent {
+  WebSocketErrorEvent(error);
+}
+
 class InitializeWebSocketEvent extends ChatEvent {
   InitializeWebSocketEvent();
 }

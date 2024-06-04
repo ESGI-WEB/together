@@ -11,7 +11,7 @@ import 'chat_state.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc() : super(MessagesState(messages: [])) {
     on<InitializeWebSocketEvent>((event, emit) async {
-      await _initWebSocket();
+      await _initWebSocket(emit);
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
@@ -28,12 +28,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     });
 
+    on<WebSocketErrorEvent>((event, emit) async {
+      emit(WebSocketErrorState(event));
+    });
+
     add(InitializeWebSocketEvent());
   }
 
   IOWebSocketChannel? _webSocketChannel;
 
-  Future<void> _initWebSocket() async {
+  Future<void> _initWebSocket(Emitter<ChatState> emit) async {
     _webSocketChannel = await ChatService.getChannel();
 
     _webSocketChannel?.stream.listen((dynamic message) {
@@ -41,7 +45,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }, onDone: () {
       print('WebSocket connection closed');
     }, onError: (error) {
-      print('WebSocket error: $error');
+      add(WebSocketErrorEvent(error));
     });
   }
 

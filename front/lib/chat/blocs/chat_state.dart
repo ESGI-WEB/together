@@ -5,3 +5,7 @@ class MessagesState extends ChatState {
 
   MessagesState({required this.messages});
 }
+
+class WebSocketErrorState extends ChatState {
+  WebSocketErrorState(error);
+}
