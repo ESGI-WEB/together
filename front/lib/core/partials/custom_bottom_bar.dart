@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/groups/group_screen.dart';
+import 'package:front/groups/group_screen/group_screen.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;

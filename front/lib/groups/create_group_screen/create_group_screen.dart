@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/groups/group_screen.dart';
+import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import 'blocs/group_bloc.dart';
+import 'blocs/create_group_bloc.dart';
 
 class CreateGroupScreen extends StatelessWidget {
   static const String routeName = 'create_group';
@@ -31,18 +31,18 @@ class CreateGroupScreen extends StatelessWidget {
           .join();
     }
 
-    return BlocProvider<GroupBloc>(
-      create: (context) => GroupBloc(),
+    return BlocProvider<CreateGroupBloc>(
+      create: (context) => CreateGroupBloc(),
       child: Scaffold(
         body: Builder(
           builder: (context) {
-            return BlocListener<GroupBloc, GroupState>(
+            return BlocListener<CreateGroupBloc, CreateGroupState>(
               listener: (context, state) {
-                if (state is GroupsLoadSuccess) {
-                  GroupScreen.navigateTo(context, id: state.groups.last.id);
-                } else if (state is GroupsLoadError) {
+                if (state.status == CreateGroupStatus.success) {
+                  GroupScreen.navigateTo(context, id: state.groups!.last.id);
+                } else if (state.status == CreateGroupStatus.error) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.errorMessage)),
+                    SnackBar(content: Text(state.errorMessage ?? 'Erreur inconnue')),
                   );
                 }
               },
@@ -65,7 +65,7 @@ class CreateGroupScreen extends StatelessWidget {
                       TextFormField(
                         controller: descriptionController,
                         decoration:
-                            const InputDecoration(labelText: 'Description'),
+                        const InputDecoration(labelText: 'Description'),
                       ),
                       TextFormField(
                         controller: codeController,
@@ -96,8 +96,8 @@ class CreateGroupScreen extends StatelessWidget {
                               "description": descriptionController.text,
                               "code": codeController.text,
                             };
-                            BlocProvider.of<GroupBloc>(context)
-                                .add(CreateGroup(newGroup));
+                            BlocProvider.of<CreateGroupBloc>(context)
+                                .add(CreateGroupSubmitted(newGroup));
                           }
                         },
                         child: const Text('Créer'),

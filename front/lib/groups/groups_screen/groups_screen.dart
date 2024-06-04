@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/groups/create_group_screen/create_group_screen.dart';
+import 'package:front/groups/groups_screen/partials/group_button.dart';
+import 'package:front/groups/groups_screen/partials/group_list.dart';
+import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import 'blocs/group_bloc.dart';
-import 'create_group_screen.dart';
-import 'group_button.dart';
-import 'group_list.dart';
-import 'join_group_screen.dart';
+import 'blocs/groups_screen_bloc.dart';
 
 class GroupsScreen extends StatelessWidget {
   static const String routeName = 'groups';
@@ -20,30 +20,30 @@ class GroupsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GroupBloc()..add(LoadGroups()),
+      create: (context) => GroupsScreenBloc()..add(GroupsScreenLoaded()),
       child: Scaffold(
         body: Stack(
           children: [
-            BlocBuilder<GroupBloc, GroupState>(
+            BlocBuilder<GroupsScreenBloc, GroupsScreenState>(
               builder: (context, state) {
-                if (state is GroupLoading) {
+                if (state.status == GroupsScreenStatus.loading) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
 
-                if (state is GroupsLoadError) {
+                if (state.status == GroupsScreenStatus.error) {
                   return Center(
                     child: Text(
-                      state.errorMessage,
+                      state.errorMessage ?? 'Failed to load groups',
                       style: const TextStyle(color: Colors.red),
                     ),
                   );
                 }
 
-                if (state is GroupsLoadSuccess) {
+                if (state.status == GroupsScreenStatus.success) {
                   return Positioned.fill(
-                    child: GroupList(groups: state.groups),
+                    child: GroupList(groups: state.groups!),
                   );
                 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/groups/groups_screen.dart';
+import 'package:front/groups/groups_screen/groups_screen.dart';
 
 class AdminLayout extends StatelessWidget {
   final String title;
