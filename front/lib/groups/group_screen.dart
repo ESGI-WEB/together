@@ -17,16 +17,12 @@ class GroupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: NextEventOfGroup(groupId: id),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          CreateEventScreen.navigateTo(context, id);
-        },
-        child: const Icon(Icons.add),
-      ),
+    return Column(
+      children: [
+        NextEventOfGroup(
+          groupId: id,
+        ),
+      ],
     );
   }
 }

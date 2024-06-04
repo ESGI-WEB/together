@@ -10,7 +10,10 @@ class CreateEventScreen extends StatefulWidget {
 
   const CreateEventScreen({required this.groupId, super.key});
 
-  static void navigateTo(BuildContext context, int groupId) {
+  static void navigateTo(
+    BuildContext context, {
+    required int groupId,
+  }) {
     context.goNamed(routeName, pathParameters: {'id': groupId.toString()});
   }
 

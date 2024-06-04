@@ -21,7 +21,8 @@ class NextEventOfGroup extends StatelessWidget {
         builder: (context, state) {
           if (state.status == NextEventOfGroupStatus.loading) {
             return Shimmer.fromColors(
-              baseColor: Theme.of(context).colorScheme.secondaryContainer,
+              baseColor:
+                  Theme.of(context).colorScheme.onBackground.withOpacity(0.3),
               highlightColor: Colors.white,
               child: Container(
                 height: 100,
@@ -39,21 +40,34 @@ class NextEventOfGroup extends StatelessWidget {
                 onTap: () {
                   CreateEventScreen.navigateTo(
                     context,
-                    groupId,
+                    groupId: groupId,
                   );
                 },
               );
             }
 
-            return EventCard(
-              event: event,
-              onTap: () {
-                EventScreen.navigateTo(
-                  context,
-                  id: groupId,
-                  eventId: event.id,
-                );
-              },
+            return Column(
+              children: [
+                EventCard(
+                  event: event,
+                  onTap: () {
+                    EventScreen.navigateTo(
+                      context,
+                      id: groupId,
+                      eventId: event.id,
+                    );
+                  },
+                ),
+                TextButton(
+                  onPressed: () {
+                    CreateEventScreen.navigateTo(
+                      context,
+                      groupId: groupId,
+                    );
+                  },
+                  child: const Text('Créer un autre évènement'),
+                ),
+              ],
             );
           }
         },
