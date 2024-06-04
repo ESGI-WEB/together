@@ -24,3 +24,9 @@ final class GroupLoadSingleSuccess extends GroupState {
 
   GroupLoadSingleSuccess({required this.group});
 }
+
+final class GroupLoadNextEventSuccess extends GroupState {
+  final Event event;
+
+  GroupLoadNextEventSuccess({required this.event});
+}

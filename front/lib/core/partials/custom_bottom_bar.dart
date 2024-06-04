@@ -3,11 +3,10 @@ import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/groups/group_screen.dart';
-import 'package:go_router/go_router.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
-  final String groupId;
+  final int groupId;
 
   const CustomBottomBar({
     super.key,
@@ -45,13 +44,10 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
-        context.pushNamed(
-          ChatScreen.routeName,
-          pathParameters: {'id': widget.groupId},
-        );
+        ChatScreen.navigateTo(context, id: widget.groupId);
         break;
       case 2:
-        // context.goNamed(ProfileScreen.routeName, pathParameters: {'id': widget.groupId});
+        Navigator.pushNamed(context, '/profile');
         break;
     }
   }

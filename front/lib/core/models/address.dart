@@ -22,6 +22,8 @@ class Address {
       zip: json['zip'],
     );
   }
+
+  String get fullAddress => '$number $street, $zip $city';
 }
 
 class AddressCreate {

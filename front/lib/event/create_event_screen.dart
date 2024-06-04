@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
+import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
-
-import 'event_screen.dart';
 
 class CreateEventScreen extends StatefulWidget {
   static const String routeName = 'create_event';
 
-  final String groupId;
+  final int groupId;
 
   const CreateEventScreen({required this.groupId, super.key});
 
-  static void navigateTo(BuildContext context, String groupId) {
-    context.goNamed(routeName, pathParameters: {'id': groupId});
+  static void navigateTo(
+    BuildContext context, {
+    required int groupId,
+  }) {
+    context.goNamed(routeName, pathParameters: {'id': groupId.toString()});
   }
 
   @override
@@ -42,7 +44,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     if (picked != null) {
       setState(() {
         date =
-        '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -55,7 +57,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     if (picked != null) {
       setState(() {
         time =
-        '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
     }
   }
@@ -78,7 +80,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       try {
         final createdEvent = await EventsServices.createEvent(event);
         // todo à remplacer par un emit lors de l'utilisation de blocs
-        EventScreen.navigateTo(context, id: createdEvent.id.toString());
+        EventScreen.navigateTo(
+          context,
+          id: widget.groupId,
+          eventId: createdEvent.id,
+        );
       } catch (e) {
         // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(

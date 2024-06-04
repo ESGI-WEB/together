@@ -6,7 +6,7 @@ import 'blocs/chat_bloc.dart';
 import 'blocs/chat_state.dart';
 
 class ChatList extends StatefulWidget {
-  final String groupId;
+  final int groupId;
 
   const ChatList({super.key, required this.groupId});
 
