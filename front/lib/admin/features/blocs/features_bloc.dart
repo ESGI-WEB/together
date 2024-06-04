@@ -13,9 +13,12 @@ class FeaturesBloc extends Bloc<FeaturesEvent, FeaturesState> {
       emit(FeaturesLoading());
 
       try {
-        emit(FeaturesDataLoadSuccess(features: await FeatureFlippingServices.getFeatureFlippings()));
+        emit(FeaturesDataLoadSuccess(
+            features: await FeatureFlippingServices.getFeatureFlippings()));
       } on ApiException {
-        emit(FeaturesDataLoadError(errorMessage: 'Une erreur est survenue lors du chargement des fonctionnalités'));
+        emit(FeaturesDataLoadError(
+            errorMessage:
+                'Une erreur est survenue lors du chargement des fonctionnalités'));
       }
     });
   }

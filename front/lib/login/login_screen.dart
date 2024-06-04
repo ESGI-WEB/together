@@ -1,22 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/groups/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const String routeName = '/login';
+  static const String routeName = 'login';
 
-  static Future<void> navigateTo(
+  static void navigateTo(
     BuildContext context, {
-    bool removeHistory = false,
     String? email,
   }) {
-    return Navigator.of(context).pushNamedAndRemoveUntil(
-        routeName, (route) => !removeHistory,
-        arguments: email);
+    context.goNamed(routeName, queryParameters: {'email': email});
   }
 
   final String? defaultEmail;
@@ -37,7 +34,7 @@ class LoginScreen extends StatelessWidget {
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is LoginSuccess) {
-              GroupsScreen.navigateTo(context, removeHistory: true);
+              GroupsScreen.navigateTo(context);
             }
           },
           child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {

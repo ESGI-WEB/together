@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/services/events_services.dart';
-import 'package:front/event/event_screen/event_detail_screen.dart';
+import 'package:front/event/event_screen/event_screen.dart';
+import 'package:go_router/go_router.dart';
 
-class EventScreen extends StatefulWidget {
-  static const String routeName = '/event';
+class CreateEventScreen extends StatefulWidget {
+  static const String routeName = 'create_event';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  final int groupId;
+
+  const CreateEventScreen({required this.groupId, super.key});
+
+  static void navigateTo(BuildContext context, int groupId) {
+    context.goNamed(routeName, pathParameters: {'id': groupId.toString()});
   }
 
-  const EventScreen({super.key});
-
   @override
-  State<EventScreen> createState() => _EventScreenState();
+  State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String name = '';
@@ -76,7 +77,11 @@ class _EventScreenState extends State<EventScreen> {
       try {
         final createdEvent = await EventsServices.createEvent(event);
         // todo à remplacer par un emit lors de l'utilisation de blocs
-        EventDetailScreen.navigateTo(context, eventId: createdEvent.id);
+        EventScreen.navigateTo(
+          context,
+          id: widget.groupId,
+          eventId: createdEvent.id,
+        );
       } catch (e) {
         // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +94,6 @@ class _EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Créer un événement'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

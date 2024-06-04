@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/add_event_card.dart';
 import 'package:front/core/partials/event_card.dart';
 import 'package:front/core/partials/next_event_of_group/blocs/next_event_of_group_bloc.dart';
-import 'package:front/event/event_create_screen.dart';
-import 'package:front/event/event_screen/event_detail_screen.dart';
+import 'package:front/event/create_event_screen.dart';
+import 'package:front/event/event_screen/event_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NextEventOfGroup extends StatelessWidget {
@@ -37,7 +37,10 @@ class NextEventOfGroup extends StatelessWidget {
             if (state.status == NextEventOfGroupStatus.error || event == null) {
               return AddEventCard(
                 onTap: () {
-                  EventScreen.navigateTo(context);
+                  CreateEventScreen.navigateTo(
+                    context,
+                    groupId,
+                  );
                 },
               );
             }
@@ -45,7 +48,11 @@ class NextEventOfGroup extends StatelessWidget {
             return EventCard(
               event: event,
               onTap: () {
-                EventDetailScreen.navigateTo(context, eventId: event.id);
+                EventScreen.navigateTo(
+                  context,
+                  id: groupId,
+                  eventId: event.id,
+                );
               },
             );
           }

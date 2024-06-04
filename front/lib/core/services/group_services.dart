@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
+
 import 'api_services.dart';
 
 class GroupServices {

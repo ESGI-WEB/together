@@ -3,14 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/features/blocs/features_bloc.dart';
 import 'package:front/core/partials/admin_layout.dart';
 import 'package:front/core/partials/features_tile/features_tile.dart';
+import 'package:go_router/go_router.dart';
 
 class FeaturesScreen extends StatelessWidget {
-  static const String routeName = '/features';
+  static const String routeName = 'features';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   const FeaturesScreen({super.key});
@@ -18,11 +17,11 @@ class FeaturesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdminLayout(
-      title: 'Fonctionnalités',
-      body: BlocProvider(
-        create: (context) => FeaturesBloc()..add(FeaturesLoaded()),
-        child: BlocBuilder<FeaturesBloc, FeaturesState>(
-          builder: (context, state) {
+        title: 'Fonctionnalités',
+        body: BlocProvider(
+          create: (context) => FeaturesBloc()..add(FeaturesLoaded()),
+          child: BlocBuilder<FeaturesBloc, FeaturesState>(
+              builder: (context, state) {
             if (state is FeaturesLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
@@ -46,9 +45,7 @@ class FeaturesScreen extends StatelessWidget {
             }
 
             return const SizedBox();
-          }
-        ),
-      )
-    );
+          }),
+        ));
   }
 }
