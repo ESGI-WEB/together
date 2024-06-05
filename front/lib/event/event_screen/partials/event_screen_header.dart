@@ -6,6 +6,7 @@ import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/date_tile.dart';
+import 'package:front/core/services/api_services.dart';
 import 'package:intl/intl.dart';
 
 class EventScreenHeader extends StatelessWidget {
@@ -18,10 +19,12 @@ class EventScreenHeader extends StatelessWidget {
     final Address? address = event.address;
     final User? organizer = event.organizer;
 
+    final NetworkImage image = event.type?.image ?? NetworkImage("${ApiServices.baseUrl}/storage/images/default.png");
+
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/birthday.png"),
+          image: image,
           fit: BoxFit.cover,
         ),
       ),

@@ -1,3 +1,4 @@
+import "package:front/core/models/event_type.dart";
 import "package:front/core/models/user.dart";
 
 import "address.dart";
@@ -12,6 +13,7 @@ class Event {
   final DateTime date;
   final String? time;
   final int typeId;
+  final EventType? type;
   final int organizerId;
   final int addressId;
   final Address? address;
@@ -27,6 +29,7 @@ class Event {
     required this.date,
     this.time,
     required this.typeId,
+    this.type,
     required this.organizerId,
     required this.addressId,
     this.address,
@@ -51,6 +54,7 @@ class Event {
           json['address'] != null ? Address.fromJson(json['address']) : null,
       organizer:
           json['organizer'] != null ? User.fromJson(json['organizer']) : null,
+      type: json['type'] != null ? EventType.fromJson(json['type']) : null,
     );
   }
 }

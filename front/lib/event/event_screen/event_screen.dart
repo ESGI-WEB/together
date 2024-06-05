@@ -1,14 +1,8 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
-import 'package:front/core/models/user.dart';
-import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/error_occurred.dart';
-import 'package:front/core/partials/widget_avatar.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
 import 'package:front/event/event_screen/partials/event_joined_members.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';

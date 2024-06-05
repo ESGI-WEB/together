@@ -24,3 +24,4 @@ go.work
 ### Storage ###
 storage/images/*
 !storage/images/.gitkeep
+!storage/images/default.png

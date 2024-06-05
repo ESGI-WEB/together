@@ -34,6 +34,7 @@ func (s *EventService) GetEventByID(eventID uint) (*models.Event, error) {
 	result := database.CurrentDatabase.
 		Preload("Address").
 		Preload("Organizer").
+		Preload("Type").
 		First(&event, eventID)
 	if result.Error != nil {
 		return nil, result.Error
