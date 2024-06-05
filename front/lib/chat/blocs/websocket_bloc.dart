@@ -22,7 +22,10 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
 
     on<SendMessageEvent>((event, emit) async {
       if (_webSocketChannel != null) {
-        Map<String, String> messageObject = {'content': event.message};
+        Map<String, String> messageObject = {
+          'content': event.message,
+          'type': 'send_chat_message'
+        };
         String jsonMessage = json.encode(messageObject);
         _webSocketChannel!.sink.add(jsonMessage);
       }
