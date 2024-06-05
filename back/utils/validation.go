@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/go-playground/validator/v10"
+	"path/filepath"
 	"reflect"
 	"strings"
 )
@@ -50,4 +51,13 @@ func getField(jsonBody interface{}, fieldName string) interface{} {
 	}
 
 	return field.Interface()
+}
+
+func IsImage(filename string) bool {
+	ext := strings.ToLower(filepath.Ext(filename))
+	switch ext {
+	case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
+		return true
+	}
+	return false
 }

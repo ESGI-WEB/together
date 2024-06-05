@@ -17,6 +17,7 @@ var appRouters = []routers.Router{
 	&routers.EventRouter{},
 	&routers.AddressRouter{},
 	&routers.GroupRouter{},
+	&routers.EventTypeRouter{},
 }
 
 func main() {
@@ -58,6 +59,8 @@ func main() {
 	routers.LoadRoutes(e, appRouters...)
 
 	e.Static("/app", utils.GetEnv("FLUTTER_BUILD_PATH", "flutter_build")+"/web")
+
+	e.Static("/storage", "storage")
 
 	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
 	e.Logger.Fatal(e.Start(addr))

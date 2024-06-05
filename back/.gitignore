@@ -20,3 +20,7 @@ go.work
 
 ### Jetbrains ###
 .idea/
+
+### Storage ###
+storage/images/*
+!storage/images/.gitkeep
