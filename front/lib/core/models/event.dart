@@ -61,6 +61,7 @@ class EventCreate {
   String date;
   String time;
   int typeId;
+  int groupId;
   AddressCreate address;
 
   EventCreate({
@@ -69,6 +70,7 @@ class EventCreate {
     required this.date,
     required this.time,
     required this.typeId,
+    required this.groupId,
     required this.address,
   });
 
@@ -79,6 +81,7 @@ class EventCreate {
       'date': date,
       'time': time,
       'type_id': typeId,
+      'group_id': groupId,
       'address': address.toJson(),
     };
   }

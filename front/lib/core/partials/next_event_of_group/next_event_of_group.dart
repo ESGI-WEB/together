@@ -53,7 +53,7 @@ class NextEventOfGroup extends StatelessWidget {
                   onTap: () {
                     EventScreen.navigateTo(
                       context,
-                      id: groupId,
+                      groupId: groupId,
                       eventId: event.id,
                     );
                   },
