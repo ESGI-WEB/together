@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/chat/blocs/websocket_event.dart';
+import 'package:front/chat/message_bubble.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:go_router/go_router.dart';
 
@@ -36,7 +39,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: ListView.builder(
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
-                    return Text(state.messages[index]);
+                    Map<String, dynamic> messageData =
+                        jsonDecode(state.messages[index]);
+                    String message = messageData['content'];
+                    String username = messageData['author_name'];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          MessageBubble(message: message, username: username),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
