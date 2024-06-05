@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/chat_service.dart';
 import 'package:web_socket_channel/io.dart';
 
-import 'chat_event.dart';
-import 'chat_state.dart';
+import 'websocket_event.dart';
+import 'websocket_state.dart';
 
-class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc() : super(MessagesState(messages: [])) {
+class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
+  WebSocketBloc() : super(MessagesState(messages: [])) {
     on<InitializeWebSocketEvent>((event, emit) async {
       await _initWebSocket(emit);
     });
@@ -37,7 +37,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   IOWebSocketChannel? _webSocketChannel;
 
-  Future<void> _initWebSocket(Emitter<ChatState> emit) async {
+  Future<void> _initWebSocket(Emitter<WebSocketState> emit) async {
     _webSocketChannel = await ChatService.getChannel();
 
     _webSocketChannel?.stream.listen((dynamic message) {

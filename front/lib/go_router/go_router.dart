@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
+import 'package:front/chat/blocs/websocket_bloc.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
@@ -30,9 +32,12 @@ final goRouter = GoRouter(
   routes: [
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
-        return CustomAppBar(
-          canPop: state.uri.toString() != '/groups',
-          child: child,
+        return BlocProvider(
+          create: (context) => WebSocketBloc(),
+          child: CustomAppBar(
+            canPop: state.uri.toString() != '/groups',
+            child: child,
+          ),
         );
       },
       routes: [
