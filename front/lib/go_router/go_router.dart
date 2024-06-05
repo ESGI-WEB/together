@@ -15,6 +15,8 @@ import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final goRouter = GoRouter(
+  // TODO error screen
+  // errorBuilder: (context, state) => ErrorScreen(state.error),
   debugLogDiagnostics: true,
   initialLocation: '/groups',
   redirect: (BuildContext context, GoRouterState state) async {
@@ -55,7 +57,7 @@ final goRouter = GoRouter(
                       routes: [
                         GoRoute(
                           name: EventScreen.routeName,
-                          path: 'events/:eventId',
+                          path: 'event/:eventId',
                           builder: (context, state) {
                             final groupId = state.pathParameters['groupId']!;
                             final eventId = state.pathParameters['eventId']!;

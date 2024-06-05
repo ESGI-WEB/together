@@ -32,8 +32,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String number = '';
   String city = '';
   String zip = '';
-  int typeId = 0;
-  int groupId = 0;
+  int? typeId;
+  int? groupId;
   List<EventType> eventTypes = [];
   EventType? selectedEventType;
 
@@ -52,7 +52,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load event types: $e')),
+        SnackBar(
+            content: Text(
+                "Nous n'avons pas réussi à charger les types d'évènements $e")),
       );
     }
   }
@@ -93,8 +95,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         description: description,
         date: date,
         time: time,
-        typeId: typeId,
-        groupId: groupId,
+        typeId: typeId!,
+        groupId: groupId!,
         street: street,
         number: number,
         city: city,
@@ -172,7 +174,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               DropdownButtonFormField<EventType>(
                 decoration:
-                    const InputDecoration(labelText: 'Type d\'événement'),
+                    const InputDecoration(labelText: "Type d'évènement"),
                 items: eventTypes.map((EventType type) {
                   return DropdownMenuItem<EventType>(
                     value: type,
@@ -187,7 +189,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
                 validator: (value) {
                   if (value == null) {
-                    return 'Veuillez sélectionner un type d\'événement';
+                    return "Veuillez sélectionner un type d'événement";
                   }
                   return null;
                 },

@@ -4,7 +4,7 @@ import 'package:front/core/services/events_services.dart';
 import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatelessWidget {
-  static const String routeName = 'events';
+  static const String routeName = 'event';
 
   final String eventId;
   final String groupId;
