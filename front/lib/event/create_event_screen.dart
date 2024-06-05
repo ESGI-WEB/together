@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/address.dart';
+import 'package:front/core/models/event.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
@@ -99,10 +101,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         time: time,
         typeId: typeId!,
         groupId: groupId!,
-        street: street,
-        number: number,
-        city: city,
-        zip: zip,
+        address: AddressCreate(
+          street: street,
+          number: number,
+          city: city,
+          zip: zip,
+        ),
       );
 
       try {
