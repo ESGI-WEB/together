@@ -26,8 +26,9 @@ class JoinGroupScreen extends StatelessWidget {
             return BlocListener<GroupBloc, GroupState>(
               listener: (context, state) {
                 if (state is GroupsLoadSuccess) {
+                  // todo laurie va refaire
                   GroupScreen.navigateTo(context,
-                      groupId: state.groups.last.id.toString());
+                      groupId: state.groups.last.id);
                 } else if (state is GroupsLoadError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage)),

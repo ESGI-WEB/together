@@ -18,5 +18,7 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 	group.GET("/:id", eventController.GetEvent, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next)
 	})
-
+	group.GET("/:id/attends", eventController.GetEventAttends, func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware(next)
+	})
 }

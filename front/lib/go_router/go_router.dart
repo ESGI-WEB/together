@@ -5,7 +5,7 @@ import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/create_event_screen.dart';
-import 'package:front/event/event_screen.dart';
+import 'package:front/event/event_screen/event_screen.dart';
 import 'package:front/groups/create_group_screen.dart';
 import 'package:front/groups/group_screen.dart';
 import 'package:front/groups/groups_screen.dart';
@@ -40,41 +40,6 @@ final goRouter = GoRouter(
           path: '/groups',
           builder: (context, state) => const GroupsScreen(),
           routes: [
-            ShellRoute(
-                builder:
-                    (BuildContext context, GoRouterState state, Widget child) {
-                  return CustomBottomBar(
-                      groupId: state.pathParameters['groupId']!, child: child);
-                },
-                routes: [
-                  GoRoute(
-                      name: GroupScreen.routeName,
-                      path: ':groupId',
-                      builder: (context, state) {
-                        return GroupScreen(
-                            groupId: state.pathParameters['groupId']!);
-                      },
-                      routes: [
-                        GoRoute(
-                          name: EventScreen.routeName,
-                          path: 'event/:eventId',
-                          builder: (context, state) {
-                            final groupId = state.pathParameters['groupId']!;
-                            final eventId = state.pathParameters['eventId']!;
-                            return EventScreen(
-                                groupId: groupId, eventId: eventId);
-                          },
-                        ),
-                        GoRoute(
-                          name: CreateEventScreen.routeName,
-                          path: 'create_event',
-                          builder: (context, state) {
-                            return CreateEventScreen(
-                                groupId: state.pathParameters['groupId']!);
-                          },
-                        ),
-                      ]),
-                ]),
             GoRoute(
               name: CreateGroupScreen.routeName,
               path: 'create',
@@ -84,6 +49,47 @@ final goRouter = GoRouter(
               name: JoinGroupScreen.routeName,
               path: 'join',
               builder: (context, state) => const JoinGroupScreen(),
+            ),
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) {
+                return CustomBottomBar(
+                  groupId: int.parse(state.pathParameters['groupId']!),
+                  child: child,
+                );
+              },
+              routes: [
+                GoRoute(
+                  name: GroupScreen.routeName,
+                  path: ':groupId',
+                  builder: (context, state) {
+                    return GroupScreen(
+                      groupId: int.parse(state.pathParameters['groupId']!),
+                    );
+                  },
+                  routes: [
+                    GoRoute(
+                      name: EventScreen.routeName,
+                      path: 'event/:eventId',
+                      builder: (context, state) {
+                        return EventScreen(
+                          groupId: int.parse(state.pathParameters['groupId']!),
+                          eventId: int.parse(state.pathParameters['eventId']!),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: CreateEventScreen.routeName,
+                      path: 'create_event',
+                      builder: (context, state) {
+                        return CreateEventScreen(
+                          groupId: int.parse(state.pathParameters['groupId']!),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),

@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
+import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
-
-import 'event_screen.dart';
 
 class CreateEventScreen extends StatefulWidget {
   static const String routeName = 'create_event';
 
-  final String groupId;
+  final int groupId;
 
   const CreateEventScreen({required this.groupId, super.key});
 
-  static void navigateTo(BuildContext context, String groupId) {
-    context.goNamed(routeName, pathParameters: {'groupId': groupId});
+  static void navigateTo(
+    BuildContext context, {
+    required int groupId,
+  }) {
+    context.goNamed(routeName, pathParameters: {'groupId': groupId.toString()});
   }
 
   @override
@@ -40,7 +42,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   void initState() {
     super.initState();
-    groupId = int.parse(widget.groupId);
+    groupId = widget.groupId;
     _fetchEventTypes();
   }
 
@@ -105,8 +107,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
       try {
         final createdEvent = await EventsServices.createEvent(event);
-        EventScreen.navigateTo(context,
-            groupId: widget.groupId, eventId: createdEvent.id.toString());
+        EventScreen.navigateTo(
+          context,
+          groupId: widget.groupId,
+          eventId: createdEvent.id,
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create event: $e')),

@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:front/event/create_event_screen.dart';
+import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
+
 import 'package:go_router/go_router.dart';
 
 class GroupScreen extends StatelessWidget {
   static const String routeName = 'group';
 
-  final String groupId;
+  final int groupId;
 
-  static void navigateTo(BuildContext context, {required String groupId}) {
-    context.goNamed(routeName, pathParameters: {'groupId': groupId});
+  static void navigateTo(BuildContext context, {required int groupId}) {
+    context.goNamed(routeName, pathParameters: {'groupId': groupId.toString()});
   }
 
   const GroupScreen({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(
-        child: Text("Accueil du group"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          CreateEventScreen.navigateTo(context, groupId);
-        },
-        child: const Icon(Icons.add),
-      ),
+    return Column(
+      children: [
+        NextEventOfGroup(
+          groupId: groupId,
+        ),
+      ],
     );
   }
 }

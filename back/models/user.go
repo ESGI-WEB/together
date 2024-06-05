@@ -11,6 +11,7 @@ const (
 
 type User struct {
 	gorm.Model
+	ColorHex          string             `json:"color_hex" gorm:"default:'#000000'" validate:"hexcolor"`
 	Name              string             `json:"name" validate:"required,min=2,max=50"`
 	Email             string             `gorm:"unique;<-:create" json:"email" validate:"email,required"`
 	Password          string             `json:"-" validate:"required"`
@@ -25,6 +26,7 @@ type UserCreate struct {
 	Name       string  `json:"name" validate:"required,min=2,max=50"`
 	Email      string  `json:"email" validate:"email,required"`
 	Password   string  `json:"password" validate:"required,min=8,max=72"`
+	ColorHex   *string `json:"color_hex" validate:"omitempty,hexcolor"`
 	Biography  *string `json:"biography"`
 	AvatarPath *string `json:"avatar_path"`
 }
@@ -36,5 +38,6 @@ func (u UserCreate) ToUser() *User {
 		Password:   u.Password,
 		Biography:  u.Biography,
 		AvatarPath: u.AvatarPath,
+		ColorHex:   *u.ColorHex,
 	}
 }
