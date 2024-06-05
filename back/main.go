@@ -15,6 +15,7 @@ var appRouters = []routers.Router{
 	&routers.SecurityRouter{},
 	&routers.FeatureRouter{},
 	&routers.EventRouter{},
+	&routers.EventTypeRouter{},
 	&routers.AddressRouter{},
 	&routers.GroupRouter{},
 }

@@ -7,20 +7,20 @@ import 'package:go_router/go_router.dart';
 class GroupScreen extends StatelessWidget {
   static const String routeName = 'group';
 
-  final int id;
+  final int groupId;
 
-  static void navigateTo(BuildContext context, {required int id}) {
-    context.goNamed(routeName, pathParameters: {'id': id.toString()});
+  static void navigateTo(BuildContext context, {required int groupId}) {
+    context.goNamed(routeName, pathParameters: {'groupId': groupId.toString()});
   }
 
-  const GroupScreen({super.key, required this.id});
+  const GroupScreen({super.key, required this.groupId});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         NextEventOfGroup(
-          groupId: id,
+          groupId: groupId,
         ),
       ],
     );
