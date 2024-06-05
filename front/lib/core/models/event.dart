@@ -16,7 +16,6 @@ class Event {
   final int addressId;
   final Address? address;
   final User? organizer;
-  // final List<> participants;
 
   Event({
     required this.id,

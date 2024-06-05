@@ -1,11 +1,19 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
+import 'package:front/core/models/user.dart';
+import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/error_occurred.dart';
+import 'package:front/core/partials/widget_avatar.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
+import 'package:front/event/event_screen/partials/event_joined_members.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
-import 'package:front/event/event_screen/partials/event_screen_members_and_location.dart';
+import 'package:front/event/event_screen/partials/event_screen_location.dart';
 import 'package:front/event/event_screen/partials/event_screen_poll.dart';
 import 'package:go_router/go_router.dart';
 
@@ -58,6 +66,8 @@ class EventScreen extends StatelessWidget {
             );
           }
 
+          final Address? address = event.address;
+
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +77,34 @@ class EventScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      EventScreenMembersAndLocation(event: event),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Participants',
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  EventJoinedMembers(
+                                      firstParticipants:
+                                          state.firstParticipants ?? []),
+                                ],
+                              ),
+                              if (address != null && address.latlng != null)
+                                EventScreenLocation(
+                                  localisation: address.latlng!,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       const EventScreenPoll(),
                       const SizedBox(height: 16),
