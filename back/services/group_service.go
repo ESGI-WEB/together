@@ -48,31 +48,36 @@ func (s *GroupService) GetAllMyGroups(userID uint) ([]models.Group, error) {
 	return groups, nil
 }
 
-func (s *GroupService) JoinGroup(request models.JoinGroupRequest) error {
+func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, error) {
 	var group models.Group
-	if err := database.CurrentDatabase.Where("code = ?", request.Code).First(&group).Error; err != nil {
+
+	if err := database.CurrentDatabase.Where("code = ?", code).First(&group).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("Le code n'existe pas.")
+			return nil, errors.New("Le code n'existe pas.")
 		}
-		return err
+		return nil, err
 	}
 
-	var user models.User
-	if err := database.CurrentDatabase.First(&user, request.UserId).Error; err != nil {
-		return err
+	if err := database.CurrentDatabase.First(&user, user.ID).Error; err != nil {
+		return nil, err
 	}
 
 	for _, u := range group.Users {
-		if u.ID == request.UserId {
-			return errors.New("L'utilisateur est déjà dans le groupe.")
+		if u.ID == user.ID {
+			return nil, errors.New("L'utilisateur est déjà dans le groupe.")
 		}
 	}
 
 	if err := database.CurrentDatabase.Model(&group).Association("Users").Append(&user); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	updatedGroup, err := s.GetGroupById(group.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedGroup, nil
 }
 
 type GroupUserRoles string

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/join_group_bloc.dart';
@@ -35,10 +36,8 @@ class JoinGroupScreen extends StatelessWidget {
                 );
               }
 
-              if (state.status == JoinGroupStatus.success) {
-                return const Center(
-                  child: Text('Groupe rejoint avec succès !'),
-                );
+              if (state.status == JoinGroupStatus.success && state.newGroup?.id != null) {
+                GroupScreen.navigateTo(context, id: state.newGroup!.id);
               }
 
               return JoinGroupForm();

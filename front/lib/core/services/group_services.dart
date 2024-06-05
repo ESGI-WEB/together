@@ -14,7 +14,7 @@ class GroupServices {
       return jsonData.map((json) => Group.fromJson(json)).toList();
     } else {
       throw ApiException(
-        message: 'Failed to load groups',
+        message: 'Échec du chargement des groupes.',
         statusCode: response.statusCode,
         response: response,
       );
@@ -27,18 +27,20 @@ class GroupServices {
       return Group.fromJson(json.decode(response.body));
     } else {
       throw ApiException(
-        message: 'Failed to create group',
+        message: 'Échec de création du groupe.',
         statusCode: response.statusCode,
         response: response,
       );
     }
   }
 
-  static Future<void> joinGroup(Map<String, dynamic> code) async {
+  static Future<Group> joinGroup(Map<String, dynamic> code) async {
     final response = await ApiServices.post('/groups/join', code);
-    if (response.statusCode != 200) {
+    if (response.statusCode == 201) {
+      return Group.fromJson(json.decode(response.body));
+    } else {
       throw ApiException(
-        message: 'Failed to join group',
+        message: 'Échec lors de la tentative de rejoindre le groupe.',
         statusCode: response.statusCode,
         response: response,
       );
@@ -51,7 +53,7 @@ class GroupServices {
       return Group.fromJson(json.decode(response.body));
     } else {
       throw ApiException(
-        message: 'Failed to load group',
+        message: 'Échec du chargement du groupe.',
         statusCode: response.statusCode,
         response: response,
       );
@@ -64,7 +66,7 @@ class GroupServices {
       return Event.fromJson(json.decode(response.body));
     } else {
       throw ApiException(
-        message: 'Failed to load next event',
+        message: "Échec du chargement de l'événement suivant.",
         statusCode: response.statusCode,
         response: response,
       );

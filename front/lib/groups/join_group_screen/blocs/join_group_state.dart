@@ -9,23 +9,23 @@ enum JoinGroupStatus {
 
 class JoinGroupState {
   final JoinGroupStatus status;
-  final List<Group>? groups;
+  final Group? newGroup;
   final String? errorMessage;
 
   JoinGroupState({
     this.status = JoinGroupStatus.initial,
-    this.groups,
+    this.newGroup,
     this.errorMessage,
   });
 
   JoinGroupState copyWith({
     JoinGroupStatus? status,
-    List<Group>? groups,
+    Group? newGroup,
     String? errorMessage,
   }) {
     return JoinGroupState(
       status: status ?? this.status,
-      groups: groups ?? this.groups,
+      newGroup: newGroup ?? this.newGroup,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

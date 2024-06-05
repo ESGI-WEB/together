@@ -15,11 +15,10 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
       ));
 
       try {
-        await GroupServices.joinGroup(event.code);
-        final updatedGroups = await GroupServices.fetchGroups();
+        final newGroup = await GroupServices.joinGroup(event.code);
         emit(state.copyWith(
           status: JoinGroupStatus.success,
-          groups: updatedGroups,
+          newGroup: newGroup,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
