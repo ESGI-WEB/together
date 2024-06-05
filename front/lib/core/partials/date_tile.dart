@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:front/core/extensions/string.dart';
 import 'package:front/core/models/event.dart';
+import 'package:front/local.dart';
 import 'package:intl/intl.dart';
 
 class DateTile extends StatelessWidget {
@@ -23,13 +24,13 @@ class DateTile extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                DateFormat.d(Platform.localeName).format(event.date),
+                DateFormat.d(LocaleLanguage.of(context)?.locale).format(event.date),
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       color: Colors.white,
                     ),
               ),
               Text(
-                DateFormat.MMMM(Platform.localeName).format(event.date).capitalize(),
+                DateFormat.MMMM(LocaleLanguage.of(context)?.locale).format(event.date).capitalize(),
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

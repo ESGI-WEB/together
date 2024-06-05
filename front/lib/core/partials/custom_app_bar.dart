@@ -80,7 +80,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context, _authenticatedData),
-      body: widget.child,
+      body: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: widget.child,
+        ),
+      ),
     );
   }
 }

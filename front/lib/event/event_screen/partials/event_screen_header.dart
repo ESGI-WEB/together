@@ -7,6 +7,7 @@ import 'package:front/core/models/event.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/date_tile.dart';
 import 'package:front/core/services/api_services.dart';
+import 'package:front/local.dart';
 import 'package:intl/intl.dart';
 
 class EventScreenHeader extends StatelessWidget {
@@ -61,7 +62,7 @@ class EventScreenHeader extends StatelessWidget {
                         ),
                         if (organizer != null)
                           Text(
-                            "Par ${organizer.name}, le ${DateFormat.yMd(Platform.localeName).format(event.date)}${event.time != null ? " ${event.time}" : ''}",
+                            "Par ${organizer.name}, le ${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}",
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
