@@ -6,41 +6,6 @@ import 'package:front/core/models/event.dart';
 
 import 'api_services.dart';
 
-class EventCreate {
-  String name;
-  String description;
-  String date;
-  String time;
-  int typeId;
-  String street;
-  String number;
-  String city;
-  String zip;
-
-  EventCreate({
-    required this.name,
-    required this.description,
-    required this.date,
-    required this.time,
-    required this.typeId,
-    required this.street,
-    required this.number,
-    required this.city,
-    required this.zip,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'description': description,
-      'date': date,
-      'time': time,
-      'type_id': typeId,
-      "address": {"street": street, "number": number, "city": city, "zip": zip},
-    };
-  }
-}
-
 class EventsServices {
   static Future<Event> createEvent(EventCreate event) async {
     try {

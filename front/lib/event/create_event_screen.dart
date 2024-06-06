@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/address.dart';
+import 'package:front/core/models/event.dart';
+import 'package:front/core/models/event_type.dart';
+import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +18,7 @@ class CreateEventScreen extends StatefulWidget {
     BuildContext context, {
     required int groupId,
   }) {
-    context.goNamed(routeName, pathParameters: {'id': groupId.toString()});
+    context.goNamed(routeName, pathParameters: {'groupId': groupId.toString()});
   }
 
   @override
@@ -32,7 +36,32 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String number = '';
   String city = '';
   String zip = '';
-  int typeId = 0;
+  int? typeId;
+  int? groupId;
+  List<EventType> eventTypes = [];
+  EventType? selectedEventType;
+
+  @override
+  void initState() {
+    super.initState();
+    groupId = widget.groupId;
+    _fetchEventTypes();
+  }
+
+  Future<void> _fetchEventTypes() async {
+    try {
+      final eventTypesData = await EventTypeServices.getEventTypes();
+      setState(() {
+        eventTypes = eventTypesData;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Nous n'avons pas réussi à charger les types d'évènements $e")),
+      );
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -70,23 +99,24 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         description: description,
         date: date,
         time: time,
-        typeId: typeId,
-        street: street,
-        number: number,
-        city: city,
-        zip: zip,
+        typeId: typeId!,
+        groupId: groupId!,
+        address: AddressCreate(
+          street: street,
+          number: number,
+          city: city,
+          zip: zip,
+        ),
       );
 
       try {
         final createdEvent = await EventsServices.createEvent(event);
-        // todo à remplacer par un emit lors de l'utilisation de blocs
         EventScreen.navigateTo(
           context,
-          id: widget.groupId,
+          groupId: widget.groupId,
           eventId: createdEvent.id,
         );
       } catch (e) {
-        // Handle error (show a snackbar or dialog)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create event: $e')),
         );
@@ -151,17 +181,26 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Type ID'),
-                keyboardType: TextInputType.number,
+              DropdownButtonFormField<EventType>(
+                decoration:
+                    const InputDecoration(labelText: "Type d'évènement"),
+                items: eventTypes.map((EventType type) {
+                  return DropdownMenuItem<EventType>(
+                    value: type,
+                    child: Text(type.name),
+                  );
+                }).toList(),
+                onChanged: (EventType? value) {
+                  setState(() {
+                    selectedEventType = value;
+                    typeId = value?.id ?? 0;
+                  });
+                },
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un Type ID';
+                  if (value == null) {
+                    return "Veuillez sélectionner un type d'événement";
                   }
                   return null;
-                },
-                onSaved: (value) {
-                  typeId = int.parse(value!);
                 },
               ),
               TextFormField(

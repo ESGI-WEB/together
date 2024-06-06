@@ -14,24 +14,24 @@ class EventScreen extends StatelessWidget {
 
   static void navigateTo(
     BuildContext context, {
-    required int id,
+    required int groupId,
     required int eventId,
   }) {
     context.goNamed(
       routeName,
       pathParameters: {
-        'id': id.toString(),
+        'groupId': groupId.toString(),
         'eventId': eventId.toString(),
       },
     );
   }
 
-  final int id;
+  final int groupId;
   final int eventId;
 
   const EventScreen({
     super.key,
-    required this.id,
+    required this.groupId,
     required this.eventId,
   });
 
