@@ -27,5 +27,12 @@ class GroupsScreenBloc extends Bloc<GroupsScreenEvent, GroupsScreenState> {
         ));
       }
     });
+
+    on<GroupJoined>((event, emit) {
+      final List<Group> updatedGroups = List.from(state.groups ?? []);
+      updatedGroups.add(event.group);
+      emit(state.copyWith(groups: updatedGroups));
+    });
+
   }
 }

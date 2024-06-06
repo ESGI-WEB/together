@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -38,6 +39,7 @@ class JoinGroupScreen extends StatelessWidget {
 
               if (state.status == JoinGroupStatus.success && state.newGroup?.id != null) {
                 GroupScreen.navigateTo(context, id: state.newGroup!.id);
+                BlocProvider.of<GroupsScreenBloc>(context).add(GroupJoined(state.newGroup!));
               }
 
               return JoinGroupForm();

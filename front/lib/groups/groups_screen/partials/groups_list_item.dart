@@ -22,16 +22,32 @@ class GroupsListItem extends StatelessWidget {
           group.name,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
-        subtitle: group.description != null
-            ? Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            group.description!,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        )
-            : null,
-        trailing: Icon(Icons.arrow_forward, color: Theme.of(context).colorScheme.primary),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (group.description != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(group.description ?? ""),
+              ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.group, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  '${group.users?.length}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).textTheme.caption!.color,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        trailing: Icon(Icons.arrow_forward,
+            color: Theme.of(context).colorScheme.primary),
       ),
     );
   }

@@ -21,58 +21,65 @@ class GroupsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GroupsScreenBloc()..add(GroupsScreenLoaded()),
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: BlocBuilder<GroupsScreenBloc, GroupsScreenState>(
-                  builder: (context, state) {
-                    if (state.status == GroupsScreenStatus.loading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (state.status == GroupsScreenStatus.error) {
-                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.errorMessage ?? 'Impossible de charger les groupes.')),
-                        );
-                      });
-                    }
-
-                    if (state.status == GroupsScreenStatus.success && state.groups != null) {
-                      return GroupsList(groups: state.groups!);
-                    }
-
-                    return const Center(child: Text('Aucun groupe disponible.'));
-                  },
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Builder(
+        builder: (context) => Scaffold(
+          body: RefreshIndicator(
+            onRefresh: () async {
+              context.read<GroupsScreenBloc>().add(GroupsScreenLoaded());
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        CreateGroupScreen.navigateTo(context);
+                    child: BlocBuilder<GroupsScreenBloc, GroupsScreenState>(
+                      builder: (context, state) {
+                        if (state.status == GroupsScreenStatus.loading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state.status == GroupsScreenStatus.error) {
+                          SchedulerBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.errorMessage ?? 'Impossible de charger les groupes.')),
+                            );
+                          });
+                        }
+
+                        if (state.status == GroupsScreenStatus.success && state.groups != null) {
+                          return GroupsList(groups: state.groups!);
+                        }
+
+                        return const Center(child: Text('Aucun groupe disponible.'));
                       },
-                      child: const Text('Créer'),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        JoinGroupScreen.navigateTo(context);
-                      },
-                      child: const Text('Rejoindre'),
-                    ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            CreateGroupScreen.navigateTo(context);
+                          },
+                          child: const Text('Créer'),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            JoinGroupScreen.navigateTo(context);
+                          },
+                          child: const Text('Rejoindre'),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
