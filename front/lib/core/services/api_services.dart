@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/exceptions/conflit_exception.dart';
 import 'package:front/core/exceptions/feature_disabled_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/services/storage_service.dart';
@@ -95,11 +96,36 @@ class ApiServices {
     return response;
   }
 
+  static Future<Response> multipartRequest(String verb, String path,
+      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+    final request = http.MultipartRequest(verb, Uri.parse(baseUrl + path));
+    request.headers.addAll(await getAllBasicHeaders());
+    request.headers.addAll(headers ?? {});
+
+    if (body != null) {
+      for (var key in body.keys) {
+        if (body[key] is http.MultipartFile) {
+          request.files.add(body[key]);
+        } else {
+          request.fields[key] = body[key].toString();
+        }
+      }
+    }
+
+    final responseStreamed = await request.send();
+    final response = await http.Response.fromStream(responseStreamed);
+
+    handleResponse(response);
+    return response;
+  }
+
   static void handleResponse(Response response) {
     if (response.statusCode == 401) {
       throw UnauthorizedException();
     } else if (response.statusCode == 503) {
       throw FeatureDisabledException();
+    } else if (response.statusCode == 409) {
+      throw ConflictException(response: response);
     } else if (response.statusCode < 200 || response.statusCode >= 300) {
       throw ApiException(response: response, statusCode: response.statusCode);
     }

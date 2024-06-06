@@ -21,4 +21,14 @@ class EventTypeServices {
       }
     }
   }
+
+  static Future<EventType> addEventType(EventTypeCreateOrEdit type) async {
+    final response = await ApiServices.multipartRequest('POST', '/event-types', type.toJson());
+    return EventType.fromJson(json.decode(response.body));
+  }
+
+  static Future<EventType> editEventType(int id, EventTypeCreateOrEdit type) async {
+    final response = await ApiServices.multipartRequest('PUT', '/event-types/$id', type.toJson());
+    return EventType.fromJson(json.decode(response.body));
+  }
 }

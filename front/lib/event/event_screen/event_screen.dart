@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
@@ -48,65 +50,82 @@ class EventScreen extends StatelessWidget {
             return const CircularProgressIndicator();
           }
 
-          final Event? event = state.event;
-          if (state.status == EventScreenStatus.error || event == null) {
-            return const ErrorOccurred(
-              image: Image(
-                width: 150,
-                image: AssetImage('assets/images/event.gif'),
-              ),
-              alertMessage: "Oups ! Une erreur est survenue",
-              bodyMessage: "Nous n'avons pas pu récuperer votre évènement",
-            );
-          }
+          return RefreshIndicator(
+            onRefresh: () async {
+              context
+                  .read<EventScreenBloc>()
+                  .add(EventScreenLoaded(eventId: eventId));
+            },
+            child: Builder(
+              builder: (context) {
+                final Event? event = state.event;
+                if (state.status == EventScreenStatus.error || event == null) {
+                  return const ErrorOccurred(
+                    image: Image(
+                      width: 150,
+                      image: AssetImage('assets/images/event.gif'),
+                    ),
+                    alertMessage: "Oups ! Une erreur est survenue",
+                    bodyMessage:
+                        "Nous n'avons pas pu récuperer votre évènement",
+                  );
+                }
 
-          final Address? address = event.address;
+                final Address? address = event.address;
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                EventScreenHeader(event: event),
-                Container(
-                  padding: const EdgeInsets.all(16),
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Participants',
-                                    style:
-                                        Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  EventJoinedMembers(
-                                      firstParticipants:
-                                          state.firstParticipants ?? []),
-                                ],
-                              ),
-                              if (address != null && address.latlng != null)
-                                EventScreenLocation(
-                                  localisation: address.latlng!,
+                      EventScreenHeader(event: event),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Participants',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        EventJoinedMembers(
+                                            firstParticipants:
+                                                state.firstParticipants ?? []),
+                                      ],
+                                    ),
+                                    if (address != null &&
+                                        address.latlng != null)
+                                      EventScreenLocation(
+                                        localisation: address.latlng!,
+                                      ),
+                                  ],
                                 ),
-                            ],
-                          ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const EventScreenPoll(),
+                            const SizedBox(height: 16),
+                            EventScreenAbout(event: event),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      const EventScreenPoll(),
-                      const SizedBox(height: 16),
-                      EventScreenAbout(event: event),
                     ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
           );
         },

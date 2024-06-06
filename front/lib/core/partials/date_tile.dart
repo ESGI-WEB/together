@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:front/core/extensions/string.dart';
 import 'package:front/core/models/event.dart';

@@ -1,6 +1,5 @@
 import "package:front/core/models/user.dart";
 
-import "address.dart";
 import "event.dart";
 
 class Attend {
