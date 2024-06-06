@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'blocs/join_group_bloc.dart';
 
@@ -30,17 +29,11 @@ class JoinGroupScreen extends StatelessWidget {
               }
 
               if (state.status == JoinGroupStatus.error) {
-                return Center(
-                  child: ErrorOccurred(
-                    image: SvgPicture.asset(
-                      'assets/images/error.svg',
-                      height: 200,
-                    ),
-                    alertMessage: 'Failed to join group',
-                    bodyMessage: state.errorMessage ?? 'Failed to join group',
-
-                  ),
-                );
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.errorMessage ?? 'Impossible de rejoindre le groupe.')),
+                  );
+                });
               }
 
               if (state.status == JoinGroupStatus.success && state.newGroup?.id != null) {

@@ -41,7 +41,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     });
     switch (index) {
       case 0:
-        GroupScreen.navigateTo(context, groupId: widget.groupId);
+        GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
         ChatScreen.navigateTo(context, id: widget.groupId);

@@ -65,7 +65,7 @@ final goRouter = GoRouter(
                   path: ':groupId',
                   builder: (context, state) {
                     return GroupScreen(
-                      groupId: int.parse(state.pathParameters['groupId']!),
+                      id: int.parse(state.pathParameters['groupId']!),
                     );
                   },
                   routes: [
