@@ -11,7 +11,7 @@ class GroupScreen extends StatelessWidget {
   final int id;
 
   static void navigateTo(BuildContext context, {required int id}) {
-    context.goNamed(routeName, pathParameters: {'id': id.toString()});
+    context.goNamed(routeName, pathParameters: {'groupId': id.toString()});
   }
 
   const GroupScreen({super.key, required this.id});
