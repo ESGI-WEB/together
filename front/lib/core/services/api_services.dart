@@ -101,7 +101,7 @@ class ApiServices {
     } else if (response.statusCode == 503) {
       throw FeatureDisabledException();
     } else if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw ApiException(response: response, statusCode: response.statusCode);
+      throw ApiException(message: response.body, response: response, statusCode: response.statusCode);
     }
   }
 }

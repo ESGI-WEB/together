@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,9 +31,14 @@ class JoinGroupScreen extends StatelessWidget {
 
               if (state.status == JoinGroupStatus.error) {
                 return Center(
-                  child: Text(
-                    state.errorMessage ?? 'Failed to join group',
-                    style: const TextStyle(color: Colors.red),
+                  child: ErrorOccurred(
+                    image: SvgPicture.asset(
+                      'assets/images/error.svg',
+                      height: 200,
+                    ),
+                    alertMessage: 'Failed to join group',
+                    bodyMessage: state.errorMessage ?? 'Failed to join group',
+
                   ),
                 );
               }

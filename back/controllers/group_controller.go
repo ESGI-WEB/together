@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+	coreErrors "together/errors"
 	"together/models"
 	"together/services"
 	"together/utils"
@@ -94,6 +95,14 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 
 	group, err := c.GroupService.JoinGroup(jsonBody.Code, user)
 	if err != nil {
+
+		if errors.Is(err, coreErrors.ErrUserAlreadyInGroup) {
+			return ctx.String(http.StatusConflict, err.Error())
+		}
+		if errors.Is(err, coreErrors.ErrCodeDoesNotExist) {
+			return ctx.String(http.StatusNotFound, err.Error())
+		}
+
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
@@ -102,7 +111,7 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
-	return ctx.JSON(http.StatusOK, group)
+	return ctx.JSON(http.StatusCreated, group)
 }
 
 func (c *GroupController) GetNextEvent(ctx echo.Context) error {

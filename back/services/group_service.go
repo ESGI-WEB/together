@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"time"
 	"together/database"
+	coreErrors "together/errors"
 	"together/models"
 )
 
@@ -51,10 +52,11 @@ func (s *GroupService) GetAllMyGroups(userID uint) ([]models.Group, error) {
 func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, error) {
 	var group models.Group
 
-	if err := database.CurrentDatabase.Where("code = ?", code).First(&group).Error; err != nil {
+	if err := database.CurrentDatabase.Where("code = ?", code).Preload("Users").First(&group).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("Le code n'existe pas.")
+			return nil, coreErrors.ErrCodeDoesNotExist
 		}
+
 		return nil, err
 	}
 
@@ -64,7 +66,7 @@ func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, 
 
 	for _, u := range group.Users {
 		if u.ID == user.ID {
-			return nil, errors.New("L'utilisateur est déjà dans le groupe.")
+			return nil, coreErrors.ErrUserAlreadyInGroup
 		}
 	}
 
