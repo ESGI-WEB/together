@@ -14,8 +14,7 @@ class JoinGroupScreen extends StatelessWidget {
 
   const JoinGroupScreen({required this.groupsBloc, super.key});
 
-  static void navigateTo(
-      BuildContext context, GroupsBloc groupsBloc) {
+  static void navigateTo(BuildContext context, GroupsBloc groupsBloc) {
     context.goNamed(routeName, extra: groupsBloc);
   }
 
@@ -29,32 +28,29 @@ class JoinGroupScreen extends StatelessWidget {
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: BlocBuilder<JoinGroupBloc, JoinGroupState>(
-              builder: (context, state) {
-                if (state.status == JoinGroupStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+                builder: (context, state) {
+              if (state.status == JoinGroupStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                if (state.status == JoinGroupStatus.error) {
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text(state.errorMessage ??
-                              'Impossible de rejoindre le groupe.')),
-                    );
-                  });
-                }
+              if (state.status == JoinGroupStatus.error) {
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage ??
+                          'Impossible de rejoindre le groupe.'),
+                    ),
+                  );
+                });
+              }
 
-                if (state.status == JoinGroupStatus.success &&
-                    state.newGroup?.id != null) {
-                  GroupScreen.navigateTo(context, id: state.newGroup!.id);
-                  context
-                      .read<GroupsBloc>()
-                      .add(GroupJoined(state.newGroup!));
-                }
-
-                return JoinGroupForm();
-              },
-            ),
+              if (state.status == JoinGroupStatus.success &&
+                  state.newGroup?.id != null) {
+                GroupScreen.navigateTo(context, id: state.newGroup!.id);
+                context.read<GroupsBloc>().add(GroupJoined(state.newGroup!));
+              }
+              return JoinGroupForm();
+            }),
           ),
         ),
       ),
@@ -76,10 +72,21 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
     return Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Rejoindre un groupe',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _codeController,
-            decoration: const InputDecoration(labelText: 'Code du groupe'),
+            decoration: InputDecoration(
+              labelText: 'Code du groupe',
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              prefixIcon: const Icon(Icons.vpn_key),
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez entrer un code';
@@ -92,12 +99,16 @@ class _JoinGroupFormState extends State<JoinGroupForm> {
             onPressed: () {
               if (_formKey.currentState?.validate() == true) {
                 BlocProvider.of<JoinGroupBloc>(context).add(
-                  JoinGroupSubmitted({
-                    'code': _codeController.text,
-                  }),
+                  JoinGroupSubmitted({'code': _codeController.text}),
                 );
               }
             },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             child: const Text('Rejoindre'),
           ),
         ],

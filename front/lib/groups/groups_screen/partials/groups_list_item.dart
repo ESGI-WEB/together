@@ -7,6 +7,10 @@ class GroupsListItem extends StatelessWidget {
 
   const GroupsListItem({required this.group, super.key});
 
+  String _getImageUrl(int id) {
+    return 'https://picsum.photos/seed/$id/201';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -18,6 +22,15 @@ class GroupsListItem extends StatelessWidget {
         onTap: () {
           GroupScreen.navigateTo(context, id: group.id);
         },
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            _getImageUrl(group.id),
+            width: 50,
+            height: 50,
+            fit: BoxFit.cover,
+          ),
+        ),
         title: Text(
           group.name,
           style: Theme.of(context).textTheme.headlineMedium,

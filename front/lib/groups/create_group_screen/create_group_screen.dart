@@ -1,12 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'blocs/create_group_bloc.dart';
 
 class CreateGroupScreen extends StatelessWidget {
@@ -16,8 +14,7 @@ class CreateGroupScreen extends StatelessWidget {
 
   const CreateGroupScreen({super.key, required this.groupsBloc});
 
-  static void navigateTo(
-      BuildContext context, GroupsBloc groupsScreenBloc) {
+  static void navigateTo(BuildContext context, GroupsBloc groupsScreenBloc) {
     context.goNamed(routeName, extra: groupsScreenBloc);
   }
 
@@ -72,8 +69,7 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
     const length = 10;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final rand = Random();
-    return List.generate(length, (index) => chars[rand.nextInt(chars.length)])
-        .join();
+    return List.generate(length, (index) => chars[rand.nextInt(chars.length)]).join();
   }
 
   @override
@@ -81,10 +77,20 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
     return Form(
       key: _formKey,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Créer un nouveau groupe',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 20),
           TextFormField(
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Nom'),
+            decoration: InputDecoration(
+              labelText: 'Nom',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              prefixIcon: const Icon(Icons.group),
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Veuillez entrer un nom';
@@ -92,14 +98,22 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
               return null;
             },
           ),
+          const SizedBox(height: 16),
           TextFormField(
             controller: _descriptionController,
-            decoration: const InputDecoration(labelText: 'Description'),
+            decoration: InputDecoration(
+              labelText: 'Description',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              prefixIcon: const Icon(Icons.description),
+            ),
           ),
+          const SizedBox(height: 16),
           TextFormField(
             controller: _codeController,
             decoration: InputDecoration(
               labelText: 'Code',
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              prefixIcon: const Icon(Icons.vpn_key),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: () {
@@ -125,10 +139,15 @@ class _CreateGroupFormState extends State<CreateGroupForm> {
                   "description": _descriptionController.text,
                   "code": _codeController.text,
                 };
-                BlocProvider.of<CreateGroupBloc>(context)
-                    .add(CreateGroupSubmitted(newGroup));
+                BlocProvider.of<CreateGroupBloc>(context).add(CreateGroupSubmitted(newGroup));
               }
             },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             child: const Text('Créer'),
           ),
         ],

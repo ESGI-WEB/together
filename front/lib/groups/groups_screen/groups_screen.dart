@@ -29,7 +29,8 @@ class GroupsScreen extends StatelessWidget {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.errorMessage ?? 'Impossible de charger les groupes.'),
+                      content: Text(state.errorMessage ??
+                          'Impossible de charger les groupes.'),
                     ),
                   );
                 });
@@ -42,29 +43,47 @@ class GroupsScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      'Groupes',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: 20),
                     Expanded(
                       child: BlocBuilder<GroupsBloc, GroupsState>(
                         builder: (context, state) {
-                          if (state.status == GroupsStatus.loading && state.groups == null) {
-                            return const Center(child: CircularProgressIndicator());
+                          if (state.status == GroupsStatus.loading &&
+                              state.groups == null) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
-                          if (state.groups != null && state.groups!.isNotEmpty) {
+                          if (state.groups != null &&
+                              state.groups!.isNotEmpty) {
                             return NotificationListener<ScrollNotification>(
                               onNotification: (ScrollNotification scrollInfo) {
-                                if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !state.hasReachedMax) {
-                                  context.read<GroupsBloc>().add(GroupsLoadMore());
+                                if (scrollInfo.metrics.pixels ==
+                                        scrollInfo.metrics.maxScrollExtent &&
+                                    !state.hasReachedMax) {
+                                  context
+                                      .read<GroupsBloc>()
+                                      .add(GroupsLoadMore());
                                 }
                                 return false;
                               },
                               child: ListView.separated(
-                                itemCount: state.groups!.length + (state.status == GroupsStatus.loadingMore ? 1 : 0),
+                                itemCount: state.groups!.length +
+                                    (state.status == GroupsStatus.loadingMore
+                                        ? 1
+                                        : 0),
                                 itemBuilder: (context, index) {
                                   if (index == state.groups!.length) {
-                                    return const Center(child: CircularProgressIndicator());
+                                    return const Center(
+                                        child: CircularProgressIndicator());
                                   } else {
-                                    return GroupsListItem(group: state.groups![index]);
+                                    return GroupsListItem(
+                                        group: state.groups![index]);
                                   }
                                 },
                                 separatorBuilder: (context, index) {
@@ -74,11 +93,14 @@ class GroupsScreen extends StatelessWidget {
                             );
                           }
 
-                          if (state.status == GroupsStatus.success && (state.groups == null || state.groups!.isEmpty)) {
-                            return const Center(child: Text('Aucun groupe disponible.'));
+                          if (state.status == GroupsStatus.success &&
+                              (state.groups == null || state.groups!.isEmpty)) {
+                            return const Center(
+                                child: Text('Aucun groupe disponible.'));
                           }
 
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         },
                       ),
                     ),
@@ -87,22 +109,40 @@ class GroupsScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
-                          child: ElevatedButton(
+                          child: ElevatedButton.icon(
                             onPressed: () {
-                              final groupsScreenBloc = context.read<GroupsBloc>();
-                              context.goNamed(CreateGroupScreen.routeName, extra: groupsScreenBloc);
+                              final groupsScreenBloc =
+                                  context.read<GroupsBloc>();
+                              context.goNamed(CreateGroupScreen.routeName,
+                                  extra: groupsScreenBloc);
                             },
-                            child: const Text('Créer'),
+                            icon: const Icon(Icons.add),
+                            label: const Text('Créer'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: ElevatedButton(
+                          child: ElevatedButton.icon(
                             onPressed: () {
-                              final groupsScreenBloc = context.read<GroupsBloc>();
-                              context.goNamed(JoinGroupScreen.routeName, extra: groupsScreenBloc);
+                              final groupsScreenBloc =
+                                  context.read<GroupsBloc>();
+                              context.goNamed(JoinGroupScreen.routeName,
+                                  extra: groupsScreenBloc);
                             },
-                            child: const Text('Rejoindre'),
+                            icon: const Icon(Icons.group_add),
+                            label: const Text('Rejoindre'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
                         ),
                       ],
