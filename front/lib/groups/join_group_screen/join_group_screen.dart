@@ -1,49 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'blocs/join_group_bloc.dart';
 
 class JoinGroupScreen extends StatelessWidget {
   static const String routeName = 'join_group';
 
-  static void navigateTo(BuildContext context) {
-    context.goNamed(routeName);
-  }
+  final GroupsScreenBloc groupsScreenBloc;
 
-  const JoinGroupScreen({super.key});
+  const JoinGroupScreen({required this.groupsScreenBloc, super.key});
+
+  static void navigateTo(
+      BuildContext context, GroupsScreenBloc groupsScreenBloc) {
+    context.goNamed(routeName, extra: groupsScreenBloc);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => JoinGroupBloc(),
-      child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: BlocBuilder<JoinGroupBloc, JoinGroupState>(
-            builder: (context, state) {
-              if (state.status == JoinGroupStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return BlocProvider.value(
+      value: groupsScreenBloc,
+      child: BlocProvider(
+        create: (context) => JoinGroupBloc(),
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: BlocBuilder<JoinGroupBloc, JoinGroupState>(
+              builder: (context, state) {
+                if (state.status == JoinGroupStatus.loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (state.status == JoinGroupStatus.error) {
-                SchedulerBinding.instance.addPostFrameCallback((_) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.errorMessage ?? 'Impossible de rejoindre le groupe.')),
-                  );
-                });
-              }
+                if (state.status == JoinGroupStatus.error) {
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(state.errorMessage ??
+                              'Impossible de rejoindre le groupe.')),
+                    );
+                  });
+                }
 
-              if (state.status == JoinGroupStatus.success && state.newGroup?.id != null) {
-                GroupScreen.navigateTo(context, id: state.newGroup!.id);
-                BlocProvider.of<GroupsScreenBloc>(context).add(GroupJoined(state.newGroup!));
-              }
+                if (state.status == JoinGroupStatus.success &&
+                    state.newGroup?.id != null) {
+                  GroupScreen.navigateTo(context, id: state.newGroup!.id);
+                  context
+                      .read<GroupsScreenBloc>()
+                      .add(GroupJoined(state.newGroup!));
+                }
 
-              return JoinGroupForm();
-            },
+                return JoinGroupForm();
+              },
+            ),
           ),
         ),
       ),

@@ -73,7 +73,9 @@ func (c *GroupController) GetAllMyGroups(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	groups, err := c.GroupService.GetAllMyGroups(user.ID)
+	pagination := utils.PaginationFromContext(ctx)
+
+	groups, err := c.GroupService.GetAllMyGroups(user.ID, *pagination)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

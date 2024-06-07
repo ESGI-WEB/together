@@ -8,6 +8,7 @@ import (
 	"together/database"
 	coreErrors "together/errors"
 	"together/models"
+	"together/utils"
 )
 
 type GroupService struct{}
@@ -38,15 +39,17 @@ func (s *GroupService) GetGroupById(id uint) (*models.Group, error) {
 	return &group, nil
 }
 
-func (s *GroupService) GetAllMyGroups(userID uint) ([]models.Group, error) {
+func (s *GroupService) GetAllMyGroups(userID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var groups []models.Group
-	if err := database.CurrentDatabase.Joins("JOIN group_users ON group_users.group_id = groups.id").
+	query := database.CurrentDatabase.Joins("JOIN group_users ON group_users.group_id = groups.id").
 		Where("group_users.user_id = ?", userID).
-		Preload("Users").
-		Find(&groups).Error; err != nil {
-		return nil, err
-	}
-	return groups, nil
+		Preload("Users")
+
+	query.Scopes(utils.Paginate(groups, &pagination, query)).Find(&groups)
+
+	pagination.Rows = groups
+
+	return &pagination, nil
 }
 
 func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, error) {

@@ -9,23 +9,23 @@ enum CreateGroupStatus {
 
 class CreateGroupState {
   final CreateGroupStatus status;
-  final List<Group>? groups;
+  final Group? newGroup;
   final String? errorMessage;
 
   CreateGroupState({
     this.status = CreateGroupStatus.initial,
-    this.groups,
+    this.newGroup,
     this.errorMessage,
   });
 
   CreateGroupState copyWith({
     CreateGroupStatus? status,
-    List<Group>? groups,
+    Group? newGroup,
     String? errorMessage,
   }) {
     return CreateGroupState(
       status: status ?? this.status,
-      groups: groups ?? this.groups,
+      newGroup: newGroup ?? this.newGroup,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

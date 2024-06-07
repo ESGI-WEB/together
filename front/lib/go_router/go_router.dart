@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/chat/chat_screen.dart';
@@ -9,6 +10,7 @@ import 'package:front/event/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
@@ -39,17 +41,27 @@ final goRouter = GoRouter(
         GoRoute(
           name: GroupsScreen.routeName,
           path: '/groups',
-          builder: (context, state) => const GroupsScreen(),
+          builder: (context, state) {
+            return BlocProvider(
+                create: (context) => GroupsScreenBloc(),
+                child: const GroupsScreen());
+          },
           routes: [
             GoRoute(
               name: CreateGroupScreen.routeName,
               path: 'create',
-              builder: (context, state) => const CreateGroupScreen(),
+              builder: (context, state)  {
+                final groupsScreenBloc = state.extra as GroupsScreenBloc;
+                return CreateGroupScreen(groupsScreenBloc: groupsScreenBloc);
+              },
             ),
             GoRoute(
               name: JoinGroupScreen.routeName,
               path: 'join',
-              builder: (context, state) => const JoinGroupScreen(),
+              builder: (context, state) {
+                final groupsScreenBloc = state.extra as GroupsScreenBloc;
+                return JoinGroupScreen(groupsScreenBloc: groupsScreenBloc);
+              },
             ),
             ShellRoute(
               builder:

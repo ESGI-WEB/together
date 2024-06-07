@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/create_group_bloc.dart';
@@ -10,11 +11,12 @@ import 'blocs/create_group_bloc.dart';
 class CreateGroupScreen extends StatelessWidget {
   static const String routeName = 'create_group';
 
-  static void navigateTo(BuildContext context) {
-    context.goNamed(routeName);
+  static void navigateTo(
+      BuildContext context, GroupsScreenBloc groupsScreenBloc) {
+    context.goNamed(routeName, extra: groupsScreenBloc);
   }
 
-  const CreateGroupScreen({super.key});
+  const CreateGroupScreen({super.key, required GroupsScreenBloc groupsScreenBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +40,12 @@ class CreateGroupScreen extends StatelessWidget {
           builder: (context) {
             return BlocListener<CreateGroupBloc, CreateGroupState>(
               listener: (context, state) {
-                if (state.status == CreateGroupStatus.success) {
-                  GroupScreen.navigateTo(context, id: state.groups!.last.id);
+                if (state.status == CreateGroupStatus.success &&
+                    state.newGroup?.id != null) {
+                  GroupScreen.navigateTo(context, id: state.newGroup!.id);
+                  context
+                      .read<GroupsScreenBloc>()
+                      .add(GroupJoined(state.newGroup!));
                 } else if (state.status == CreateGroupStatus.error) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.errorMessage ?? 'Erreur inconnue')),

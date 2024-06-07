@@ -15,11 +15,10 @@ class CreateGroupBloc extends Bloc<CreateGroupEvent, CreateGroupState> {
       ));
 
       try {
-        await GroupServices.createGroup(event.newGroup);
-        final updatedGroups = await GroupServices.fetchGroups();
+        final newGroup = await GroupServices.createGroup(event.newGroup);
         emit(state.copyWith(
           status: CreateGroupStatus.success,
-          groups: updatedGroups,
+          newGroup: newGroup,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
