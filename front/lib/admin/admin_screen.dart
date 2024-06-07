@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
+import 'package:front/admin/users/users_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AdminScreen extends StatelessWidget {
@@ -34,7 +35,7 @@ class AdminScreen extends StatelessWidget {
               'View Users',
             ),
             onPressed: () {
-              // Navigate to Users screen
+              UsersScreen.navigateTo(context);
             },
           ),
           ElevatedButton.icon(

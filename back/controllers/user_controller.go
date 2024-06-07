@@ -49,8 +49,9 @@ func (c *UserController) CreateUser(ctx echo.Context) error {
 
 func (c *UserController) GetUsers(ctx echo.Context) error {
 	pagination := utils.PaginationFromContext(ctx)
+	search := ctx.QueryParam("search")
 
-	usersPagination, err := c.UserService.GetUsers(pagination)
+	usersPagination, err := c.UserService.GetUsers(pagination, &search)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

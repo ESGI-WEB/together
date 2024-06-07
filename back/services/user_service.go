@@ -52,6 +52,18 @@ func (s *UserService) GenerateAvatarColorHex() string {
 	return color
 }
 
-func (s *UserService) GetUsers(pagination utils.Pagination) (*utils.Pagination, error) {
-	return nil, nil
+func (s *UserService) GetUsers(pagination utils.Pagination, search *string) (*utils.Pagination, error) {
+	var users []models.User
+	query := database.CurrentDatabase
+
+	if search != nil {
+		query = query.Where("name LIKE ?", "%"+*search+"%")
+	}
+
+	query.Scopes(utils.Paginate(users, &pagination, query)).
+		Order("ID asc").
+		Find(&users)
+	pagination.Rows = users
+
+	return &pagination, nil
 }
