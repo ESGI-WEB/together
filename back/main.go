@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
+	"github.com/zc2638/swag"
+	"strings"
 	"together/database"
 	"together/routers"
+	"together/swagger"
 	"together/utils"
 )
 
@@ -26,7 +29,41 @@ func main() {
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
 
-	// cors authorize flutter web dev
+	api := swagger.SetupSwagger()
+	api.Walk(func(path string, ep *swag.Endpoint) {
+		h, ok := ep.Handler.(func(echo.Context) error)
+		if !ok {
+			e.Logger.Fatalf("Invalid handler for path %s", path)
+			return
+		}
+		path = swag.ColonPath(path)
+
+		switch strings.ToLower(ep.Method) {
+		case "get":
+			e.GET(path, h)
+		case "head":
+			e.HEAD(path, h)
+		case "options":
+			e.OPTIONS(path, h)
+		case "delete":
+			e.DELETE(path, h)
+		case "put":
+			e.PUT(path, h)
+		case "post":
+			e.POST(path, h)
+		case "trace":
+			e.TRACE(path, h)
+		case "patch":
+			e.PATCH(path, h)
+		case "connect":
+			e.CONNECT(path, h)
+		}
+	})
+
+	e.GET("/swagger/json", echo.WrapHandler(api.Handler()))
+	e.GET("/swagger/ui/*", echo.WrapHandler(swag.UIHandler("/swagger/ui", "/swagger/json", true)))
+
+	// CORS authorize Flutter web dev
 	fmt.Printf("APP_MODE: %s\n", utils.GetEnv("APP_MODE", "production"))
 	if utils.GetEnv("APP_MODE", "production") == "development" {
 		e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -39,9 +76,7 @@ func main() {
 		})
 	}
 
-	// init database
-	// can also be called in func init but defer must be called in main
-	// so we keep everything together here
+	// Initialize database
 	newDB, err := database.InitDB()
 	if err != nil {
 		e.Logger.Fatal(err)
@@ -49,15 +84,17 @@ func main() {
 	}
 	defer newDB.CloseDB()
 
-	// auto migrate database
+	// Auto migrate database
 	err = newDB.AutoMigrate()
 	if err != nil {
 		e.Logger.Fatal(err)
 		return
 	}
 
+	// Load routes
 	routers.LoadRoutes(e, appRouters...)
 
+	// Serve static files for Flutter web
 	e.Static("/app", utils.GetEnv("FLUTTER_BUILD_PATH", "flutter_build")+"/web")
 
 	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
