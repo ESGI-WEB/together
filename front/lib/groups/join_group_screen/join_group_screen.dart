@@ -49,7 +49,7 @@ class JoinGroupScreen extends StatelessWidget {
                 GroupScreen.navigateTo(context, id: state.newGroup!.id);
                 context.read<GroupsBloc>().add(GroupJoined(state.newGroup!));
               }
-              return JoinGroupForm();
+              return const JoinGroupForm();
             }),
           ),
         ),
@@ -59,11 +59,13 @@ class JoinGroupScreen extends StatelessWidget {
 }
 
 class JoinGroupForm extends StatefulWidget {
+  const JoinGroupForm({super.key});
+
   @override
-  _JoinGroupFormState createState() => _JoinGroupFormState();
+  JoinGroupFormState createState() => JoinGroupFormState();
 }
 
-class _JoinGroupFormState extends State<JoinGroupForm> {
+class JoinGroupFormState extends State<JoinGroupForm> {
   final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
 

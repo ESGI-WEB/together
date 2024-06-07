@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/partials/custom_icon_button.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/groups_screen/partials/groups_list_item.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
@@ -106,44 +107,26 @@ class GroupsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              final groupsScreenBloc =
-                                  context.read<GroupsBloc>();
-                              context.goNamed(CreateGroupScreen.routeName,
-                                  extra: groupsScreenBloc);
-                            },
-                            icon: const Icon(Icons.add),
-                            label: const Text('Créer'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
+                        CustomIconButton(
+                          icon: Icons.add,
+                          label: 'Créer',
+                          onPressed: () {
+                            final groupsScreenBloc = context.read<GroupsBloc>();
+                            context.goNamed(CreateGroupScreen.routeName,
+                                extra: groupsScreenBloc);
+                          },
                         ),
                         const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              final groupsScreenBloc =
-                                  context.read<GroupsBloc>();
-                              context.goNamed(JoinGroupScreen.routeName,
-                                  extra: groupsScreenBloc);
-                            },
-                            icon: const Icon(Icons.group_add),
-                            label: const Text('Rejoindre'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                          ),
+                        CustomIconButton(
+                          icon: Icons.group_add,
+                          label: 'Rejoindre',
+                          onPressed: () {
+                            final groupsScreenBloc = context.read<GroupsBloc>();
+                            context.goNamed(JoinGroupScreen.routeName,
+                                extra: groupsScreenBloc);
+                          },
                         ),
                       ],
                     ),

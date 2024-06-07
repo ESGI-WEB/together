@@ -45,11 +45,19 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
-	if _, err := c.GroupService.JoinGroup(newGroup.Code, user); err != nil {
-		return ctx.NoContent(http.StatusInternalServerError)
+	joinedGroup, err := c.GroupService.JoinGroup(newGroup.Code, user)
+	if err != nil {
+		switch {
+		case errors.Is(err, coreErrors.ErrUserAlreadyInGroup):
+			return ctx.String(http.StatusConflict, err.Error())
+		case errors.Is(err, coreErrors.ErrCodeDoesNotExist):
+			return ctx.String(http.StatusNotFound, err.Error())
+		default:
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
 	}
 
-	return ctx.JSON(http.StatusCreated, newGroup)
+	return ctx.JSON(http.StatusCreated, joinedGroup)
 }
 
 func (c *GroupController) GetGroupById(ctx echo.Context) error {

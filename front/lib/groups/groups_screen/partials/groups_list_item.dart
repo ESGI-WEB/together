@@ -52,7 +52,7 @@ class GroupsListItem extends StatelessWidget {
                   '${group.users?.length}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Theme.of(context).textTheme.caption!.color,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],

@@ -45,7 +45,7 @@ class CreateGroupScreen extends StatelessWidget {
                   });
                 }
               },
-              child: CreateGroupForm(),
+              child: const CreateGroupForm(),
             ),
           ),
         ),
@@ -55,11 +55,13 @@ class CreateGroupScreen extends StatelessWidget {
 }
 
 class CreateGroupForm extends StatefulWidget {
+  const CreateGroupForm({super.key});
+
   @override
-  _CreateGroupFormState createState() => _CreateGroupFormState();
+  CreateGroupFormState createState() => CreateGroupFormState();
 }
 
-class _CreateGroupFormState extends State<CreateGroupForm> {
+class CreateGroupFormState extends State<CreateGroupForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
