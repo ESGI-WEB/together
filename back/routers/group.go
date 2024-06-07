@@ -13,9 +13,9 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 
 	group := e.Group("/groups")
 
-	/*group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware()(next)
-	})*/
+	})
 
 	group.GET("", groupController.GetAllMyGroups)
 	group.GET("/:id", groupController.GetGroupById, middlewares.GroupMembershipMiddleware)

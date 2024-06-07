@@ -69,10 +69,13 @@ class GroupServices {
     }
   }
 
-  static Future<Event> getGroupNextEvent(int groupId) async {
+  static Future<Event?> getGroupNextEvent(int groupId) async {
     try {
       final response = await ApiServices.get('/groups/$groupId/next-event');
-      return Event.fromJson(json.decode(response.body));
+      if (response.body.isNotEmpty){
+        return Event.fromJson(json.decode(response.body));
+      }
+      return null;
     } catch (e) {
       if (e is UnauthorizedException) {
         throw UnauthorizedException(message: "Vous n'êtes pas connecté");
