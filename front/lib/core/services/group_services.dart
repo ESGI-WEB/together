@@ -7,10 +7,10 @@ import 'package:front/core/models/group.dart';
 import 'api_services.dart';
 
 class GroupServices {
-  static Future<List<Group>> fetchGroups() async {
-    final response = await ApiServices.get('/groups');
+  static Future<List<Group>> fetchGroups(int page, int limit) async {
+    final response = await ApiServices.get('/groups?page=$page&limit=$limit');
     if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
+      List<dynamic> jsonData = json.decode(response.body)['rows'];
       return jsonData.map((json) => Group.fromJson(json)).toList();
     } else {
       throw ApiException(

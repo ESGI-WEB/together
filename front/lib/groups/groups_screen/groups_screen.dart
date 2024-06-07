@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
-import 'package:front/groups/groups_screen/partials/groups_list.dart';
+import 'package:front/groups/groups_screen/partials/groups_list_item.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:go_router/go_router.dart';
 
-import 'blocs/groups_screen_bloc.dart';
+import 'blocs/groups_bloc.dart';
 
 class GroupsScreen extends StatelessWidget {
   static const String routeName = 'groups';
@@ -20,17 +20,16 @@ class GroupsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GroupsScreenBloc()..add(GroupsScreenLoaded()),
+      create: (context) => GroupsBloc()..add(GroupsLoaded()),
       child: Builder(
         builder: (context) => Scaffold(
-          body: BlocListener<GroupsScreenBloc, GroupsScreenState>(
+          body: BlocListener<GroupsBloc, GroupsState>(
             listener: (context, state) {
-              if (state.status == GroupsScreenStatus.error) {
+              if (state.status == GroupsStatus.error) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.errorMessage ??
-                          'Impossible de charger les groupes.'),
+                      content: Text(state.errorMessage ?? 'Impossible de charger les groupes.'),
                     ),
                   );
                 });
@@ -38,29 +37,48 @@ class GroupsScreen extends StatelessWidget {
             },
             child: RefreshIndicator(
               onRefresh: () async {
-                context.read<GroupsScreenBloc>().add(GroupsScreenLoaded());
+                context.read<GroupsBloc>().add(GroupsLoaded());
               },
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
                     Expanded(
-                      child: BlocBuilder<GroupsScreenBloc, GroupsScreenState>(
+                      child: BlocBuilder<GroupsBloc, GroupsState>(
                         builder: (context, state) {
-                          if (state.status == GroupsScreenStatus.loading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
+                          if (state.status == GroupsStatus.loading && state.groups == null) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+
+                          if (state.groups != null && state.groups!.isNotEmpty) {
+                            return NotificationListener<ScrollNotification>(
+                              onNotification: (ScrollNotification scrollInfo) {
+                                if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !state.hasReachedMax) {
+                                  context.read<GroupsBloc>().add(GroupsLoadMore());
+                                }
+                                return false;
+                              },
+                              child: ListView.separated(
+                                itemCount: state.groups!.length + (state.status == GroupsStatus.loadingMore ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == state.groups!.length) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  } else {
+                                    return GroupsListItem(group: state.groups![index]);
+                                  }
+                                },
+                                separatorBuilder: (context, index) {
+                                  return const SizedBox(height: 10);
+                                },
+                              ),
                             );
                           }
 
-                          if (state.status == GroupsScreenStatus.success &&
-                              state.groups != null) {
-                            return GroupsList(groups: state.groups!);
+                          if (state.status == GroupsStatus.success && (state.groups == null || state.groups!.isEmpty)) {
+                            return const Center(child: Text('Aucun groupe disponible.'));
                           }
 
-                          return const Center(
-                            child: Text('Aucun groupe disponible.'),
-                          );
+                          return const Center(child: CircularProgressIndicator());
                         },
                       ),
                     ),
@@ -71,10 +89,8 @@ class GroupsScreen extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              final groupsScreenBloc =
-                                  context.read<GroupsScreenBloc>();
-                              context.goNamed(CreateGroupScreen.routeName,
-                                  extra: groupsScreenBloc);
+                              final groupsScreenBloc = context.read<GroupsBloc>();
+                              context.goNamed(CreateGroupScreen.routeName, extra: groupsScreenBloc);
                             },
                             child: const Text('Créer'),
                           ),
@@ -83,10 +99,8 @@ class GroupsScreen extends StatelessWidget {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              final groupsScreenBloc =
-                                  context.read<GroupsScreenBloc>();
-                              context.goNamed(JoinGroupScreen.routeName,
-                                  extra: groupsScreenBloc);
+                              final groupsScreenBloc = context.read<GroupsBloc>();
+                              context.goNamed(JoinGroupScreen.routeName, extra: groupsScreenBloc);
                             },
                             child: const Text('Rejoindre'),
                           ),

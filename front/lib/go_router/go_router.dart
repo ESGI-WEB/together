@@ -10,7 +10,7 @@ import 'package:front/event/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
-import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
+import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
@@ -43,7 +43,7 @@ final goRouter = GoRouter(
           path: '/groups',
           builder: (context, state) {
             return BlocProvider(
-                create: (context) => GroupsScreenBloc(),
+                create: (context) => GroupsBloc(),
                 child: const GroupsScreen());
           },
           routes: [
@@ -51,16 +51,16 @@ final goRouter = GoRouter(
               name: CreateGroupScreen.routeName,
               path: 'create',
               builder: (context, state)  {
-                final groupsScreenBloc = state.extra as GroupsScreenBloc;
-                return CreateGroupScreen(groupsScreenBloc: groupsScreenBloc);
+                final groupsBloc = state.extra as GroupsBloc;
+                return CreateGroupScreen(groupsBloc: groupsBloc);
               },
             ),
             GoRoute(
               name: JoinGroupScreen.routeName,
               path: 'join',
               builder: (context, state) {
-                final groupsScreenBloc = state.extra as GroupsScreenBloc;
-                return JoinGroupScreen(groupsScreenBloc: groupsScreenBloc);
+                final groupsBloc = state.extra as GroupsBloc;
+                return JoinGroupScreen(groupsBloc: groupsBloc);
               },
             ),
             ShellRoute(

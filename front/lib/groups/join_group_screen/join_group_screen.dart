@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
-import 'package:front/groups/groups_screen/blocs/groups_screen_bloc.dart';
+import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/join_group_bloc.dart';
@@ -10,19 +10,19 @@ import 'blocs/join_group_bloc.dart';
 class JoinGroupScreen extends StatelessWidget {
   static const String routeName = 'join_group';
 
-  final GroupsScreenBloc groupsScreenBloc;
+  final GroupsBloc groupsBloc;
 
-  const JoinGroupScreen({required this.groupsScreenBloc, super.key});
+  const JoinGroupScreen({required this.groupsBloc, super.key});
 
   static void navigateTo(
-      BuildContext context, GroupsScreenBloc groupsScreenBloc) {
-    context.goNamed(routeName, extra: groupsScreenBloc);
+      BuildContext context, GroupsBloc groupsBloc) {
+    context.goNamed(routeName, extra: groupsBloc);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: groupsScreenBloc,
+      value: groupsBloc,
       child: BlocProvider(
         create: (context) => JoinGroupBloc(),
         child: Scaffold(
@@ -48,7 +48,7 @@ class JoinGroupScreen extends StatelessWidget {
                     state.newGroup?.id != null) {
                   GroupScreen.navigateTo(context, id: state.newGroup!.id);
                   context
-                      .read<GroupsScreenBloc>()
+                      .read<GroupsBloc>()
                       .add(GroupJoined(state.newGroup!));
                 }
 
