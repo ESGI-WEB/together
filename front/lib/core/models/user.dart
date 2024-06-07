@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:front/core/services/color_services.dart';
+
 class User {
   final int id;
   final DateTime createdAt;
@@ -8,6 +11,8 @@ class User {
   final String role;
   final String? biography;
   final String? avatarPath;
+  final Color? colorHex;
+  final Color? textColorHex;
 
   User({
     required this.id,
@@ -19,9 +24,13 @@ class User {
     required this.role,
     this.biography,
     this.avatarPath,
+    this.colorHex,
+    this.textColorHex,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    final colorHex = json['color_hex'] != null ? ColorServices.hexToColor(json['color_hex']) : null;
+
     return User(
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),
@@ -33,6 +42,8 @@ class User {
       role: json['role'],
       biography: json['biography'],
       avatarPath: json['avatar_path'],
+      colorHex: colorHex,
+      textColorHex: colorHex != null ? ColorServices.getContrastingTextColor(colorHex) : null,
     );
   }
 }

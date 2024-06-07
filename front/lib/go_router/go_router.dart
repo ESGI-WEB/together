@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/admin_screen.dart';
+import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
@@ -34,7 +35,12 @@ final goRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return CustomAppBar(
           canPop: state.uri.toString() != '/groups',
-          child: child,
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 800),
+              child: child,
+            ),
+          ),
         );
       },
       routes: [
@@ -115,6 +121,21 @@ final goRouter = GoRouter(
             ),
           ],
         ),
+      ],
+    ),
+    ShellRoute(
+      builder: (BuildContext context, GoRouterState state, Widget child) {
+        return CustomAppBar(
+          canPop: state.uri.toString() != '/admin',
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: child,
+            ),
+          ),
+        );
+      },
+      routes: [
         GoRoute(
           name: AdminScreen.routeName,
           path: '/admin',
@@ -124,6 +145,11 @@ final goRouter = GoRouter(
               name: FeaturesScreen.routeName,
               path: 'features',
               builder: (context, state) => const FeaturesScreen(),
+            ),
+            GoRoute(
+              name: EventTypesScreen.routeName,
+              path: 'event-types',
+              builder: (context, state) => const EventTypesScreen(),
             ),
           ],
         ),
