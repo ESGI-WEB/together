@@ -6,6 +6,7 @@ import (
 	"together/database"
 	"together/errors"
 	"together/models"
+	"together/utils"
 )
 
 type UserService struct{}
@@ -49,4 +50,8 @@ func (s *UserService) AddUser(user models.UserCreate) (*models.User, error) {
 func (s *UserService) GenerateAvatarColorHex() string {
 	color := "#" + random.String(6, "0123456789ABCDEF")
 	return color
+}
+
+func (s *UserService) GetUsers(pagination utils.Pagination) (*utils.Pagination, error) {
+	return nil, nil
 }

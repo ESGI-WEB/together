@@ -46,3 +46,14 @@ func (c *UserController) CreateUser(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusCreated, newUser)
 }
+
+func (c *UserController) GetUsers(ctx echo.Context) error {
+	pagination := utils.PaginationFromContext(ctx)
+
+	usersPagination, err := c.UserService.GetUsers(pagination)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, usersPagination)
+}
