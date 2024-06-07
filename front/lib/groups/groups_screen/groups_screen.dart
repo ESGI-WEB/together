@@ -96,8 +96,13 @@ class GroupsScreen extends StatelessWidget {
 
                           if (state.status == GroupsStatus.success &&
                               (state.groups == null || state.groups!.isEmpty)) {
-                            return const Center(
-                                child: Text('Aucun groupe disponible.'));
+                            return ListView(
+                              children: const [
+                                Center(
+                                  child: Text('Aucun groupe disponible.'),
+                                ),
+                              ],
+                            );
                           }
 
                           return const Center(
