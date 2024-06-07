@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/event_types/blocs/event_types_bloc.dart';
 import 'package:front/core/models/event_type.dart';
-import 'package:front/core/partials/error_occurred.dart';
-import 'package:go_router/go_router.dart';
 
 class EventTypesForm extends StatefulWidget {
   final void Function()? onFormCancel;
   final void Function()? onFormCreated;
+  final EventTypeCreateOrEdit? eventTypeToEdit;
 
   const EventTypesForm({
     super.key,
     this.onFormCancel,
     this.onFormCreated,
+    this.eventTypeToEdit,
   });
 
   @override
@@ -25,7 +25,36 @@ class _EventTypesScreenState extends State<EventTypesForm> {
   Image? _selectedImage;
   bool _isHovering = false;
   bool _isImageMissing = false;
-  EventTypeCreateOrEdit _eventTypeCreating = EventTypeCreateOrEdit();
+  late EventTypeCreateOrEdit _eventTypeCreating;
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initForm();
+  }
+
+  @override
+  void didUpdateWidget(EventTypesForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.eventTypeToEdit != oldWidget.eventTypeToEdit) {
+      setState(() {
+        _initForm();
+      });
+    }
+  }
+
+  void _initForm() {
+    _eventTypeCreating = widget.eventTypeToEdit ?? EventTypeCreateOrEdit();
+    // create image from bytes
+    _selectedImage = _eventTypeCreating.image != null
+        ? Image.memory(_eventTypeCreating.image!.bytes!)
+        : null;
+    _nameController = TextEditingController(text: _eventTypeCreating.name);
+    _descriptionController =
+        TextEditingController(text: _eventTypeCreating.description);
+  }
 
   void _resetForm() {
     setState(() {
@@ -34,6 +63,8 @@ class _EventTypesScreenState extends State<EventTypesForm> {
       _isHovering = false;
       _isImageMissing = false;
       _eventTypeCreating = EventTypeCreateOrEdit();
+      _nameController.clear();
+      _descriptionController.clear();
       widget.onFormCreated?.call();
     });
   }
@@ -86,6 +117,7 @@ class _EventTypesScreenState extends State<EventTypesForm> {
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   TextFormField(
+                    controller: _nameController,
                     enabled:
                         state.status != EventTypesStatus.addOrEditTypeLoading,
                     decoration: const InputDecoration(
@@ -110,6 +142,7 @@ class _EventTypesScreenState extends State<EventTypesForm> {
                     },
                   ),
                   TextFormField(
+                    controller: _descriptionController,
                     enabled:
                         state.status != EventTypesStatus.addOrEditTypeLoading,
                     maxLines: 4,
@@ -224,7 +257,11 @@ class _EventTypesScreenState extends State<EventTypesForm> {
                               });
                             }
                           },
-                          child: const Text('Ajouter'),
+                          child: Text(
+                            _eventTypeCreating.id == null
+                                ? 'Ajouter'
+                                : 'Modifier',
+                          ),
                         ),
                     ],
                   ),

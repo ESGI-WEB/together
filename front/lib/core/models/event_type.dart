@@ -11,12 +11,18 @@ class EventType {
   final String name;
   final String description;
   final NetworkImage image;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final DateTime? deletedAt;
 
   EventType({
     required this.id,
     required this.name,
     required this.description,
     required this.image,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
   });
 
   factory EventType.fromJson(Map<String, dynamic> json) {
@@ -24,7 +30,10 @@ class EventType {
       id: json['ID'],
       name: json['name'],
       description: json['description'],
-      image: NetworkImage("${ApiServices.baseUrl}/${json['image_path']}"),
+      createdAt: DateTime.parse(json['CreatedAt']),
+      updatedAt: DateTime.parse(json['UpdatedAt']),
+      deletedAt: json['DeletedAt'] != null ? DateTime.parse(json['deleted_at']) : null,
+      image: NetworkImage("${ApiServices.baseUrl}/${json['image_path']}?${json['UpdatedAt']}"),
     );
   }
 

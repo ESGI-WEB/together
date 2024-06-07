@@ -27,11 +27,19 @@ class ApiServices {
 
     return headers;
   }
+  
+  static String getFullUrlFromPath(String path) {
+    if (path.startsWith('http')) {
+      return path;
+    }
+    
+    return '$baseUrl$path';
+  }
 
   static Future<Response> get(String path,
       [Map<String, String>? headers]) async {
     final response = await http.get(
-      Uri.parse(baseUrl + path),
+      Uri.parse(getFullUrlFromPath(path)),
       headers: {}
         ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
@@ -44,7 +52,7 @@ class ApiServices {
   static Future<Response> post(String path,
       [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.post(
-      Uri.parse(baseUrl + path),
+      Uri.parse(getFullUrlFromPath(path)),
       headers: {}
         ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
@@ -58,7 +66,7 @@ class ApiServices {
   static Future<Response> put(String path,
       [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.put(
-      Uri.parse(baseUrl + path),
+      Uri.parse(getFullUrlFromPath(path)),
       headers: {}
         ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
@@ -72,7 +80,7 @@ class ApiServices {
   static Future<Response> patch(String path,
       [Map<String, dynamic>? body, Map<String, String>? headers]) async {
     final response = await http.patch(
-      Uri.parse(baseUrl + path),
+      Uri.parse(getFullUrlFromPath(path)),
       headers: {}
         ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
@@ -86,7 +94,7 @@ class ApiServices {
   static Future<Response> delete(String path,
       [Map<String, String>? headers]) async {
     final response = await http.delete(
-      Uri.parse(baseUrl + path),
+      Uri.parse(getFullUrlFromPath(path)),
       headers: {}
         ..addAll(await getAllBasicHeaders())
         ..addAll(headers ?? {}),
@@ -98,7 +106,7 @@ class ApiServices {
 
   static Future<Response> multipartRequest(String verb, String path,
       [Map<String, dynamic>? body, Map<String, String>? headers]) async {
-    final request = http.MultipartRequest(verb, Uri.parse(baseUrl + path));
+    final request = http.MultipartRequest(verb, Uri.parse(getFullUrlFromPath(path)));
     request.headers.addAll(await getAllBasicHeaders());
     request.headers.addAll(headers ?? {});
 

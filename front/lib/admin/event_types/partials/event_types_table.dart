@@ -5,13 +5,21 @@ import 'package:front/core/models/event_type.dart';
 import 'package:front/core/partials/error_occurred.dart';
 
 class EventTypesTable extends StatelessWidget {
-  const EventTypesTable({super.key});
+  final Function(EventType)? onEdit;
+  final Function(EventType)? onDelete;
+
+  const EventTypesTable({
+    super.key,
+    this.onEdit,
+    this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<EventTypesBloc, EventTypesState>(
       builder: (context, state) {
-        if (state.status == EventTypesStatus.tableLoading && state.types == null) {
+        if (state.status == EventTypesStatus.tableLoading &&
+            state.types == null) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -30,7 +38,7 @@ class EventTypesTable extends StatelessWidget {
         final List<EventType>? types = state.types;
         return Column(
           children: [
-            if (types == null)
+            if (types == null || types.isEmpty)
               const Text('Aucun type d\'évènement trouvé')
             else
               DataTable(
@@ -74,18 +82,20 @@ class EventTypesTable extends StatelessWidget {
                           DataCell(
                             Row(
                               children: <Widget>[
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {
-                                    // Navigate to Edit Event Type screen
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    // Delete Event Type
-                                  },
-                                ),
+                                if (onEdit != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      onEdit?.call(type);
+                                    },
+                                  ),
+                                if (onDelete != null)
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () {
+                                      onDelete?.call(type);
+                                    },
+                                  ),
                               ],
                             ),
                           ),

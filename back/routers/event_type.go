@@ -19,4 +19,7 @@ func (r *EventTypeRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("", eventTypeController.CreateEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
 	})
+	group.PUT("/:id", eventTypeController.UpdateEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
+	})
 }

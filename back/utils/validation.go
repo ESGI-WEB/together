@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/go-playground/validator/v10"
-	"path/filepath"
+	"mime/multipart"
 	"reflect"
 	"strings"
 )
@@ -53,11 +53,65 @@ func getField(jsonBody interface{}, fieldName string) interface{} {
 	return field.Interface()
 }
 
-func IsImage(filename string) bool {
-	ext := strings.ToLower(filepath.Ext(filename))
-	switch ext {
-	case ".jpg", ".jpeg", ".png", ".gif", ".bmp":
-		return true
+// image formats and magic numbers
+var magicTable = map[string]string{
+	"\xff\xd8\xff":      "image/jpeg",
+	"\x89PNG\r\n\x1a\n": "image/png",
+	"GIF87a":            "image/gif",
+	"GIF89a":            "image/gif",
+}
+
+func MimeFromIncipit(incipit []byte) string {
+	incipitStr := string(incipit)
+	for magic, mime := range magicTable {
+		if strings.HasPrefix(incipitStr, magic) {
+			return mime
+		}
 	}
-	return false
+
+	return ""
+}
+
+func IsImage(file multipart.FileHeader) bool {
+	incipit := make([]byte, 512)
+	fileSrc, err := file.Open()
+	if err != nil {
+		return false
+	}
+	defer fileSrc.Close()
+
+	_, err = fileSrc.Read(incipit)
+	if err != nil {
+		return false
+	}
+
+	return MimeFromIncipit(incipit) != ""
+}
+
+func GetImageExt(file multipart.FileHeader) string {
+	incipit := make([]byte, 512)
+	fileSrc, err := file.Open()
+	if err != nil {
+		return ""
+	}
+	defer fileSrc.Close()
+
+	_, err = fileSrc.Read(incipit)
+	if err != nil {
+		return ""
+	}
+
+	mime := MimeFromIncipit(incipit)
+	if mime != "" {
+		switch mime {
+		case "image/jpeg":
+			return ".jpg"
+		case "image/png":
+			return ".png"
+		case "image/gif":
+			return ".gif"
+		}
+	}
+
+	return ""
 }

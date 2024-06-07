@@ -6,7 +6,7 @@ import (
 	"io"
 	"mime/multipart"
 	"os"
-	"path/filepath"
+	"together/utils"
 )
 
 type StorageService struct{}
@@ -23,7 +23,7 @@ func (s *StorageService) SaveFile(file multipart.FileHeader, name string) (strin
 	defer src.Close()
 
 	// Create a destination file
-	extension := filepath.Ext(file.Filename)
+	extension := utils.GetImageExt(file)
 	filePath := fmt.Sprintf("storage/images/%s%s", slug.Make(name), extension)
 	dst, err := os.Create(filePath)
 	if err != nil {
@@ -37,4 +37,12 @@ func (s *StorageService) SaveFile(file multipart.FileHeader, name string) (strin
 	}
 
 	return filePath, nil
+}
+
+func (s *StorageService) DeleteFile(filePath string) error {
+	err := os.Remove(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
