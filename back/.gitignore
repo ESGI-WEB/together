@@ -22,6 +22,5 @@ go.work
 .idea/
 
 ### Storage ###
-storage/images/*
-!storage/images/.gitkeep
-!storage/images/default.png
+storage/images/types/*
+!storage/images/types/default.png

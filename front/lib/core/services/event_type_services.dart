@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/api_services.dart';

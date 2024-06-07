@@ -15,7 +15,7 @@ func NewStorageService() *StorageService {
 	return &StorageService{}
 }
 
-func (s *StorageService) SaveFile(file multipart.FileHeader, name string) (string, error) {
+func (s *StorageService) SaveFile(file multipart.FileHeader, folder string, name string) (string, error) {
 	src, err := file.Open()
 	if err != nil {
 		return "", err
@@ -24,7 +24,7 @@ func (s *StorageService) SaveFile(file multipart.FileHeader, name string) (strin
 
 	// Create a destination file
 	extension := utils.GetImageExt(file)
-	filePath := fmt.Sprintf("storage/images/%s%s", slug.Make(name), extension)
+	filePath := fmt.Sprintf("storage/images/%s/%s%s", folder, slug.Make(name), extension)
 	dst, err := os.Create(filePath)
 	if err != nil {
 		return "", err

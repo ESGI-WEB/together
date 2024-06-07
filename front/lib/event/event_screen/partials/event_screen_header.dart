@@ -19,7 +19,7 @@ class EventScreenHeader extends StatelessWidget {
     final Address? address = event.address;
     final User? organizer = event.organizer;
 
-    final NetworkImage image = event.type?.image ?? NetworkImage("${ApiServices.baseUrl}/storage/images/default.png");
+    final NetworkImage image = event.type?.image ?? NetworkImage("${ApiServices.baseUrl}/storage/images/types/default.png");
 
     return Container(
       decoration: BoxDecoration(

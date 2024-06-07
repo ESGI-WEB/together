@@ -31,7 +31,7 @@ func (s *EventTypeService) CreateEventType(eventType models.EventType, file mult
 		return nil, err
 	}
 
-	filePath, err := NewStorageService().SaveFile(file, eventType.Name)
+	filePath, err := NewStorageService().SaveFile(file, models.EventTypeFolder, eventType.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 	oldPath := eventType.ImagePath
 
 	if file != nil {
-		filePath, err := NewStorageService().SaveFile(*file, eventType.Name)
+		filePath, err := NewStorageService().SaveFile(*file, models.EventTypeFolder, eventType.Name)
 		if err != nil {
 			return nil, err
 		}
