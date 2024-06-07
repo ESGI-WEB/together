@@ -22,7 +22,7 @@ class AdminScreen extends StatelessWidget {
           ElevatedButton.icon(
             icon: const Icon(Icons.lock_open),
             label: const Text(
-              'View Features',
+              'Voir les fonctionnalités',
             ),
             onPressed: () {
               FeaturesScreen.navigateTo(context);
@@ -31,7 +31,7 @@ class AdminScreen extends StatelessWidget {
           ElevatedButton.icon(
             icon: const Icon(Icons.person),
             label: const Text(
-              'View Users',
+              'Voir les utilisateurs',
             ),
             onPressed: () {
               // Navigate to Users screen
@@ -40,7 +40,7 @@ class AdminScreen extends StatelessWidget {
           ElevatedButton.icon(
             icon: const Icon(Icons.event),
             label: const Text(
-              'View Events Types',
+              "Voir les types d'évènements",
             ),
             onPressed: () {
               EventTypesScreen.navigateTo(context);

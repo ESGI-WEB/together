@@ -112,8 +112,8 @@ class _EventTypesScreenState extends State<EventTypesForm> {
                 children: <Widget>[
                   Text(
                     _eventTypeCreating.id == null
-                        ? 'Ajouter un type d\'évènement'
-                        : 'Modifier un type d\'évènement',
+                        ? "Ajouter un type d'évènement"
+                        : "Modifier un type d'évènement",
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   TextFormField(
