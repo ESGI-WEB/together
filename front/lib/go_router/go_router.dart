@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
+import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
@@ -93,6 +94,15 @@ final goRouter = GoRouter(
                         );
                       },
                     ),
+                    GoRoute(
+                      name: ChatScreen.routeName,
+                      path: 'messaging',
+                      builder: (context, state) {
+                        return ChatScreen(
+                          groupId: int.parse(state.pathParameters['id']!),
+                        );
+                      },
+                    )
                   ],
                 ),
               ],
