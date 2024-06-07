@@ -5,6 +5,8 @@ import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/error_occurred.dart';
+import 'package:front/local.dart';
+import 'package:intl/intl.dart';
 
 class UsersTable extends StatefulWidget {
   final Function(User)? onEdit;
@@ -83,7 +85,7 @@ class _UsersTableState extends State<UsersTable> {
                               Text(user.id.toString()),
                             ),
                             DataCell(
-                              Text(user.createdAt.toString()),
+                              Text(DateFormat.yMMMMEEEEd(LocaleLanguage.of(context)?.locale).format(user.createdAt)),
                             ),
                             DataCell(
                               Row(
@@ -174,7 +176,7 @@ class _UsersTableState extends State<UsersTable> {
                       .toList(),
                 ),
               if (pages != null && page != null && page < pages)
-                TextButton(
+                ElevatedButton(
                   onPressed: state.status == UsersStatus.tableLoading ? null : () {
                     context.read<UsersBloc>().add(
                           UsersDataTableLoaded(
