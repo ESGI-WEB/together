@@ -13,10 +13,6 @@ func (r *HelloRouter) SetupRoutes(e *echo.Echo) {
 	messageController := controllers.NewMessageController()
 
 	e.GET("/", helloController.Hello)
-	e.GET("/ws", messageController.Hello, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	e.GET("/admin/ping", helloController.HelloAdmin, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
+	e.GET("/ws", messageController.Hello, middlewares.AuthenticationMiddleware())
+	e.GET("/admin/ping", helloController.HelloAdmin, middlewares.AuthenticationMiddleware())
 }

@@ -12,19 +12,14 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 	groupController := controllers.NewGroupController()
 
 	group := e.Group("/groups")
-	group.GET("", groupController.GetAllMyGroups, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.GET("/:id", groupController.GetGroupById, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.POST("", groupController.CreateGroup, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.POST("/join", groupController.JoinGroup, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.GET("/:id/next-event", groupController.GetNextEvent, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
+
+	/*group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware()(next)
+	})*/
+
+	group.GET("", groupController.GetAllMyGroups)
+	group.GET("/:id", groupController.GetGroupById, middlewares.GroupMembershipMiddleware)
+	group.POST("", groupController.CreateGroup)
+	group.POST("/join", groupController.JoinGroup)
+	group.GET("/:id/next-event", groupController.GetNextEvent, middlewares.GroupMembershipMiddleware)
 }

@@ -12,7 +12,10 @@ func (r *EventTypeRouter) SetupRoutes(e *echo.Echo) {
 	eventTypeController := controllers.NewEventTypeController()
 
 	group := e.Group("/event-types")
-	group.GET("", eventTypeController.GetAllEventTypes, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
+
+	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware()(next)
 	})
+
+	group.GET("", eventTypeController.GetAllEventTypes)
 }
