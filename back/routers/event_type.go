@@ -22,4 +22,7 @@ func (r *EventTypeRouter) SetupRoutes(e *echo.Echo) {
 	group.PUT("/:id", eventTypeController.UpdateEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
 	})
+	group.DELETE("/:id", eventTypeController.DeleteEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
+	})
 }

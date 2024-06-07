@@ -47,7 +47,7 @@ class EventScreen extends StatelessWidget {
       child: BlocBuilder<EventScreenBloc, EventScreenState>(
         builder: (context, state) {
           if (state.status == EventScreenStatus.loading) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
 
           return RefreshIndicator(

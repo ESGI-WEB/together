@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/event_types/blocs/event_types_bloc.dart';
+import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/partials/error_occurred.dart';
 
-class EventTypesTable extends StatelessWidget {
+class EventTypesTable extends StatefulWidget {
   final Function(EventType)? onEdit;
-  final Function(EventType)? onDelete;
+  final Future<void> Function(EventType)? onDelete;
 
   const EventTypesTable({
     super.key,
     this.onEdit,
     this.onDelete,
   });
+
+  @override
+  State<EventTypesTable> createState() => _EventTypesTableState();
+}
+
+class _EventTypesTableState extends State<EventTypesTable> {
+  List<EventType> typesDeleting = [];
 
   @override
   Widget build(BuildContext context) {
@@ -82,18 +90,57 @@ class EventTypesTable extends StatelessWidget {
                           DataCell(
                             Row(
                               children: <Widget>[
-                                if (onEdit != null)
+                                if (widget.onEdit != null)
                                   IconButton(
                                     icon: const Icon(Icons.edit),
                                     onPressed: () {
-                                      onEdit?.call(type);
+                                      widget.onEdit?.call(type);
                                     },
                                   ),
-                                if (onDelete != null)
+                                if (widget.onDelete != null)
                                   IconButton(
-                                    icon: const Icon(Icons.delete),
+                                    icon: typesDeleting.contains(type)
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child:
+                                                CircularProgressIndicator(),
+                                          )
+                                        : const Icon(Icons.delete),
                                     onPressed: () {
-                                      onDelete?.call(type);
+                                      if (typesDeleting.contains(type)) {
+                                        return;
+                                      }
+
+                                      setState(() {
+                                        typesDeleting.add(type);
+                                      });
+
+                                      widget.onDelete
+                                          ?.call(type)
+                                          .then(
+                                            (value) => context
+                                                .read<EventTypesBloc>()
+                                                .add(
+                                                  EventTypesDataTableLoaded(),
+                                                ),
+                                          )
+                                          .catchError((error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              error is ApiException
+                                                  ? error.message
+                                                  : 'Une erreur est survenue',
+                                            ),
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme.error,
+                                          ),
+                                        );
+                                      }).whenComplete(() => setState(() {
+                                                typesDeleting.remove(type);
+                                              }));
                                     },
                                   ),
                               ],

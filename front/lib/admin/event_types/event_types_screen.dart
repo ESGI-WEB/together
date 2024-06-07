@@ -5,6 +5,7 @@ import 'package:front/admin/event_types/partials/event_types_form.dart';
 import 'package:front/admin/event_types/partials/event_types_table.dart';
 import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/api_services.dart';
+import 'package:front/core/services/event_type_services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/event_types_bloc.dart';
@@ -45,8 +46,9 @@ class _EventTypesScreenState extends State<EventTypesScreen> {
                     }
                   });
                 },
-                child: Text(
-                    _eventTypeToEditOrCreate != null ? 'Cacher le formulaire' : 'Ajouter un type'),
+                child: Text(_eventTypeToEditOrCreate != null
+                    ? 'Cacher le formulaire'
+                    : 'Ajouter un type'),
               ),
               const SizedBox(height: 40),
               Wrap(
@@ -56,7 +58,8 @@ class _EventTypesScreenState extends State<EventTypesScreen> {
                 children: [
                   EventTypesTable(
                     onEdit: (eventType) async {
-                      final response = await ApiServices.get(eventType.image.url);
+                      final response =
+                          await ApiServices.get(eventType.image.url);
                       final imageBytes = response.bodyBytes;
                       final image = PlatformFile(
                         name: eventType.image.url,
@@ -75,6 +78,7 @@ class _EventTypesScreenState extends State<EventTypesScreen> {
                         _eventTypeToEditOrCreate = eventTypeWithImage;
                       });
                     },
+                    onDelete: (eventType) => EventTypeServices.deleteEventType(eventType.id),
                   ),
                   if (_eventTypeToEditOrCreate != null)
                     EventTypesForm(

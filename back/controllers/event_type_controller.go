@@ -112,3 +112,24 @@ func (c *EventTypeController) UpdateEventType(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, updatedType)
 }
+
+func (c *EventTypeController) DeleteEventType(ctx echo.Context) error {
+	var eventType models.EventType
+	err := database.CurrentDatabase.
+		Preload("Events").
+		First(&eventType, ctx.Param("id")).Error
+	if err != nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if len(eventType.Events) > 0 {
+		return ctx.String(http.StatusForbidden, "Impossible de supprimer un type d'événement avec des événements associés")
+	}
+
+	err = c.EventTypeService.DeleteEventType(eventType)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.NoContent(http.StatusNoContent)
+}

@@ -9,13 +9,11 @@ class EventTypeServices {
   static Future<List<EventType>> getEventTypes() async {
     try {
       final response = await ApiServices.get('/event-types');
-      List<dynamic> data = json.decode(response.body);
+      List<dynamic> data = ApiServices.decodeResponse(response);
       return EventType.listFromJson(data);
     } catch (e) {
       if (e is UnauthorizedException) {
         throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
       } else {
         rethrow;
       }
@@ -24,11 +22,15 @@ class EventTypeServices {
 
   static Future<EventType> addEventType(EventTypeCreateOrEdit type) async {
     final response = await ApiServices.multipartRequest('POST', '/event-types', type.toJson());
-    return EventType.fromJson(json.decode(response.body));
+    return EventType.fromJson(ApiServices.decodeResponse(response));
   }
 
   static Future<EventType> editEventType(int id, EventTypeCreateOrEdit type) async {
     final response = await ApiServices.multipartRequest('PUT', '/event-types/$id', type.toJson());
-    return EventType.fromJson(json.decode(response.body));
+    return EventType.fromJson(ApiServices.decodeResponse(response));
+  }
+
+  static Future<void> deleteEventType(int id) async {
+    await ApiServices.delete('/event-types/$id');
   }
 }

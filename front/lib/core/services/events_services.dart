@@ -13,7 +13,7 @@ class EventsServices {
     try {
       final response = await ApiServices.post('/events', event.toJson());
 
-      return Event.fromJson(json.decode(response.body));
+      return Event.fromJson(ApiServices.decodeResponse(response));
     } catch (e) {
       if (e is UnauthorizedException) {
         throw UnauthorizedException(message: "Vous n'êtes pas connecté");
@@ -28,7 +28,7 @@ class EventsServices {
   static Future<Event> getEventById(int id) async {
     try {
       final response = await ApiServices.get('/events/$id');
-      return Event.fromJson(json.decode(response.body));
+      return Event.fromJson(ApiServices.decodeResponse(response));
     } catch (e) {
       if (e is UnauthorizedException) {
         throw UnauthorizedException(message: "Vous n'êtes pas connecté");
@@ -51,7 +51,7 @@ class EventsServices {
       }
 
       final response = await ApiServices.get(url);
-      return Paginated.fromJson(json.decode(response.body), Attend.fromJson);
+      return Paginated.fromJson(ApiServices.decodeResponse(response), Attend.fromJson);
     } catch (e) {
       if (e is UnauthorizedException) {
         throw UnauthorizedException(message: "Vous n'êtes pas connecté");

@@ -135,7 +135,13 @@ class ApiServices {
     } else if (response.statusCode == 409) {
       throw ConflictException(response: response);
     } else if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw ApiException(response: response, statusCode: response.statusCode);
+      throw ApiException(response: response, statusCode: response.statusCode, message: response.body);
     }
+  }
+
+  static dynamic decodeResponse(Response response) {
+    final decodedResponse = utf8.decode(response.bodyBytes);
+    final jsonResponse = json.decode(decodedResponse);
+    return jsonResponse;
   }
 }

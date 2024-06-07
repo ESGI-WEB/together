@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"mime/multipart"
 	"together/database"
@@ -34,7 +33,6 @@ func (s *EventTypeService) CreateEventType(eventType models.EventType, file mult
 
 	filePath, err := NewStorageService().SaveFile(file, eventType.Name)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	eventType.ImagePath = filePath
@@ -76,4 +74,21 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 	}
 
 	return &eventType, nil
+}
+
+func (s *EventTypeService) DeleteEventType(eventType models.EventType) error {
+	err := database.CurrentDatabase.First(&eventType, eventType.ID).Error
+	if err != nil {
+		return err
+	}
+
+	result := database.CurrentDatabase.Delete(&eventType)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// ignore error if unable to delete
+	_ = NewStorageService().DeleteFile(eventType.ImagePath)
+
+	return nil
 }

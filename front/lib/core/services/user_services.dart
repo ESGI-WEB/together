@@ -37,7 +37,7 @@ class UserServices {
         'password': password,
       });
 
-      return User.fromJson(json.decode(response.body));
+      return User.fromJson(ApiServices.decodeResponse(response));
     } on ApiException catch (e) {
       if (e.response?.statusCode == 409) {
         throw ConflictException(message: 'Cet email est déjà utilisé');
