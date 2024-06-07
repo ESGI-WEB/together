@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
@@ -10,7 +8,7 @@ class GroupServices {
   static Future<List<Group>> fetchGroups() async {
     final response = await ApiServices.get('/groups');
     if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
+      List<dynamic> jsonData = ApiServices.decodeResponse(response);
       return jsonData.map((json) => Group.fromJson(json)).toList();
     } else {
       throw ApiException(
@@ -24,7 +22,7 @@ class GroupServices {
   static Future<Group> createGroup(Map<String, dynamic> newGroup) async {
     final response = await ApiServices.post('/groups', newGroup);
     if (response.statusCode == 201) {
-      return Group.fromJson(json.decode(response.body));
+      return Group.fromJson(ApiServices.decodeResponse(response));
     } else {
       throw ApiException(
         message: 'Failed to create group',
@@ -48,7 +46,7 @@ class GroupServices {
   static Future<Group> getGroupById(int groupId) async {
     final response = await ApiServices.get('/groups/$groupId');
     if (response.statusCode == 200) {
-      return Group.fromJson(json.decode(response.body));
+      return Group.fromJson(ApiServices.decodeResponse(response));
     } else {
       throw ApiException(
         message: 'Failed to load group',
@@ -61,7 +59,7 @@ class GroupServices {
   static Future<Event> getGroupNextEvent(int groupId) async {
     final response = await ApiServices.get('/groups/$groupId/next-event');
     if (response.statusCode == 200 && response.body.isNotEmpty) {
-      return Event.fromJson(json.decode(response.body));
+      return Event.fromJson(ApiServices.decodeResponse(response));
     } else {
       throw ApiException(
         message: 'Failed to load next event',
