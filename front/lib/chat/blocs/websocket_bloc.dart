@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/message.dart';
 import 'package:front/core/services/chat_service.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -15,17 +16,20 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
-      List<String> messages = List.from((state as MessagesState).messages);
-      messages.add(event.message);
+      List<ServerBoundSendChatMessage> messages =
+          List.from((state as MessagesState).messages);
+      messages
+          .add(ServerBoundSendChatMessage.fromJson(jsonDecode(event.message)));
       emit(MessagesState(messages: messages));
     });
 
     on<SendMessageEvent>((event, emit) async {
       if (_webSocketChannel != null) {
-        Map<String, String> messageObject = {
-          'content': event.message,
-          'type': 'send_chat_message'
-        };
+        print(event.message);
+        final messageObject = ClientBoundSendChatMessage(
+          content: event.message,
+        ).toJson();
+        print(messageObject);
         String jsonMessage = json.encode(messageObject);
         _webSocketChannel!.sink.add(jsonMessage);
       }

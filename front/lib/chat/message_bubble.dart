@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/message.dart';
 
 class MessageBubble extends StatelessWidget {
-  final String message;
-  final String username;
+  final ServerBoundSendChatMessage message;
 
   const MessageBubble({
     super.key,
     required this.message,
-    required this.username,
   });
 
   @override
@@ -16,14 +15,14 @@ class MessageBubble extends StatelessWidget {
       children: [
         CircleAvatar(
           child: Text(
-            username[0].toUpperCase(),
+            message.author[0].toUpperCase(),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            message,
+            message.content,
             style: const TextStyle(fontSize: 16),
           ),
         ),

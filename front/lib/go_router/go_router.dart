@@ -98,7 +98,7 @@ final goRouter = GoRouter(
                       path: 'messaging',
                       builder: (context, state) {
                         return ChatScreen(
-                          groupId: int.parse(state.pathParameters['id']!),
+                          groupId: int.parse(state.pathParameters['groupId']!),
                         );
                       },
                     )

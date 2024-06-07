@@ -24,7 +24,6 @@ var (
 func (controller *MessageController) Hello(ctx echo.Context) error {
 	// Get current authenticated user from context
 	loggedUser := ctx.Get("user").(models.User)
-	ctx.Logger().Debug(loggedUser.Name)
 
 	ws, err := upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
 	if err != nil {
