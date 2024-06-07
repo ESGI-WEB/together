@@ -140,6 +140,10 @@ class ApiServices {
   }
 
   static dynamic decodeResponse(Response response) {
+    if (response.body.isEmpty) {
+      return null;
+    }
+
     final decodedResponse = utf8.decode(response.bodyBytes);
     final jsonResponse = json.decode(decodedResponse);
     return jsonResponse;
