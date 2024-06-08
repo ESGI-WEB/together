@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/core/services/group_services.dart';
-import 'package:flutter/foundation.dart';
 
 part 'groups_event.dart';
 part 'groups_state.dart';

@@ -6,7 +6,6 @@ import 'package:front/core/models/user.dart';
 import 'package:front/core/services/events_services.dart';
 
 part 'event_screen_event.dart';
-
 part 'event_screen_state.dart';
 
 class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {

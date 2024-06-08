@@ -1,5 +1,4 @@
 import 'package:front/core/exceptions/api_exception.dart';
-import 'package:front/core/exceptions/unauthorized_exception.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
 
