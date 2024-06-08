@@ -11,14 +11,12 @@ class GroupServices {
       final response = await ApiServices.get('/groups?page=$page&limit=$limit');
       List<dynamic> jsonData = ApiServices.decodeResponse(response)['rows'];
       return jsonData.map((json) => Group.fromJson(json)).toList();
-    } catch (e) {
-      if (e is UnauthorizedException) {
-        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
-      } else {
-        rethrow;
-      }
+    } on ApiException catch (e) {
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
+      );
     }
   }
 
@@ -26,14 +24,12 @@ class GroupServices {
     try {
       final response = await ApiServices.post('/groups', newGroup);
       return Group.fromJson(ApiServices.decodeResponse(response));
-    } catch (e) {
-      if (e is UnauthorizedException) {
-        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
-      } else {
-        rethrow;
-      }
+    } on ApiException catch (e) {
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
+      );
     }
   }
 
@@ -41,14 +37,12 @@ class GroupServices {
     try {
       final response = await ApiServices.post('/groups/join', code);
       return Group.fromJson(ApiServices.decodeResponse(response));
-    } catch (e) {
-      if (e is UnauthorizedException) {
-        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
-      } else {
-        rethrow;
-      }
+    } on ApiException catch (e) {
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
+      );
     }
   }
 
@@ -56,32 +50,25 @@ class GroupServices {
     try {
       final response = await ApiServices.get('/groups/$groupId');
       return Group.fromJson(ApiServices.decodeResponse(response));
-    } catch (e) {
-      if (e is UnauthorizedException) {
-        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
-      } else {
-        rethrow;
-      }
+    } on ApiException catch (e) {
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
+      );
     }
   }
 
   static Future<Event?> getGroupNextEvent(int groupId) async {
     try {
       final response = await ApiServices.get('/groups/$groupId/next-event');
-      if (response.body.isNotEmpty){
-        return Event.fromJson(ApiServices.decodeResponse(response));
-      }
-      return null;
-    } catch (e) {
-      if (e is UnauthorizedException) {
-        throw UnauthorizedException(message: "Vous n'êtes pas connecté");
-      } else if (e is ApiException) {
-        rethrow;
-      } else {
-        rethrow;
-      }
+      return Event.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
+      throw ApiException(
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
+      );
     }
   }
 }
