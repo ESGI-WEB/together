@@ -1,15 +1,16 @@
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
+import 'package:front/core/models/paginated.dart';
 
 import 'api_services.dart';
 
 class GroupServices {
-  static Future<List<Group>> fetchGroups(int page, int limit) async {
+  static Future<Paginated<Group>> fetchGroups(int page, int limit) async {
     try {
       final response = await ApiServices.get('/groups?page=$page&limit=$limit');
-      List<dynamic> jsonData = ApiServices.decodeResponse(response)['rows'];
-      return jsonData.map((json) => Group.fromJson(json)).toList();
+      final jsonData = ApiServices.decodeResponse(response);
+      return Paginated.fromJson(jsonData, (json) => Group.fromJson(json));
     } on ApiException catch (e) {
       throw ApiException(
         message: e.message,

@@ -14,6 +14,8 @@ class GroupsState {
   final String? errorMessage;
   final int page;
   final int limit;
+  final int? total;
+  final int? pages;
   final bool hasReachedMax;
 
   GroupsState({
@@ -22,6 +24,8 @@ class GroupsState {
     this.errorMessage,
     this.page = 1,
     this.limit = 5,
+    this.total,
+    this.pages,
     this.hasReachedMax = false,
   });
 
@@ -31,6 +35,8 @@ class GroupsState {
     String? errorMessage,
     int? page,
     int? limit,
+    int? total,
+    int? pages,
     bool? hasReachedMax,
   }) {
     return GroupsState(
@@ -39,6 +45,8 @@ class GroupsState {
       errorMessage: errorMessage ?? this.errorMessage,
       page: page ?? this.page,
       limit: limit ?? this.limit,
+      total: total ?? this.total,
+      pages: pages ?? this.pages,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }

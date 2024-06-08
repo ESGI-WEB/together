@@ -29,6 +29,18 @@ class GroupsListItem extends StatelessWidget {
             width: 50,
             height: 50,
             fit: BoxFit.cover,
+            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+              return Container(
+                width: 50,
+                height: 50,
+                color: Colors.grey[200],
+                child: Icon(
+                  Icons.image,
+                  color: Colors.grey[400],
+                  size: 30,
+                ),
+              );
+            },
           ),
         ),
         title: Text(

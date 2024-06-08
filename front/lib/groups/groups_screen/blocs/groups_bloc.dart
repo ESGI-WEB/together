@@ -17,11 +17,13 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       ));
 
       try {
-        final groups = await GroupServices.fetchGroups(state.page, state.limit);
+        final paginatedGroups = await GroupServices.fetchGroups(state.page, state.limit);
         emit(state.copyWith(
           status: GroupsStatus.success,
-          groups: groups,
-          hasReachedMax: groups.length < state.limit,
+          groups: paginatedGroups.rows,
+          total: paginatedGroups.total,
+          pages: paginatedGroups.pages,
+          hasReachedMax: paginatedGroups.page >= paginatedGroups.pages,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
@@ -43,13 +45,13 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
       try {
         emit(state.copyWith(status: GroupsStatus.loadingMore));
         final newPage = state.page + 1;
-        final groups = await GroupServices.fetchGroups(newPage, state.limit);
-        final updatedGroups = List<Group>.from(state.groups ?? [])..addAll(groups);
+        final paginatedGroups = await GroupServices.fetchGroups(newPage, state.limit);
+        final updatedGroups = List<Group>.from(state.groups ?? [])..addAll(paginatedGroups.rows);
         emit(state.copyWith(
           status: GroupsStatus.success,
           groups: updatedGroups,
           page: newPage,
-          hasReachedMax: groups.length < state.limit,
+          hasReachedMax: newPage >= paginatedGroups.pages,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
