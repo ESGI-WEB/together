@@ -1,3 +1,5 @@
+import 'package:front/core/models/user.dart';
+
 class WebSocketMessage {
   final String type;
 
@@ -8,7 +10,7 @@ class WebSocketMessage {
 
 class ServerBoundSendChatMessage extends WebSocketMessage {
   final String content;
-  final String author;
+  final User author;
 
   ServerBoundSendChatMessage({
     required this.content,
@@ -18,7 +20,7 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
   factory ServerBoundSendChatMessage.fromJson(Map<String, dynamic> json) {
     return ServerBoundSendChatMessage(
       content: json['content'],
-      author: json['author_name'],
+      author: User.fromJson(json['author']),
     );
   }
 }

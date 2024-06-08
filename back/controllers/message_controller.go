@@ -32,16 +32,6 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 
 	defer controller.messageService.AcceptNewConnection(ws)(ws)
 
-	response := services.ServerBoundSendChatMessage{
-		Content:    "Hello, Client!",
-		AuthorName: "Server",
-	}
-	err = controller.messageService.SendMessage(response, ws)
-	if err != nil {
-		ctx.Logger().Error(err)
-		return nil
-	}
-
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {

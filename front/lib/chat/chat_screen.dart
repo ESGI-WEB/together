@@ -83,7 +83,7 @@ class _ChatScreenState extends State<ChatScreen> {
             height: 200,
           ));
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       },
     );

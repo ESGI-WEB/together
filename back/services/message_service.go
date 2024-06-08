@@ -24,9 +24,9 @@ func (s *MessageService) AcceptNewConnection(ws *websocket.Conn) func(ws *websoc
 		_ = ws.Close()
 
 		// Remove the closed web socket from the connection list
-		for i, v := range s.connections {
-			if v == ws {
-				s.connections = append(s.connections[:i], s.connections[i+1:]...)
+		for index, connection := range s.connections {
+			if connection == ws {
+				s.connections = append(s.connections[:index], s.connections[index+1:]...)
 				break
 			}
 		}
@@ -86,8 +86,8 @@ func (s *MessageService) handleSendChatMessage(msg []byte, user models.User) err
 		TypeMessage: TypeMessage{
 			Type: ServerBoundSendChatMessageType,
 		},
-		Content:    receivedMessage.Content,
-		AuthorName: user.Name,
+		Content: receivedMessage.Content,
+		Author:  &user,
 	}
 	if err := s.Broadcast(response); err != nil {
 		return err
@@ -112,6 +112,6 @@ type ClientBoundSendChatMessage struct {
 
 type ServerBoundSendChatMessage struct {
 	TypeMessage
-	Content    string `json:"content" validate:"required"`
-	AuthorName string `json:"author_name" validate:"required"`
+	Content string       `json:"content" validate:"required"`
+	Author  *models.User `json:"author" validate:"required"`
 }

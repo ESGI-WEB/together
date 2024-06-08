@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/models/message.dart';
+import 'package:front/core/partials/avatar.dart';
 
 class MessageBubble extends StatelessWidget {
   final ServerBoundSendChatMessage message;
@@ -13,12 +14,7 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          child: Text(
-            message.author[0].toUpperCase(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+        Avatar(user: message.author),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
