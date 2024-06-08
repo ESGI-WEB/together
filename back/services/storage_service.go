@@ -2,11 +2,10 @@ package services
 
 import (
 	"fmt"
-	"github.com/gosimple/slug"
-	"io"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"mime/multipart"
-	"os"
-	"together/utils"
+	"together/storage"
 )
 
 type StorageService struct{}
@@ -15,34 +14,36 @@ func NewStorageService() *StorageService {
 	return &StorageService{}
 }
 
-func (s *StorageService) SaveFile(file multipart.FileHeader, folder string, name string) (string, error) {
+func (s *StorageService) uploadFile(file multipart.FileHeader, filename string) (*s3.PutObjectOutput, error) {
 	src, err := file.Open()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer src.Close()
 
-	// Create a destination file
-	extension := utils.GetImageExt(file)
-	filePath := fmt.Sprintf("storage/images/%s/%s%s", folder, slug.Make(name), extension)
-	dst, err := os.Create(filePath)
-	if err != nil {
-		return "", err
-	}
-	defer dst.Close()
-
-	// Copy the file content
-	if _, err = io.Copy(dst, src); err != nil {
-		return "", err
+	input := &s3.PutObjectInput{
+		Bucket:        storage.AwsBucketName,
+		Key:           aws.String(filename),
+		Body:          src,
+		ContentLength: &file.Size,
 	}
 
-	return filePath, nil
+	return storage.S3.PutObject(input)
 }
 
-func (s *StorageService) DeleteFile(filePath string) error {
-	err := os.Remove(filePath)
-	if err != nil {
-		return err
+func (s *StorageService) getFileUrl(filename string) string {
+	return fmt.Sprintf("https://%s.s3.fr-par.scw.cloud/%s", *storage.AwsBucketName, filename)
+}
+
+func (s *StorageService) getFileNameFromFullPath(path string) string {
+	return path[len(s.getFileUrl("")):]
+}
+
+func (s *StorageService) deleteFile(filename string) (*s3.DeleteObjectOutput, error) {
+	input := &s3.DeleteObjectInput{
+		Bucket: storage.AwsBucketName,
+		Key:    aws.String(filename),
 	}
-	return nil
+
+	return storage.S3.DeleteObject(input)
 }

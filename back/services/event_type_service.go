@@ -2,9 +2,11 @@ package services
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/gosimple/slug"
 	"mime/multipart"
 	"together/database"
 	"together/models"
+	"together/utils"
 )
 
 type EventTypeService struct{}
@@ -31,11 +33,13 @@ func (s *EventTypeService) CreateEventType(eventType models.EventType, file mult
 		return nil, err
 	}
 
-	filePath, err := NewStorageService().SaveFile(file, models.EventTypeFolder, eventType.Name)
+	storageService := NewStorageService()
+	imagePath := s.GetEventTypeFilePath(file, eventType)
+	_, err = storageService.uploadFile(file, imagePath)
 	if err != nil {
 		return nil, err
 	}
-	eventType.ImagePath = filePath
+	eventType.ImagePath = storageService.getFileUrl(imagePath)
 
 	result := database.CurrentDatabase.Create(&eventType)
 	if result.Error != nil {
@@ -53,13 +57,15 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 	}
 
 	oldPath := eventType.ImagePath
+	storageService := NewStorageService()
 
 	if file != nil {
-		filePath, err := NewStorageService().SaveFile(*file, models.EventTypeFolder, eventType.Name)
+		filePath := s.GetEventTypeFilePath(*file, eventType)
+		_, err = storageService.uploadFile(*file, filePath)
 		if err != nil {
 			return nil, err
 		}
-		eventType.ImagePath = filePath
+		eventType.ImagePath = storageService.getFileUrl(filePath)
 	}
 
 	result := database.CurrentDatabase.Save(&eventType)
@@ -70,7 +76,7 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 	// if path has changed, delete the old image
 	// ignore error if unable to delete
 	if file != nil && eventType.ImagePath != oldPath {
-		_ = NewStorageService().DeleteFile(oldPath)
+		_, _ = storageService.deleteFile(storageService.getFileNameFromFullPath(oldPath))
 	}
 
 	return &eventType, nil
@@ -88,7 +94,11 @@ func (s *EventTypeService) DeleteEventType(eventType models.EventType) error {
 	}
 
 	// ignore error if unable to delete
-	_ = NewStorageService().DeleteFile(eventType.ImagePath)
+	_, _ = NewStorageService().deleteFile(NewStorageService().getFileNameFromFullPath(eventType.ImagePath))
 
 	return nil
+}
+
+func (s *EventTypeService) GetEventTypeFilePath(file multipart.FileHeader, eventType models.EventType) string {
+	return `event_types/` + slug.Make(eventType.Name) + utils.GetImageExt(file)
 }

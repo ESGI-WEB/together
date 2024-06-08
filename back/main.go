@@ -61,7 +61,7 @@ func main() {
 
 	e.Static("/app", utils.GetEnv("FLUTTER_BUILD_PATH", "flutter_build")+"/web")
 
-	e.Static("/storage", "storage")
+	e.Static("/public", "public")
 
 	addr := "0.0.0.0:" + utils.GetEnv("PORT", "8080")
 	e.Logger.Fatal(e.Start(addr))
