@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
+import 'package:front/event/event_screen/partials/event_joined_members.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
-import 'package:front/event/event_screen/partials/event_screen_members_and_location.dart';
+import 'package:front/event/event_screen/partials/event_screen_location.dart';
 import 'package:front/event/event_screen/partials/event_screen_poll.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,39 +45,85 @@ class EventScreen extends StatelessWidget {
       child: BlocBuilder<EventScreenBloc, EventScreenState>(
         builder: (context, state) {
           if (state.status == EventScreenStatus.loading) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
 
-          final Event? event = state.event;
-          if (state.status == EventScreenStatus.error || event == null) {
-            return const ErrorOccurred(
-              image: Image(
-                width: 150,
-                image: AssetImage('assets/images/event.gif'),
-              ),
-              alertMessage: "Oups ! Une erreur est survenue",
-              bodyMessage: "Nous n'avons pas pu récuperer votre évènement",
-            );
-          }
+          return RefreshIndicator(
+            onRefresh: () async {
+              context
+                  .read<EventScreenBloc>()
+                  .add(EventScreenLoaded(eventId: eventId));
+            },
+            child: Builder(
+              builder: (context) {
+                final Event? event = state.event;
+                if (state.status == EventScreenStatus.error || event == null) {
+                  return const ErrorOccurred(
+                    image: Image(
+                      width: 150,
+                      image: AssetImage('assets/images/event.gif'),
+                    ),
+                    alertMessage: "Oups ! Une erreur est survenue",
+                    bodyMessage:
+                        "Nous n'avons pas pu récuperer votre évènement",
+                  );
+                }
 
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                EventScreenHeader(event: event),
-                Container(
-                  padding: const EdgeInsets.all(16),
+                final Address? address = event.address;
+
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      EventScreenMembersAndLocation(event: event),
-                      const SizedBox(height: 16),
-                      const EventScreenPoll(),
-                      const SizedBox(height: 16),
-                      EventScreenAbout(event: event),
+                      EventScreenHeader(event: event),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Participants',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        EventJoinedMembers(
+                                            firstParticipants:
+                                                state.firstParticipants ?? []),
+                                      ],
+                                    ),
+                                    if (address != null &&
+                                        address.latlng != null)
+                                      EventScreenLocation(
+                                        localisation: address.latlng!,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const EventScreenPoll(),
+                            const SizedBox(height: 16),
+                            EventScreenAbout(event: event),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
           );
         },

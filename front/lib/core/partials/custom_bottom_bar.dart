@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/groups/group_screen.dart';
+import 'package:front/groups/group_screen/group_screen.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
@@ -41,7 +41,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     });
     switch (index) {
       case 0:
-        GroupScreen.navigateTo(context, groupId: widget.groupId);
+        GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
         ChatScreen.navigateTo(context, id: widget.groupId);

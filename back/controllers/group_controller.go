@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+	coreErrors "together/errors"
 	"together/models"
 	"together/services"
 	"together/utils"
@@ -24,8 +25,14 @@ func NewGroupController() *GroupController {
 
 func (c *GroupController) CreateGroup(ctx echo.Context) error {
 	var jsonBody models.Group
+
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user, ok := ctx.Get("user").(models.User)
+	if !ok || user.ID == 0 {
+		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
 	newGroup, err := c.GroupService.CreateGroup(jsonBody)
@@ -38,17 +45,19 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
-	user, ok := ctx.Get("user").(models.User)
-	if !ok || user.ID == 0 {
-		return ctx.NoContent(http.StatusUnauthorized)
+	joinedGroup, err := c.GroupService.JoinGroup(newGroup.Code, user)
+	if err != nil {
+		switch {
+		case errors.Is(err, coreErrors.ErrUserAlreadyInGroup):
+			return ctx.String(http.StatusConflict, err.Error())
+		case errors.Is(err, coreErrors.ErrCodeDoesNotExist):
+			return ctx.String(http.StatusNotFound, err.Error())
+		default:
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
 	}
 
-	joinRequest := models.JoinGroupRequest{Code: jsonBody.Code, UserId: user.ID}
-	if err := c.GroupService.JoinGroup(joinRequest); err != nil {
-		return ctx.NoContent(http.StatusInternalServerError)
-	}
-
-	return ctx.JSON(http.StatusCreated, newGroup)
+	return ctx.JSON(http.StatusCreated, joinedGroup)
 }
 
 func (c *GroupController) GetGroupById(ctx echo.Context) error {
@@ -72,7 +81,9 @@ func (c *GroupController) GetAllMyGroups(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	groups, err := c.GroupService.GetAllMyGroups(user.ID)
+	pagination := utils.PaginationFromContext(ctx)
+
+	groups, err := c.GroupService.GetAllMyGroups(user.ID, *pagination)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
@@ -92,8 +103,16 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	jsonBody.UserId = user.ID
-	if err := c.GroupService.JoinGroup(jsonBody); err != nil {
+	group, err := c.GroupService.JoinGroup(jsonBody.Code, user)
+	if err != nil {
+
+		if errors.Is(err, coreErrors.ErrUserAlreadyInGroup) {
+			return ctx.String(http.StatusConflict, err.Error())
+		}
+		if errors.Is(err, coreErrors.ErrCodeDoesNotExist) {
+			return ctx.String(http.StatusNotFound, err.Error())
+		}
+
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
@@ -102,7 +121,7 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
-	return ctx.NoContent(http.StatusOK)
+	return ctx.JSON(http.StatusCreated, group)
 }
 
 func (c *GroupController) GetNextEvent(ctx echo.Context) error {

@@ -1,9 +1,12 @@
+import 'package:latlong2/latlong.dart';
+
 class Address {
   final int id;
   final String street;
   final String number;
   final String city;
   final String zip;
+  final LatLng? latlng;
 
   Address({
     required this.id,
@@ -11,6 +14,7 @@ class Address {
     required this.number,
     required this.city,
     required this.zip,
+    this.latlng,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) {
@@ -20,6 +24,9 @@ class Address {
       number: json['number'],
       city: json['city'],
       zip: json['zip'],
+      latlng: json['latitude'] != null && json['longitude'] != null
+          ? LatLng(json['latitude'], json['longitude'])
+          : null,
     );
   }
 

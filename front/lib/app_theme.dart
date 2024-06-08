@@ -43,6 +43,7 @@ class AppTheme {
       scaffoldBackgroundColor: scheme.background,
       canvasColor: scheme.background,
       cardColor: scheme.background,
+      disabledColor: const Color(0xfff5f5f5),
       textTheme: TextTheme(
         displayLarge: TextStyle(
           color: scheme.primary,

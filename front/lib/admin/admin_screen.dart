@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/core/partials/admin_layout.dart';
 import 'package:go_router/go_router.dart';
 
 class AdminScreen extends StatelessWidget {
@@ -14,33 +14,39 @@ class AdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdminLayout(
-      title: "Pannel d'administration",
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ElevatedButton.icon(
-              icon: const Icon(Icons.lock_open),
-              label: const Text(
-                'View Features',
-              ),
-              onPressed: () {
-                FeaturesScreen.navigateTo(context);
-              },
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ElevatedButton.icon(
+            icon: const Icon(Icons.lock_open),
+            label: const Text(
+              'Voir les fonctionnalités',
             ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.person),
-              label: const Text(
-                'View Users',
-              ),
-              onPressed: () {
-                // Navigate to Users screen
-              },
+            onPressed: () {
+              FeaturesScreen.navigateTo(context);
+            },
+          ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.person),
+            label: const Text(
+              'Voir les utilisateurs',
             ),
-          ],
-        ),
+            onPressed: () {
+              // Navigate to Users screen
+            },
+          ),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.event),
+            label: const Text(
+              "Voir les types d'évènements",
+            ),
+            onPressed: () {
+              EventTypesScreen.navigateTo(context);
+            },
+          ),
+        ],
       ),
     );
   }

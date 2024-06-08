@@ -12,13 +12,12 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 	eventController := controllers.NewEventController()
 
 	group := e.Group("/events")
-	group.POST("", eventController.CreateEvent, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
+
+	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware()(next)
 	})
-	group.GET("/:id", eventController.GetEvent, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.GET("/:id/attends", eventController.GetEventAttends, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
+
+	group.POST("", eventController.CreateEvent)
+	group.GET("/:id", eventController.GetEvent)
+	group.GET("/:id/attends", eventController.GetEventAttends)
 }

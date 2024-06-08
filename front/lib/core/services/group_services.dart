@@ -1,72 +1,73 @@
-import 'dart:convert';
-
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
+import 'package:front/core/models/paginated.dart';
 
 import 'api_services.dart';
 
 class GroupServices {
-  static Future<List<Group>> fetchGroups() async {
-    final response = await ApiServices.get('/groups');
-    if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
-      return jsonData.map((json) => Group.fromJson(json)).toList();
-    } else {
+  static Future<Paginated<Group>> fetchGroups(int page, int limit) async {
+    try {
+      final response = await ApiServices.get('/groups?page=$page&limit=$limit');
+      final jsonData = ApiServices.decodeResponse(response);
+      return Paginated.fromJson(jsonData, (json) => Group.fromJson(json));
+    } on ApiException catch (e) {
       throw ApiException(
-        message: 'Failed to load groups',
-        statusCode: response.statusCode,
-        response: response,
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
       );
     }
   }
 
   static Future<Group> createGroup(Map<String, dynamic> newGroup) async {
-    final response = await ApiServices.post('/groups', newGroup);
-    if (response.statusCode == 201) {
-      return Group.fromJson(json.decode(response.body));
-    } else {
+    try {
+      final response = await ApiServices.post('/groups', newGroup);
+      return Group.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
       throw ApiException(
-        message: 'Failed to create group',
-        statusCode: response.statusCode,
-        response: response,
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
       );
     }
   }
 
-  static Future<void> joinGroup(Map<String, dynamic> code) async {
-    final response = await ApiServices.post('/groups/join', code);
-    if (response.statusCode != 200) {
+  static Future<Group> joinGroup(Map<String, dynamic> code) async {
+    try {
+      final response = await ApiServices.post('/groups/join', code);
+      return Group.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
       throw ApiException(
-        message: 'Failed to join group',
-        statusCode: response.statusCode,
-        response: response,
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
       );
     }
   }
 
   static Future<Group> getGroupById(int groupId) async {
-    final response = await ApiServices.get('/groups/$groupId');
-    if (response.statusCode == 200) {
-      return Group.fromJson(json.decode(response.body));
-    } else {
+    try {
+      final response = await ApiServices.get('/groups/$groupId');
+      return Group.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
       throw ApiException(
-        message: 'Failed to load group',
-        statusCode: response.statusCode,
-        response: response,
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
       );
     }
   }
 
-  static Future<Event> getGroupNextEvent(int groupId) async {
-    final response = await ApiServices.get('/groups/$groupId/next-event');
-    if (response.statusCode == 200 && response.body.isNotEmpty) {
-      return Event.fromJson(json.decode(response.body));
-    } else {
+  static Future<Event?> getGroupNextEvent(int groupId) async {
+    try {
+      final response = await ApiServices.get('/groups/$groupId/next-event');
+      return Event.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
       throw ApiException(
-        message: 'Failed to load next event',
-        statusCode: response.statusCode,
-        response: response,
+        message: e.message,
+        statusCode: e.statusCode,
+        response: e.response,
       );
     }
   }
