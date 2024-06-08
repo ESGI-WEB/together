@@ -27,12 +27,12 @@ class ApiServices {
 
     return headers;
   }
-  
+
   static String getFullUrlFromPath(String path) {
     if (path.startsWith('http')) {
       return path;
     }
-    
+
     return '$baseUrl$path';
   }
 

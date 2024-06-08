@@ -5,7 +5,6 @@ import 'package:front/core/models/event.dart';
 import 'package:front/core/services/group_services.dart';
 
 part 'next_event_of_group_event.dart';
-
 part 'next_event_of_group_state.dart';
 
 class NextEventOfGroupBloc

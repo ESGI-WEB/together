@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
-
 import 'package:go_router/go_router.dart';
 
 class GroupScreen extends StatelessWidget {

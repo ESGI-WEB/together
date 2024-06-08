@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 
 class ColorServices {
   static Color getContrastingTextColor(Color backgroundColor) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
@@ -8,10 +9,11 @@ import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
-import 'package:front/groups/create_group_screen.dart';
-import 'package:front/groups/group_screen.dart';
-import 'package:front/groups/groups_screen.dart';
-import 'package:front/groups/join_group_screen.dart';
+import 'package:front/groups/create_group_screen/create_group_screen.dart';
+import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
+import 'package:front/groups/groups_screen/groups_screen.dart';
+import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -45,17 +47,27 @@ final goRouter = GoRouter(
         GoRoute(
           name: GroupsScreen.routeName,
           path: '/groups',
-          builder: (context, state) => const GroupsScreen(),
+          builder: (context, state) {
+            return BlocProvider(
+                create: (context) => GroupsBloc(),
+                child: const GroupsScreen());
+          },
           routes: [
             GoRoute(
               name: CreateGroupScreen.routeName,
               path: 'create',
-              builder: (context, state) => const CreateGroupScreen(),
+              builder: (context, state)  {
+                final groupsBloc = state.extra as GroupsBloc;
+                return CreateGroupScreen(groupsBloc: groupsBloc);
+              },
             ),
             GoRoute(
               name: JoinGroupScreen.routeName,
               path: 'join',
-              builder: (context, state) => const JoinGroupScreen(),
+              builder: (context, state) {
+                final groupsBloc = state.extra as GroupsBloc;
+                return JoinGroupScreen(groupsBloc: groupsBloc);
+              },
             ),
             ShellRoute(
               builder:
@@ -71,7 +83,7 @@ final goRouter = GoRouter(
                   path: ':groupId',
                   builder: (context, state) {
                     return GroupScreen(
-                      groupId: int.parse(state.pathParameters['groupId']!),
+                      id: int.parse(state.pathParameters['groupId']!),
                     );
                   },
                   routes: [
