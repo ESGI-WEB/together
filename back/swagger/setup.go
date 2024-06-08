@@ -9,7 +9,10 @@ import (
 
 func RegisterSwaggerRoutes(e *echo.Echo, apis ...*swag.API) {
 	combinedAPI := swag.New(
-		option.Title("Combined API Doc"),
+		option.Title("Together API Doc"),
+		option.SecurityScheme("bearer_auth",
+			option.OAuth2Security("bearer", "", "http://example.com/oauth/token"),
+		),
 	)
 
 	for _, api := range apis {

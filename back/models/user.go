@@ -31,6 +31,15 @@ type UserCreate struct {
 	AvatarPath *string `json:"avatar_path"`
 }
 
+type UserLogin struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=72"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+}
+
 func (u UserCreate) ToUser() *User {
 	return &User{
 		Name:       u.Name,

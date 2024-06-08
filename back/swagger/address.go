@@ -13,11 +13,7 @@ func SetupAddressSwagger() *swag.API {
 	api := swag.New(
 		option.Title("Address API Doc"),
 		option.Security("address_auth", "read:addresses"),
-		option.SecurityScheme("address_auth",
-			option.OAuth2Security("accessCode", "http://example.com/oauth/authorize", "http://example.com/oauth/token"),
-			option.OAuth2Scope("write:addresses", "modify addresses in your account"),
-			option.OAuth2Scope("read:addresses", "read your addresses"),
-		),
+		option.Security("bearer_auth", "read:addresses"),
 	)
 
 	addressController := controllers.NewAddressController()

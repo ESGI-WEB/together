@@ -116,7 +116,7 @@ class LoginScreen extends StatelessWidget {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 30),
                         Builder(builder: (context) {
                           if (state is LoginLoading) {
                             return const CircularProgressIndicator();
@@ -131,6 +131,13 @@ class LoginScreen extends StatelessWidget {
                                         .add(LoginFormSubmitted());
                                   }
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 50, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
                                 child: const Text('Connexion'),
                               ),
                               TextButton(
