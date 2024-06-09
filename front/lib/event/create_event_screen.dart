@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
@@ -6,6 +8,7 @@ import 'package:front/core/services/event_type_services.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 
 class CreateEventScreen extends StatefulWidget {
   static const String routeName = 'create_event';
@@ -40,6 +43,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   int? groupId;
   List<EventType> eventTypes = [];
   EventType? selectedEventType;
+  List<Map<String, String>> addressSuggestions = [];
 
   @override
   void initState() {
@@ -88,6 +92,43 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         time =
             '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
       });
+    }
+  }
+
+  Future<void> _fetchAddressSuggestions(String query) async {
+    if (query.length < 3) {
+      setState(() {
+        addressSuggestions = [];
+      });
+      return;
+    }
+
+    final url =
+        Uri.parse('http://api-adresse.data.gouv.fr/search?q=$query&limit=5');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final features = data['features'] as List;
+        setState(() {
+          addressSuggestions = features.map((feature) {
+            final properties = feature['properties'] as Map<String, dynamic>;
+            return {
+              'label': properties['label'] as String,
+              'street': properties['street']?.toString() ?? '',
+              'city': properties['city']?.toString() ?? '',
+              'postcode': properties['postcode']?.toString() ?? '',
+              'housenumber': properties['housenumber']?.toString() ?? '',
+            };
+          }).toList();
+        });
+      } else {
+        throw Exception('Failed to load addresses');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load addresses: $e')),
+      );
     }
   }
 
@@ -203,54 +244,36 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   return null;
                 },
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Numéro de rue'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un numéro de rue';
+              Autocomplete<Map<String, String>>(
+                optionsBuilder: (TextEditingValue textEditingValue) {
+                  if (textEditingValue.text.length < 5) {
+                    return const Iterable<Map<String, String>>.empty();
                   }
-                  return null;
+                  _fetchAddressSuggestions(textEditingValue.text);
+                  return addressSuggestions;
                 },
-                onSaved: (value) {
-                  number = value!;
+                displayStringForOption: (option) => option['label']!,
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    decoration: const InputDecoration(labelText: 'Adresse'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer une adresse';
+                      }
+                      return null;
+                    },
+                  );
                 },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Rue'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une rue';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  street = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Ville'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une ville';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  city = value!;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Code postal'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un code postal';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  zip = value!;
+                onSelected: (Map<String, String> selection) {
+                  setState(() {
+                    street = selection['street']!;
+                    number = selection['housenumber']!;
+                    city = selection['city']!;
+                    zip = selection['postcode']!;
+                  });
                 },
               ),
               const SizedBox(height: 20),
