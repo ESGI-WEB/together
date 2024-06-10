@@ -11,7 +11,7 @@ func RegisterSwaggerRoutes(e *echo.Echo, apis ...*swag.API) {
 	combinedAPI := swag.New(
 		option.Title("Together API Doc"),
 		option.SecurityScheme("bearer_auth",
-			option.OAuth2Security("bearer", "", "http://example.com/oauth/token"),
+			option.APIKeySecurity("Authorization", "header"),
 		),
 	)
 
@@ -33,6 +33,8 @@ func RegisterSwaggerRoutes(e *echo.Echo, apis ...*swag.API) {
 				e.PUT(path, h)
 			case http.MethodDelete:
 				e.DELETE(path, h)
+			case http.MethodPatch:
+				e.PATCH(path, h)
 			default:
 				e.Logger.Infof("Méthode HTTP %s non gérée pour le chemin %s", ep.Method, path)
 			}

@@ -12,11 +12,8 @@ import (
 func SetupEventSwagger() *swag.API {
 	api := swag.New(
 		option.Title("Event API Doc"),
-		option.Security("event_auth", "read:events"),
-		option.SecurityScheme("event_auth",
-			option.OAuth2Security("accessCode", "http://example.com/oauth/authorize", "http://example.com/oauth/token"),
-			option.OAuth2Scope("write:events", "modify events in your account"),
-			option.OAuth2Scope("read:events", "read your events"),
+		option.SecurityScheme("bearer_auth",
+			option.APIKeySecurity("Authorization", "header"),
 		),
 	)
 
@@ -33,6 +30,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
 		),
 		endpoint.New(
 			http.MethodGet, "/events/{id}",
@@ -43,6 +41,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusOK, "Successfully retrieved event", endpoint.SchemaResponseOption(models.Event{})),
 			endpoint.Response(http.StatusNotFound, "Event not found"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
 		),
 		endpoint.New(
 			http.MethodGet, "/events/{id}/attends",
@@ -53,6 +52,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusOK, "Successfully retrieved attends", endpoint.SchemaResponseOption([]models.Attend{})),
 			endpoint.Response(http.StatusNotFound, "Event not found"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
 		),
 	)
 

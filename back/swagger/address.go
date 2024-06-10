@@ -12,8 +12,9 @@ import (
 func SetupAddressSwagger() *swag.API {
 	api := swag.New(
 		option.Title("Address API Doc"),
-		option.Security("address_auth", "read:addresses"),
-		option.Security("bearer_auth", "read:addresses"),
+		option.SecurityScheme("bearer_auth",
+			option.APIKeySecurity("Authorization", "header"),
+		),
 	)
 
 	addressController := controllers.NewAddressController()
@@ -29,6 +30,7 @@ func SetupAddressSwagger() *swag.API {
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
 		),
 	)
 
