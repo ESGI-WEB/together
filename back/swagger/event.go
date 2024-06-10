@@ -15,6 +15,7 @@ func SetupEventSwagger() *swag.API {
 		option.SecurityScheme("bearer_auth",
 			option.APIKeySecurity("Authorization", "header"),
 		),
+		option.Tag("Event", "Endpoints related to event operations"),
 	)
 
 	eventController := controllers.NewEventController()
@@ -31,6 +32,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event"),
 		),
 		endpoint.New(
 			http.MethodGet, "/events/{id}",
@@ -42,6 +44,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusNotFound, "Event not found"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event"),
 		),
 		endpoint.New(
 			http.MethodGet, "/events/{id}/attends",
@@ -53,6 +56,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Response(http.StatusNotFound, "Event not found"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event"),
 		),
 	)
 

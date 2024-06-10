@@ -15,6 +15,7 @@ func SetupAddressSwagger() *swag.API {
 		option.SecurityScheme("bearer_auth",
 			option.APIKeySecurity("Authorization", "header"),
 		),
+		option.Tag("Address", "Endpoints related to address operations"),
 	)
 
 	addressController := controllers.NewAddressController()
@@ -31,6 +32,7 @@ func SetupAddressSwagger() *swag.API {
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Address"),
 		),
 	)
 

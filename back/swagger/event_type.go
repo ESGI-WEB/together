@@ -13,6 +13,7 @@ func SetupEventTypeSwagger() *swag.API {
 	api := swag.New(
 		option.Title("Event Type API"),
 		option.SecurityScheme("bearer_auth", option.APIKeySecurity("Authorization", "header")),
+		option.Tag("Event type", "Endpoints related to event type operations"),
 	)
 
 	eventTypeController := controllers.NewEventTypeController()
@@ -26,6 +27,7 @@ func SetupEventTypeSwagger() *swag.API {
 			endpoint.Response(http.StatusOK, "Successfully retrieved event types", endpoint.SchemaResponseOption([]models.EventType{})),
 			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event type"),
 		),
 	)
 
@@ -42,6 +44,7 @@ func SetupEventTypeSwagger() *swag.API {
 			endpoint.Response(http.StatusConflict, "Event type already exists"),
 			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event type"),
 		),
 	)
 
@@ -60,6 +63,7 @@ func SetupEventTypeSwagger() *swag.API {
 			endpoint.Response(http.StatusNotFound, "Event type not found"),
 			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event type"),
 		),
 	)
 
@@ -75,6 +79,7 @@ func SetupEventTypeSwagger() *swag.API {
 			endpoint.Response(http.StatusNotFound, "Event type not found"),
 			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event type"),
 		),
 	)
 

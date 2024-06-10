@@ -15,6 +15,7 @@ func SetupSecuritySwagger() *swag.API {
 		option.Description("API documentation for security endpoints, including user login."),
 		option.Security("basic_auth", "read:login"),
 		option.SecurityScheme("bearer auth", option.BasicSecurity()),
+		option.Tag("Security", "Endpoints related to security operations"),
 	)
 
 	securityController := controllers.NewSecurityController()
@@ -30,6 +31,7 @@ func SetupSecuritySwagger() *swag.API {
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "Invalid credentials"),
+			endpoint.Tags("Security"),
 		),
 	)
 
