@@ -6,7 +6,9 @@ import (
 	"gorm.io/gorm"
 	"time"
 	"together/database"
+	coreErrors "together/errors"
 	"together/models"
+	"together/utils"
 )
 
 type GroupService struct{}
@@ -37,42 +39,50 @@ func (s *GroupService) GetGroupById(id uint) (*models.Group, error) {
 	return &group, nil
 }
 
-func (s *GroupService) GetAllMyGroups(userID uint) ([]models.Group, error) {
+func (s *GroupService) GetAllMyGroups(userID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var groups []models.Group
-	if err := database.CurrentDatabase.Joins("JOIN group_users ON group_users.group_id = groups.id").
+	query := database.CurrentDatabase.Joins("JOIN group_users ON group_users.group_id = groups.id").
 		Where("group_users.user_id = ?", userID).
-		Preload("Users").
-		Find(&groups).Error; err != nil {
-		return nil, err
-	}
-	return groups, nil
+		Preload("Users")
+
+	query.Scopes(utils.Paginate(groups, &pagination, query)).Find(&groups)
+
+	pagination.Rows = groups
+
+	return &pagination, nil
 }
 
-func (s *GroupService) JoinGroup(request models.JoinGroupRequest) error {
+func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, error) {
 	var group models.Group
-	if err := database.CurrentDatabase.Where("code = ?", request.Code).First(&group).Error; err != nil {
+
+	if err := database.CurrentDatabase.Where("code = ?", code).Preload("Users").First(&group).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("Le code n'existe pas.")
+			return nil, coreErrors.ErrCodeDoesNotExist
 		}
-		return err
+
+		return nil, err
 	}
 
-	var user models.User
-	if err := database.CurrentDatabase.First(&user, request.UserId).Error; err != nil {
-		return err
+	if err := database.CurrentDatabase.First(&user, user.ID).Error; err != nil {
+		return nil, err
 	}
 
 	for _, u := range group.Users {
-		if u.ID == request.UserId {
-			return errors.New("L'utilisateur est déjà dans le groupe.")
+		if u.ID == user.ID {
+			return nil, coreErrors.ErrUserAlreadyInGroup
 		}
 	}
 
 	if err := database.CurrentDatabase.Model(&group).Association("Users").Append(&user); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	updatedGroup, err := s.GetGroupById(group.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedGroup, nil
 }
 
 type GroupUserRoles string
@@ -115,4 +125,16 @@ func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
 		return nil, err
 	}
 	return &event, nil
+}
+
+func (s *GroupService) UserBelongsToGroup(userID, groupID uint) (bool, error) {
+	var count int64
+	if err := database.CurrentDatabase.Model(&models.Group{}).
+		Joins("JOIN group_users ON groups.id = group_users.group_id").
+		Where("groups.id = ? AND group_users.user_id = ?", groupID, userID).
+		Count(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }

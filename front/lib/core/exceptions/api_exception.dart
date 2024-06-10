@@ -5,8 +5,9 @@ class ApiException extends Error {
   int? statusCode;
   Response? response;
 
-  ApiException(
-      {this.message = 'Une erreur est survenue',
-      this.statusCode = 500,
-      this.response});
+  ApiException({
+    this.message = 'Une erreur est survenue',
+    this.statusCode = 500,
+    this.response,
+  });
 }

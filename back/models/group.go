@@ -13,8 +13,7 @@ type Group struct {
 }
 
 type JoinGroupRequest struct {
-	UserId uint
-	Code   string `json:"code" validate:"required,min=5,max=10"`
+	Code string `json:"code" validate:"required,min=5,max=10"`
 }
 
 func (gc Group) ToGroup() *Group {

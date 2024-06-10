@@ -2,27 +2,34 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/message.dart';
 import 'package:front/core/services/chat_service.dart';
 import 'package:web_socket_channel/io.dart';
 
-import 'chat_event.dart';
-import 'chat_state.dart';
+import 'websocket_event.dart';
+import 'websocket_state.dart';
 
-class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  ChatBloc() : super(MessagesState(messages: [])) {
+class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
+  WebSocketBloc() : super(MessagesState(messages: [])) {
     on<InitializeWebSocketEvent>((event, emit) async {
       await _initWebSocket(emit);
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
-      List<String> messages = List.from((state as MessagesState).messages);
-      messages.add(event.message);
+      List<ServerBoundSendChatMessage> messages =
+          List.from((state as MessagesState).messages);
+      messages
+          .add(ServerBoundSendChatMessage.fromJson(jsonDecode(event.message)));
       emit(MessagesState(messages: messages));
     });
 
     on<SendMessageEvent>((event, emit) async {
       if (_webSocketChannel != null) {
-        Map<String, String> messageObject = {'content': event.message};
+        print(event.message);
+        final messageObject = ClientBoundSendChatMessage(
+          content: event.message,
+        ).toJson();
+        print(messageObject);
         String jsonMessage = json.encode(messageObject);
         _webSocketChannel!.sink.add(jsonMessage);
       }
@@ -37,7 +44,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   IOWebSocketChannel? _webSocketChannel;
 
-  Future<void> _initWebSocket(Emitter<ChatState> emit) async {
+  Future<void> _initWebSocket(Emitter<WebSocketState> emit) async {
     _webSocketChannel = await ChatService.getChannel();
 
     _webSocketChannel?.stream.listen((dynamic message) {
