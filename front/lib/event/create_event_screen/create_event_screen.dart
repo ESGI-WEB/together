@@ -41,6 +41,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String number = '';
   String city = '';
   String zip = '';
+  double? latitude;
+  double? longitude;
   int? typeId;
   int? groupId;
   List<EventType> eventTypes = [];
@@ -115,12 +117,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         setState(() {
           addressSuggestions = features.map((feature) {
             final properties = feature['properties'] as Map<String, dynamic>;
+            final geometry = feature['geometry'] as Map<String, dynamic>;
+            final coordinates = geometry['coordinates'] as List<dynamic>;
             return {
               'label': properties['label'] as String,
               'street': properties['street']?.toString() ?? '',
               'city': properties['city']?.toString() ?? '',
               'postcode': properties['postcode']?.toString() ?? '',
               'housenumber': properties['housenumber']?.toString() ?? '',
+              'latitude': coordinates[1].toString(),
+              'longitude': coordinates[0].toString(),
             };
           }).toList();
         });
@@ -149,6 +155,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           number: number,
           city: city,
           zip: zip,
+          latitude: latitude,
+          longitude: longitude,
         ),
       );
 
@@ -250,6 +258,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             typeId = value?.id ?? 0;
                           });
                         },
+                        selectedItemBuilder: (BuildContext context) {
+                          return eventTypes.map<Widget>((EventType type) {
+                            return Text(
+                              type.name,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            );
+                          }).toList();
+                        },
                         validator: (value) {
                           if (value == null) {
                             return "Veuillez sélectionner un type d'événement";
@@ -287,6 +306,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             number = selection['housenumber']!;
                             city = selection['city']!;
                             zip = selection['postcode']!;
+                            latitude = double.tryParse(selection['latitude']!);
+                            longitude =
+                                double.tryParse(selection['longitude']!);
                           });
                         },
                       ),
