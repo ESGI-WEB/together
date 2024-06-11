@@ -12,5 +12,5 @@ func (r *StorageRouter) SetupRoutes(e *echo.Echo) {
 
 	group := e.Group("/storage")
 
-	group.GET("", storageController.GetImage)
+	group.GET(":path", storageController.GetImage)
 }

@@ -35,11 +35,11 @@ func (s *EventTypeService) CreateEventType(eventType models.EventType, file mult
 
 	storageService := NewStorageService()
 	imagePath := s.GetEventTypeFilePath(file, eventType)
-	_, err = storageService.uploadFile(file, imagePath)
+	_, err = storageService.UploadFile(file, imagePath)
 	if err != nil {
 		return nil, err
 	}
-	eventType.ImagePath = storageService.getFileUrl(imagePath)
+	eventType.ImagePath = storageService.GetFileApiUrl(imagePath)
 
 	result := database.CurrentDatabase.Create(&eventType)
 	if result.Error != nil {
@@ -61,11 +61,11 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 
 	if file != nil {
 		filePath := s.GetEventTypeFilePath(*file, eventType)
-		_, err = storageService.uploadFile(*file, filePath)
+		_, err = storageService.UploadFile(*file, filePath)
 		if err != nil {
 			return nil, err
 		}
-		eventType.ImagePath = storageService.getFileUrl(filePath)
+		eventType.ImagePath = storageService.GetFileApiUrl(filePath)
 	}
 
 	result := database.CurrentDatabase.Save(&eventType)
@@ -76,7 +76,7 @@ func (s *EventTypeService) UpdateEventType(eventType models.EventType, file *mul
 	// if path has changed, delete the old image
 	// ignore error if unable to delete
 	if file != nil && eventType.ImagePath != oldPath {
-		_, _ = storageService.deleteFile(storageService.getFileNameFromFullPath(oldPath))
+		_, _ = storageService.DeleteFile(storageService.GetFileNameFromFullPath(oldPath))
 	}
 
 	return &eventType, nil
@@ -94,7 +94,7 @@ func (s *EventTypeService) DeleteEventType(eventType models.EventType) error {
 	}
 
 	// ignore error if unable to delete
-	_, _ = NewStorageService().deleteFile(NewStorageService().getFileNameFromFullPath(eventType.ImagePath))
+	_, _ = NewStorageService().DeleteFile(NewStorageService().GetFileNameFromFullPath(eventType.ImagePath))
 
 	return nil
 }
