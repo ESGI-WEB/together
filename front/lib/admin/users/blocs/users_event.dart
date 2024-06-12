@@ -12,3 +12,13 @@ class UsersDataTableLoaded extends UsersEvent {
     this.search,
   });
 }
+
+class UserCreatedOrEdited extends UsersEvent {
+  final UserCreateOrEdit user;
+  final int? id;
+
+  UserCreatedOrEdited({
+    required this.user,
+    this.id,
+  });
+}

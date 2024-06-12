@@ -27,12 +27,12 @@ class ApiServices {
 
     return headers;
   }
-  
+
   static String getFullUrlFromPath(String path) {
     if (path.startsWith('http')) {
       return path;
     }
-    
+
     return '$baseUrl$path';
   }
 
@@ -129,7 +129,7 @@ class ApiServices {
 
   static void handleResponse(Response response) {
     if (response.statusCode == 401) {
-      throw UnauthorizedException();
+      throw UnauthorizedException(message: "Vous n'êtes pas connecté");
     } else if (response.statusCode == 503) {
       throw FeatureDisabledException();
     } else if (response.statusCode == 409) {

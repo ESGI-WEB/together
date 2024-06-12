@@ -11,33 +11,19 @@ const (
 
 type User struct {
 	gorm.Model
-	ColorHex          string             `json:"color_hex" gorm:"default:'#000000'" validate:"hexcolor"`
 	Name              string             `json:"name" validate:"required,min=2,max=50"`
-	Email             string             `gorm:"unique;<-:create" json:"email" validate:"email,required"`
-	Password          string             `json:"-" validate:"required"`
-	Role              Role               `gorm:"default:user" json:"role"`
-	Biography         *string            `json:"biography"`
-	AvatarPath        *string            `json:"avatar_path"`
+	Email             string             `gorm:"uniqueIndex:idx_email_deleted_at" json:"email" validate:"email,required"`
+	Password          string             `json:"-"`
+	ColorHex          string             `json:"color_hex" gorm:"default:'#000000'" validate:"omitempty,hexcolor"`
+	Role              Role               `gorm:"default:user" json:"role" validate:"omitempty,oneof=admin user"`
+	Biography         *string            `json:"biography,omitempty"`
+	AvatarPath        *string            `json:"avatar_path,omitempty"`
 	Groups            []Group            `gorm:"many2many:group_users;" json:"groups,omitempty"`
 	PollAnswerChoices []PollAnswerChoice `gorm:"many2many:poll_answer_choice_users" json:"poll_answer_choices,omitempty"`
+	DeletedAt         gorm.DeletedAt     `gorm:"uniqueIndex:idx_email_deleted_at"`
+	PlainPassword     *string            `gorm:"-" json:"password,omitempty" validate:"required_without=Password,omitempty,min=8,max=72"`
 }
 
-type UserCreate struct {
-	Name       string  `json:"name" validate:"required,min=2,max=50"`
-	Email      string  `json:"email" validate:"email,required"`
-	Password   string  `json:"password" validate:"required,min=8,max=72"`
-	ColorHex   *string `json:"color_hex" validate:"omitempty,hexcolor"`
-	Biography  *string `json:"biography"`
-	AvatarPath *string `json:"avatar_path"`
-}
-
-func (u UserCreate) ToUser() *User {
-	return &User{
-		Name:       u.Name,
-		Email:      u.Email,
-		Password:   u.Password,
-		Biography:  u.Biography,
-		AvatarPath: u.AvatarPath,
-		ColorHex:   *u.ColorHex,
-	}
+func (u User) IsAdmin() bool {
+	return u.Role == AdminRole
 }

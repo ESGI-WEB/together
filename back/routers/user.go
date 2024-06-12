@@ -17,7 +17,9 @@ func (r *UserRouter) SetupRoutes(e *echo.Echo) {
 		return middlewares.FeatureEnabledMiddleware(next, models.FSlugRegister)
 	})
 
-	group.GET("", userController.GetUsers, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
-	})
+	group.GET("", userController.GetUsers, middlewares.AuthenticationMiddleware(models.AdminRole))
+
+	group.PUT("/:id", userController.UpdateUser, middlewares.AuthenticationMiddleware())
+
+	group.DELETE("/:id", userController.DeleteUser, middlewares.AuthenticationMiddleware(models.AdminRole))
 }

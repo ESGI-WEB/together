@@ -22,7 +22,7 @@ class Paginated<DataType> {
       sort: json['sort'],
       total: json['total'],
       pages: json['pages'],
-      rows: (json['rows'] as List).map((e) => fromJson(e)).toList(),
+      rows: ((json['rows'] ?? []) as List).map((e) => fromJson(e)).toList(),
     );
   }
 }

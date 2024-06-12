@@ -12,7 +12,10 @@ func (r *AddressRouter) SetupRoutes(e *echo.Echo) {
 	addressController := controllers.NewAddressController()
 
 	group := e.Group("/addresses")
-	group.POST("", addressController.CreateAddress, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
+
+	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return middlewares.AuthenticationMiddleware()(next)
 	})
+
+	group.POST("", addressController.CreateAddress)
 }

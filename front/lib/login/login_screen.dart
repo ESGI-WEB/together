@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/services/user_services.dart';
-import 'package:front/groups/groups_screen.dart';
+import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';

@@ -6,7 +6,6 @@ import 'package:front/core/models/event_type.dart';
 import 'package:front/core/services/event_type_services.dart';
 
 part 'event_types_event.dart';
-
 part 'event_types_state.dart';
 
 class EventTypesBloc extends Bloc<EventTypesEvent, EventTypesState> {
@@ -30,7 +29,7 @@ class EventTypesBloc extends Bloc<EventTypesEvent, EventTypesState> {
       }
     });
 
-    on<EventTypeEdited>((event, emit) async {
+    on<EventTypeCreatedOrEdited>((event, emit) async {
       emit(state.copyWith(
         status: EventTypesStatus.addOrEditTypeLoading,
       ));

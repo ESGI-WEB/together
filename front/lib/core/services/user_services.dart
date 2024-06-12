@@ -33,16 +33,10 @@ class UserServices {
   }
 
   static Future<User> register(
-    String name,
-    String email,
-    String password,
+    UserCreateOrEdit user,
   ) async {
     try {
-      final response = await ApiServices.post('/users', {
-        'name': name,
-        'email': email,
-        'password': password,
-      });
+      final response = await ApiServices.post('/users', user.toJson());
 
       return User.fromJson(ApiServices.decodeResponse(response));
     } on ApiException catch (e) {
@@ -51,6 +45,19 @@ class UserServices {
       } else {
         rethrow;
       }
+    }
+  }
+
+  static Future<User> registerAsAdmin(
+    UserCreateOrEdit user,
+  ) async {
+    try {
+      final response = await ApiServices.post('/admin/users', user.toJson());
+      return User.fromJson(ApiServices.decodeResponse(response));
+    } on ConflictException {
+      throw ConflictException(message: 'Cet email est déjà utilisé');
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -69,5 +76,24 @@ class UserServices {
       ApiServices.decodeResponse(response),
       (data) => User.fromJson(data),
     );
+  }
+
+  static Future<void> deleteUser(int id) async {
+    await ApiServices.delete('/users/$id');
+  }
+
+  static Future<User> editUser(
+    int id,
+    UserCreateOrEdit user,
+  ) async {
+    try {
+      final response = await ApiServices.put('/users/$id', user.toJson());
+
+      return User.fromJson(ApiServices.decodeResponse(response));
+    } on ConflictException {
+      throw ConflictException(message: 'Cet email est déjà utilisé');
+    } catch (e) {
+      rethrow;
+    }
   }
 }

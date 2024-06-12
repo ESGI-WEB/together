@@ -11,19 +11,22 @@ func GetValidationErrors(errors validator.ValidationErrors, jsonBody interface{}
 	var validationErrors = make(map[string]string)
 
 	for _, e := range errors {
-		fieldParts := strings.Split(e.StructNamespace(), ".")[1:]
+		fieldParts := strings.Split(e.StructNamespace(), ".")
+		fieldPartsWithoutNamespace := fieldParts
+		if len(fieldParts) > 1 {
+			fieldPartsWithoutNamespace = fieldParts[1:]
+		}
 		currentBody := jsonBody
-		fieldNameJSON := GetJSONFieldName(currentBody, fieldParts[0])
+		fieldNameJSON := GetJSONFieldName(currentBody, fieldPartsWithoutNamespace[0])
 
-		// Traverse the jsonBody to get to the nested struct
-		for i := 0; i < len(fieldParts)-1; i++ {
-			currentBody = getField(currentBody, fieldParts[i])
+		for i := 0; i < len(fieldPartsWithoutNamespace)-1; i++ {
+			currentBody = getField(currentBody, fieldPartsWithoutNamespace[i])
 			if currentBody == nil {
 				break
 			}
 
 			if currentBody != nil {
-				fieldNameJSON += "." + GetJSONFieldName(currentBody, fieldParts[len(fieldParts)-1])
+				fieldNameJSON += "." + GetJSONFieldName(currentBody, fieldPartsWithoutNamespace[len(fieldPartsWithoutNamespace)-1])
 			}
 		}
 

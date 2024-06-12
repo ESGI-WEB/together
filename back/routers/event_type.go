@@ -13,16 +13,8 @@ func (r *EventTypeRouter) SetupRoutes(e *echo.Echo) {
 	eventTypeController := controllers.NewEventTypeController()
 
 	group := e.Group("/event-types")
-	group.GET("", eventTypeController.GetAllEventTypes, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next)
-	})
-	group.POST("", eventTypeController.CreateEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
-	})
-	group.PUT("/:id", eventTypeController.UpdateEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
-	})
-	group.DELETE("/:id", eventTypeController.DeleteEventType, func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware(next, models.AdminRole)
-	})
+	group.GET("", eventTypeController.GetAllEventTypes, middlewares.AuthenticationMiddleware())
+	group.POST("", eventTypeController.CreateEventType, middlewares.AuthenticationMiddleware(models.AdminRole))
+	group.PUT("/:id", eventTypeController.UpdateEventType, middlewares.AuthenticationMiddleware(models.AdminRole))
+	group.DELETE("/:id", eventTypeController.DeleteEventType, middlewares.AuthenticationMiddleware(models.AdminRole))
 }
