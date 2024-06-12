@@ -32,16 +32,6 @@ func main() {
 	// Set up Swagger routes
 	swagger.SetupSwaggerRoutes(e)
 
-	securitySwagger := swagger.SetupSecuritySwagger()
-	addressSwagger := swagger.SetupAddressSwagger()
-	eventSwagger := swagger.SetupEventSwagger()
-	eventTypeSwagger := swagger.SetupEventTypeSwagger()
-	featureSwagger := swagger.SetupFeatureSwagger()
-	groupSwagger := swagger.SetupGroupSwagger()
-	userSwagger := swagger.SetupUserSwagger()
-
-	swagger.RegisterSwaggerRoutes(e, securitySwagger, addressSwagger, eventSwagger, eventTypeSwagger, featureSwagger, groupSwagger, userSwagger)
-
 	// CORS authorize Flutter web dev
 	fmt.Printf("APP_MODE: %s\n", utils.GetEnv("APP_MODE", "production"))
 	if utils.GetEnv("APP_MODE", "production") == "development" {
@@ -55,7 +45,9 @@ func main() {
 		})
 	}
 
-	// Initialize database
+	// init database
+	// can also be called in func init but defer must be called in main
+	// so we keep everything together here
 	newDB, err := database.InitDB()
 	if err != nil {
 		e.Logger.Fatal(err)
@@ -63,7 +55,7 @@ func main() {
 	}
 	defer newDB.CloseDB()
 
-	// Auto migrate database
+	// auto migrate database
 	err = newDB.AutoMigrate()
 	if err != nil {
 		e.Logger.Fatal(err)
