@@ -10,7 +10,7 @@ type HelloRouter struct{}
 
 func (r *HelloRouter) SetupRoutes(e *echo.Echo) {
 	helloController := controllers.NewHelloController()
-	messageController := controllers.NewMessageController()
+	messageController := controllers.NewWebSocketController()
 
 	e.GET("/", helloController.Hello)
 	e.GET("/ws", messageController.Hello, middlewares.AuthenticationMiddleware())
