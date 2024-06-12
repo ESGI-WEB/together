@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front/admin/charts/monthly_chart.dart';
 import 'package:go_router/go_router.dart';
 
 class AdminScreen extends StatelessWidget {
@@ -12,6 +13,6 @@ class AdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text("Admin");
+    return MonthlyChart();
   }
 }

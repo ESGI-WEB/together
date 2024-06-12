@@ -1,15 +1,28 @@
 package controllers
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"net/http"
+	"together/services"
+)
 
-type AdminController struct{}
+type AdminController struct {
+	StatsService *services.StatsService
+}
 
 func NewAdminController() *AdminController {
-	return &AdminController{}
+	return &AdminController{
+		StatsService: services.NewStatsService(),
+	}
 }
 
 func (c *AdminController) GetLastYearRegistrationsCount(ctx echo.Context) error {
-	return ctx.JSON(200, "Last year registrations")
+	stats, err := c.StatsService.GetLastYearRegistrationsCount()
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(200, stats)
 }
 
 func (c *AdminController) GetLastDayMessagesCount(ctx echo.Context) error {
