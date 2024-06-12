@@ -29,13 +29,18 @@ func main() {
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
 
-	// Swagger configuration for routes
+	// Set up Swagger routes
+	swagger.SetupSwaggerRoutes(e)
+
 	securitySwagger := swagger.SetupSecuritySwagger()
 	addressSwagger := swagger.SetupAddressSwagger()
 	eventSwagger := swagger.SetupEventSwagger()
 	eventTypeSwagger := swagger.SetupEventTypeSwagger()
+	featureSwagger := swagger.SetupFeatureSwagger()
+	groupSwagger := swagger.SetupGroupSwagger()
+	userSwagger := swagger.SetupUserSwagger()
 
-	swagger.RegisterSwaggerRoutes(e, securitySwagger, addressSwagger, eventSwagger, eventTypeSwagger)
+	swagger.RegisterSwaggerRoutes(e, securitySwagger, addressSwagger, eventSwagger, eventTypeSwagger, featureSwagger, groupSwagger, userSwagger)
 
 	// CORS authorize Flutter web dev
 	fmt.Printf("APP_MODE: %s\n", utils.GetEnv("APP_MODE", "production"))
