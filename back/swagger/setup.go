@@ -43,5 +43,5 @@ func RegisterSwaggerRoutes(e *echo.Echo, apis ...*swag.API) {
 	}
 
 	e.GET("/swagger/json", echo.WrapHandler(combinedAPI.Handler()))
-	e.GET("/swagger/ui/*", echo.WrapHandler(swag.UIHandler("/swagger/ui", "/swagger/json", true)))
+	e.GET("/swagger/ui*", echo.WrapHandler(swag.UIHandler("/swagger/ui", "/swagger/json", true)))
 }

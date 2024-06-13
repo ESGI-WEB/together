@@ -55,6 +55,7 @@ func SetupFeatureSwagger() *swag.API {
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
 			endpoint.Response(http.StatusNotFound, "Feature not found"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("Feature"),
 		),

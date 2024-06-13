@@ -36,5 +36,56 @@ func SetupUserSwagger() *swag.API {
 		),
 	)
 
+	api.AddEndpoint(
+		endpoint.New(
+			http.MethodGet, "/users",
+			endpoint.Handler(userController.GetUsers),
+			endpoint.Summary("Get all users"),
+			endpoint.Description("Retrieve all users."),
+			endpoint.Response(http.StatusOK, "Successfully retrieved users", endpoint.SchemaResponseOption([]models.User{})),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("User"),
+		),
+	)
+
+	api.AddEndpoint(
+		endpoint.New(
+			http.MethodDelete, "/users/{id}",
+			endpoint.Handler(userController.DeleteUser),
+			endpoint.Summary("Delete a user"),
+			endpoint.Description("Deletes a user identified by the provided ID."),
+			endpoint.Path("id", "integer", "ID of the user to delete", true),
+			endpoint.Response(http.StatusNoContent, "Successfully deleted user"),
+			endpoint.Response(http.StatusNotFound, "User not found"),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Response(http.StatusForbidden, "User not authorized to delete user"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("User"),
+		),
+	)
+
+	api.AddEndpoint(
+		endpoint.New(
+			http.MethodPut, "/users/{id}",
+			endpoint.Handler(userController.UpdateUser),
+			endpoint.Summary("Update a user"),
+			endpoint.Description("Updates a user identified by the provided ID."),
+			endpoint.Path("id", "integer", "ID of the user to update", true),
+			endpoint.Body(models.User{}, "User object with updated information", true),
+			endpoint.Response(http.StatusOK, "Successfully updated user", endpoint.SchemaResponseOption(models.User{})),
+			endpoint.Response(http.StatusBadRequest, "Invalid input"),
+			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
+			endpoint.Response(http.StatusNotFound, "User not found"),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Response(http.StatusForbidden, "User not authorized to update user"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("User"),
+		),
+	)
+
 	return api
 }

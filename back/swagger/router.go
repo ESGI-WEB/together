@@ -5,13 +5,15 @@ import (
 )
 
 func SetupSwaggerRoutes(e *echo.Echo) {
-	securitySwagger := SetupSecuritySwagger()
-	addressSwagger := SetupAddressSwagger()
-	eventSwagger := SetupEventSwagger()
-	eventTypeSwagger := SetupEventTypeSwagger()
-	featureSwagger := SetupFeatureSwagger()
-	groupSwagger := SetupGroupSwagger()
-	userSwagger := SetupUserSwagger()
-
-	RegisterSwaggerRoutes(e, securitySwagger, addressSwagger, eventSwagger, eventTypeSwagger, featureSwagger, groupSwagger, userSwagger)
+	RegisterSwaggerRoutes(e,
+		SetupSecuritySwagger(),
+		SetupAddressSwagger(),
+		SetupEventSwagger(),
+		SetupEventTypeSwagger(),
+		SetupFeatureSwagger(),
+		SetupGroupSwagger(),
+		SetupUserSwagger(),
+		SetupHelloSwagger(),
+		SetupStorageSwagger(),
+	)
 }

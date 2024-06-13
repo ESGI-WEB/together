@@ -86,6 +86,17 @@ docker compose up -d
 
 - Se rendre sur http://localhost:8080 pour acceder à l'API une fois que le serveur go est lancé (peut prendre quelques secondes)
 
+## Swagger
+Toutes les routes sont documentées sur swagger, pour y accéder, rendez-vous sur
+http://localhost:8080/swagger/ui
+
+- Authentification
+    - Pour accéder à certaines routes, il faut être authentifié
+    - Pour cela, il faut se rendre sur la route /auth/register pour créer un compte
+    - Puis sur la route /auth/login pour se connecter
+    - Une fois connecté, vous recevrez un token JWT à mettre dans le header Authorization pour accéder aux routes protégées
+    - Dans swagger, cliquez sur Authorize en haut à droite, et mettez le token dans le champ Value prefixé par Bearer, par exemple : `Bearer eyJhb...`
+
 ## Flutter
 - Aller dans le dossier /front
 ```bash

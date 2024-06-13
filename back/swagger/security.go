@@ -31,6 +31,7 @@ func SetupSecuritySwagger() *swag.API {
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnprocessableEntity, "Validation error"),
 			endpoint.Response(http.StatusUnauthorized, "Invalid credentials"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
 			endpoint.Tags("Security"),
 		),
 	)
