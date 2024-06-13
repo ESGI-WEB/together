@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
+	"together/database"
 	"together/models"
 )
 
@@ -93,6 +94,74 @@ func (s *MessageService) handleSendChatMessage(msg []byte, user models.User) err
 		return err
 	}
 	return nil
+}
+
+func (s *MessageService) CreatePublication(message models.Message) (*models.Message, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(message); err != nil {
+		return nil, err
+	}
+
+	message.Type = models.PubMessageType // Ensure the message type is set to publication
+
+	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
+func (s *MessageService) UpdateMessage(messageID uint, updatedData models.Message) (*models.Message, error) {
+	var message models.Message
+	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	// Prevent changing the type
+	updatedData.Type = message.Type
+
+	if err := database.CurrentDatabase.Model(&message).Updates(updatedData).Error; err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
+func (s *MessageService) DeleteMessage(messageID uint) error {
+	if err := database.CurrentDatabase.Delete(&models.Message{}, messageID).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *MessageService) PinMessage(messageID uint, pin bool) (*models.Message, error) {
+	var message models.Message
+	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	message.IsPined = pin
+	if err := database.CurrentDatabase.Save(&message).Error; err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
+func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint) ([]models.Message, error) {
+	var messages []models.Message
+	if err := database.CurrentDatabase.Where("event_id = ? AND group_id = ? AND type = ?", eventID, groupID, models.PubMessageType).Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
+}
+
+func (s *MessageService) GetPublicationsByGroup(groupID uint) ([]models.Message, error) {
+	var messages []models.Message
+	if err := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
 }
 
 const (
