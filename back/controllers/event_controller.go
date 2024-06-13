@@ -95,7 +95,7 @@ func (c *EventController) GetEventAttends(ctx echo.Context) error {
 		hasAttended = &hasAttendedBool
 	}
 
-	attends, err := c.EventService.GetEventAttends(uint(eventID), *pagination, hasAttended)
+	attends, err := c.EventService.GetEventAttends(uint(eventID), pagination, hasAttended)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

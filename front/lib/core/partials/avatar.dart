@@ -10,8 +10,8 @@ class Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 20,
-      backgroundColor: user.colorHex,
-      foregroundColor: user.textColorHex,
+      backgroundColor: user.color,
+      foregroundColor: user.textColor,
       child: Text(
         user.name[0].toUpperCase(),
       ),

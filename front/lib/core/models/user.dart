@@ -8,11 +8,11 @@ class User {
   final DateTime? deletedAt;
   final String name;
   final String email;
-  final String role;
+  final UserRole role;
   final String? biography;
   final String? avatarPath;
-  final Color? colorHex;
-  final Color? textColorHex;
+  final Color color;
+  final Color textColor;
 
   User({
     required this.id,
@@ -24,12 +24,22 @@ class User {
     required this.role,
     this.biography,
     this.avatarPath,
-    this.colorHex,
-    this.textColorHex,
+    required this.color,
+    required this.textColor,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final colorHex = json['color_hex'] != null ? ColorServices.hexToColor(json['color_hex']) : null;
+    late final Color color;
+    try {
+      if (json['color_hex'] == null) {
+        throw Exception('Color hex not found');
+      }
+
+      color = ColorServices.hexToColor(json['color_hex']);
+    } catch (e) {
+      // if color_hex is not found or invalid, set a default color
+      color = Colors.white70;
+    }
 
     return User(
       id: json['ID'],
@@ -39,11 +49,11 @@ class User {
           json['DeletedAt'] != null ? DateTime.parse(json['deleted_at']) : null,
       name: json['name'],
       email: json['email'],
-      role: json['role'],
+      role: json['role'] == 'admin' ? UserRole.admin : UserRole.user,
       biography: json['biography'],
       avatarPath: json['avatar_path'],
-      colorHex: colorHex,
-      textColorHex: colorHex != null ? ColorServices.getContrastingTextColor(colorHex) : null,
+      color: color,
+      textColor: ColorServices.getContrastingTextColor(color),
     );
   }
 }
@@ -51,4 +61,55 @@ class User {
 enum UserRole {
   admin,
   user,
+}
+
+class UserCreateOrEdit {
+  final int? id;
+  final String? name;
+  final String? email;
+  final String? password;
+  final UserRole? role;
+  final String? biography;
+  final Color? color;
+
+  UserCreateOrEdit({
+    this.id,
+    this.name,
+    this.email,
+    this.password,
+    this.role,
+    this.biography,
+    this.color,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'email': email,
+      'password': password,
+      'role': role?.name,
+      'biography': biography,
+      'color_hex': color?.toString(),
+    };
+  }
+
+  UserCreateOrEdit copyWith({
+    int? id,
+    String? name,
+    String? email,
+    String? password,
+    UserRole? role,
+    String? biography,
+    Color? color,
+  }) {
+    return UserCreateOrEdit(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      role: role ?? this.role,
+      biography: biography ?? this.biography,
+      color: color ?? this.color,
+    );
+  }
 }
