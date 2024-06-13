@@ -2,6 +2,7 @@ package utils
 
 import (
 	"reflect"
+	"strings"
 )
 
 func GetJSONFieldName(obj interface{}, fieldName string) string {
@@ -14,7 +15,10 @@ func GetJSONFieldName(obj interface{}, fieldName string) string {
 		field := objType.Field(i)
 		jsonTag := field.Tag.Get("json")
 		if field.Name == fieldName {
-			return jsonTag
+			if jsonTag != "" {
+				return strings.Split(jsonTag, ",")[0]
+			}
+			return fieldName
 		}
 	}
 

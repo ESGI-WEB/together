@@ -26,7 +26,7 @@ func SetupUserSwagger() *swag.API {
 			endpoint.Handler(userController.CreateUser),
 			endpoint.Summary("Create a new user"),
 			endpoint.Description("Creates a new user with the provided information."),
-			endpoint.Body(models.UserCreate{}, "User object that needs to be added", true),
+			endpoint.Body(models.User{}, "User object that needs to be added", true),
 			endpoint.Response(http.StatusCreated, "Successfully created user", endpoint.SchemaResponseOption(models.User{})),
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusConflict, "User already exists"),

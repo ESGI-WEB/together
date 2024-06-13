@@ -9,6 +9,7 @@ import 'package:front/core/services/feature_flipping_services.dart';
 import 'package:front/core/services/user_services.dart';
 
 part 'register_event.dart';
+
 part 'register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
@@ -53,7 +54,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
 
       try {
         final user = await UserServices.register(
-            state.name, state.email, state.password);
+          UserCreateOrEdit(
+            name: state.name,
+            email: state.email,
+            password: state.password,
+          ),
+        );
         emit(RegisterSuccess(user: user));
       } on FeatureDisabledException {
         emit(RegisterFeatureDisabled(

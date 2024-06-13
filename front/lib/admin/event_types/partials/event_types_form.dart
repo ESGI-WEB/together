@@ -6,21 +6,19 @@ import 'package:front/core/models/event_type.dart';
 
 class EventTypesForm extends StatefulWidget {
   final void Function()? onFormCancel;
-  final void Function()? onFormCreated;
   final EventTypeCreateOrEdit? eventTypeToEdit;
 
   const EventTypesForm({
     super.key,
     this.onFormCancel,
-    this.onFormCreated,
     this.eventTypeToEdit,
   });
 
   @override
-  State<EventTypesForm> createState() => _EventTypesScreenState();
+  State<EventTypesForm> createState() => _EventTypesFormState();
 }
 
-class _EventTypesScreenState extends State<EventTypesForm> {
+class _EventTypesFormState extends State<EventTypesForm> {
   final _formKey = GlobalKey<FormState>();
   Image? _selectedImage;
   bool _isHovering = false;
@@ -65,7 +63,6 @@ class _EventTypesScreenState extends State<EventTypesForm> {
       _eventTypeCreating = EventTypeCreateOrEdit();
       _nameController.clear();
       _descriptionController.clear();
-      widget.onFormCreated?.call();
     });
   }
 
@@ -248,7 +245,7 @@ class _EventTypesScreenState extends State<EventTypesForm> {
                             if (_formKey.currentState!.validate() &&
                                 _eventTypeCreating.image != null) {
                               BlocProvider.of<EventTypesBloc>(context).add(
-                                EventTypeEdited(_eventTypeCreating),
+                                EventTypeCreatedOrEdited(_eventTypeCreating),
                               );
                             } else {
                               setState(() {
