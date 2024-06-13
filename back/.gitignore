@@ -22,5 +22,5 @@ go.work
 .idea/
 
 ### Storage ###
-storage/images/types/*
-!storage/images/types/default.png
+public/images/types/*
+!public/images/types/default.png
