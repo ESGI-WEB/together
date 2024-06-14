@@ -49,107 +49,111 @@ class _EventTypesTableState extends State<EventTypesTable> {
             if (types == null || types.isEmpty)
               const Text('Aucun type d\'évènement trouvé')
             else
-              DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text('Id'),
-                  ),
-                  DataColumn(
-                    label: Text('Nom'),
-                  ),
-                  DataColumn(
-                    label: Text('Description'),
-                  ),
-                  DataColumn(
-                    label: Text('Image'),
-                  ),
-                  DataColumn(
-                    label: Text('Actions'),
-                  ),
-                ],
-                rows: types
-                    .map(
-                      (type) => DataRow(
-                        cells: <DataCell>[
-                          DataCell(
-                            Text(type.id.toString()),
-                          ),
-                          DataCell(
-                            Text(type.name),
-                          ),
-                          DataCell(
-                            Text(type.description),
-                          ),
-                          DataCell(
-                            Image(
-                              image: type.image,
-                              width: 40,
-                              height: 40,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  columns: const <DataColumn>[
+                    DataColumn(
+                      label: Text('Id'),
+                    ),
+                    DataColumn(
+                      label: Text('Nom'),
+                    ),
+                    DataColumn(
+                      label: Text('Description'),
+                    ),
+                    DataColumn(
+                      label: Text('Image'),
+                    ),
+                    DataColumn(
+                      label: Text('Actions'),
+                    ),
+                  ],
+                  rows: types
+                      .map(
+                        (type) => DataRow(
+                          cells: <DataCell>[
+                            DataCell(
+                              Text(type.id.toString()),
                             ),
-                          ),
-                          DataCell(
-                            Row(
-                              children: <Widget>[
-                                if (widget.onEdit != null)
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () {
-                                      widget.onEdit?.call(type);
-                                    },
-                                  ),
-                                if (widget.onDelete != null)
-                                  IconButton(
-                                    icon: typesDeleting.contains(type)
-                                        ? const SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child:
-                                                CircularProgressIndicator(),
-                                          )
-                                        : const Icon(Icons.delete),
-                                    onPressed: () {
-                                      if (typesDeleting.contains(type)) {
-                                        return;
-                                      }
+                            DataCell(
+                              Text(type.name),
+                            ),
+                            DataCell(
+                              Text(type.description),
+                            ),
+                            DataCell(
+                              Image(
+                                image: type.image,
+                                width: 40,
+                                height: 40,
+                              ),
+                            ),
+                            DataCell(
+                              Row(
+                                children: <Widget>[
+                                  if (widget.onEdit != null)
+                                    IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        widget.onEdit?.call(type);
+                                      },
+                                    ),
+                                  if (widget.onDelete != null)
+                                    IconButton(
+                                      icon: typesDeleting.contains(type)
+                                          ? const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(),
+                                            )
+                                          : const Icon(Icons.delete),
+                                      onPressed: () {
+                                        if (typesDeleting.contains(type)) {
+                                          return;
+                                        }
 
-                                      setState(() {
-                                        typesDeleting.add(type);
-                                      });
+                                        setState(() {
+                                          typesDeleting.add(type);
+                                        });
 
-                                      widget.onDelete
-                                          ?.call(type)
-                                          .then(
-                                            (value) => context
-                                                .read<EventTypesBloc>()
-                                                .add(
-                                                  EventTypesDataTableLoaded(),
-                                                ),
-                                          )
-                                          .catchError((error) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              error is ApiException
-                                                  ? error.message
-                                                  : 'Une erreur est survenue',
+                                        widget.onDelete
+                                            ?.call(type)
+                                            .then(
+                                              (value) => context
+                                                  .read<EventTypesBloc>()
+                                                  .add(
+                                                    EventTypesDataTableLoaded(),
+                                                  ),
+                                            )
+                                            .catchError((error) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                error is ApiException &&
+                                                        error.message.isNotEmpty
+                                                    ? error.message
+                                                    : 'Une erreur est survenue',
+                                              ),
+                                              backgroundColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
                                             ),
-                                            backgroundColor: Theme.of(context)
-                                                .colorScheme.error,
-                                          ),
-                                        );
-                                      }).whenComplete(() => setState(() {
-                                                typesDeleting.remove(type);
-                                              }));
-                                    },
-                                  ),
-                              ],
+                                          );
+                                        }).whenComplete(() => setState(() {
+                                                  typesDeleting.remove(type);
+                                                }));
+                                      },
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                    .toList(),
+                          ],
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
             if (state.status == EventTypesStatus.tableLoading)
               const Center(child: CircularProgressIndicator()),

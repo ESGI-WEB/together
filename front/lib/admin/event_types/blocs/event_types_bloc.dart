@@ -29,7 +29,7 @@ class EventTypesBloc extends Bloc<EventTypesEvent, EventTypesState> {
       }
     });
 
-    on<EventTypeEdited>((event, emit) async {
+    on<EventTypeCreatedOrEdited>((event, emit) async {
       emit(state.copyWith(
         status: EventTypesStatus.addOrEditTypeLoading,
       ));

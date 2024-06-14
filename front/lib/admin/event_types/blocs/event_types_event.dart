@@ -5,8 +5,8 @@ sealed class EventTypesEvent {}
 
 class EventTypesDataTableLoaded extends EventTypesEvent {}
 
-class EventTypeEdited extends EventTypesEvent {
+class EventTypeCreatedOrEdited extends EventTypesEvent {
   final EventTypeCreateOrEdit type;
 
-  EventTypeEdited(this.type);
+  EventTypeCreatedOrEdited(this.type);
 }

@@ -54,7 +54,7 @@ func Paginate(value interface{}, pagination *Pagination, query *gorm.DB) func(db
 	}
 }
 
-func PaginationFromContext(ctx echo.Context) *Pagination {
+func PaginationFromContext(ctx echo.Context) Pagination {
 	pagination := new(Pagination)
 	sort := ctx.QueryParam("sort")
 
@@ -62,5 +62,5 @@ func PaginationFromContext(ctx echo.Context) *Pagination {
 	pagination.Page, _ = strconv.Atoi(ctx.QueryParam("page"))
 	pagination.Sort = &sort
 
-	return pagination
+	return *pagination
 }

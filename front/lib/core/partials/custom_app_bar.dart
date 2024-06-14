@@ -10,11 +10,13 @@ import 'package:go_router/go_router.dart';
 class CustomAppBar extends StatefulWidget {
   final bool canPop;
   final Widget child;
+  final Widget? drawer;
 
   const CustomAppBar({
     super.key,
     required this.child,
     this.canPop = false,
+    this.drawer,
   });
 
   @override
@@ -81,6 +83,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return Scaffold(
       appBar: _buildAppBar(context, _authenticatedData),
       body: widget.child,
+      drawer: widget.drawer,
     );
   }
 }

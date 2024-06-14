@@ -56,6 +56,15 @@ class _EventTypesScreenState extends State<EventTypesScreen> {
                 spacing: 20,
                 runSpacing: 20,
                 children: [
+                  if (_eventTypeToEditOrCreate != null)
+                    EventTypesForm(
+                      eventTypeToEdit: _eventTypeToEditOrCreate,
+                      onFormCancel: () {
+                        setState(() {
+                          _eventTypeToEditOrCreate = null;
+                        });
+                      },
+                    ),
                   EventTypesTable(
                     onEdit: (eventType) async {
                       final response =
@@ -78,17 +87,9 @@ class _EventTypesScreenState extends State<EventTypesScreen> {
                         _eventTypeToEditOrCreate = eventTypeWithImage;
                       });
                     },
-                    onDelete: (eventType) => EventTypeServices.deleteEventType(eventType.id),
+                    onDelete: (eventType) =>
+                        EventTypeServices.deleteEventType(eventType.id),
                   ),
-                  if (_eventTypeToEditOrCreate != null)
-                    EventTypesForm(
-                      eventTypeToEdit: _eventTypeToEditOrCreate,
-                      onFormCancel: () {
-                        setState(() {
-                          _eventTypeToEditOrCreate = null;
-                        });
-                      },
-                    ),
                 ],
               ),
             ],

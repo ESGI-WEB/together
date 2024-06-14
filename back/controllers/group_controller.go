@@ -83,7 +83,7 @@ func (c *GroupController) GetAllMyGroups(ctx echo.Context) error {
 
 	pagination := utils.PaginationFromContext(ctx)
 
-	groups, err := c.GroupService.GetAllMyGroups(user.ID, *pagination)
+	groups, err := c.GroupService.GetAllMyGroups(user.ID, pagination)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

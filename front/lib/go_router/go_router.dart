@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:front/admin/admin_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/chat/blocs/websocket_bloc.dart';
+import 'package:front/admin/users/users_screen.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
@@ -18,6 +20,23 @@ import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
+
+CustomTransitionPage buildPageWithDefaultTransition<T>({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  // remove all transition effects
+
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return child;
+    },
+    transitionDuration: const Duration(milliseconds: 0),
+  );
+}
 
 final goRouter = GoRouter(
   // TODO error screen
@@ -129,7 +148,7 @@ final goRouter = GoRouter(
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return CustomAppBar(
-          canPop: state.uri.toString() != '/admin',
+          drawer: const AdminDrawer(),
           child: Center(
             child: Container(
               constraints: const BoxConstraints(maxWidth: 1200),
@@ -142,17 +161,38 @@ final goRouter = GoRouter(
         GoRoute(
           name: AdminScreen.routeName,
           path: '/admin',
-          builder: (context, state) => const AdminScreen(),
+          pageBuilder: (context, state) => buildPageWithDefaultTransition(
+            context: context,
+            state: state,
+            child: const AdminScreen(),
+          ),
           routes: [
             GoRoute(
               name: FeaturesScreen.routeName,
               path: 'features',
-              builder: (context, state) => const FeaturesScreen(),
+              pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                context: context,
+                state: state,
+                child: const FeaturesScreen(),
+              ),
             ),
             GoRoute(
               name: EventTypesScreen.routeName,
               path: 'event-types',
-              builder: (context, state) => const EventTypesScreen(),
+              pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                context: context,
+                state: state,
+                child: const EventTypesScreen(),
+              ),
+            ),
+            GoRoute(
+              name: UsersScreen.routeName,
+              path: 'users',
+              pageBuilder: (context, state) => buildPageWithDefaultTransition(
+                context: context,
+                state: state,
+                child: const UsersScreen(),
+              ),
             ),
           ],
         ),
