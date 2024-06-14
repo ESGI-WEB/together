@@ -9,6 +9,7 @@ import 'package:front/core/services/event_type_services.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import 'blocs/create_event_bloc.dart';
 
@@ -80,8 +81,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
     if (picked != null) {
       setState(() {
-        date =
-            '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+        date = DateFormat('yyyy-MM-dd').format(picked); // Format personnalisé
       });
     }
   }
@@ -92,9 +92,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       initialTime: TimeOfDay.now(),
     );
     if (picked != null) {
+      final now = DateTime.now();
+      final selectedTime =
+          DateTime(now.year, now.month, now.day, picked.hour, picked.minute);
       setState(() {
-        time =
-            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+        time = DateFormat('HH:mm').format(selectedTime); // Format personnalisé
       });
     }
   }
@@ -131,11 +133,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           }).toList();
         });
       } else {
-        throw Exception('Failed to load addresses');
+        throw Exception('Erreur au chargement des addresses');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load addresses: $e')),
+        SnackBar(content: Text('Erreur au chargement des addresses: $e')),
       );
     }
   }
@@ -184,7 +186,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                         content: Text(
-                            'Failed to create event: ${state.errorMessage}')),
+                            "Erreur sur la création d'évènement: ${state.errorMessage}")),
                   );
                 }
               },
