@@ -30,7 +30,7 @@ func (controller *WebSocketController) Hello(ctx echo.Context) error {
 		return err
 	}
 
-	defer controller.messageService.AcceptNewWebSocketConnection(ws)(ws)
+	defer controller.messageService.AcceptNewWebSocketConnection(ws, &loggedUser)(ws)
 
 	for {
 		_, msg, err := ws.ReadMessage()
@@ -39,7 +39,7 @@ func (controller *WebSocketController) Hello(ctx echo.Context) error {
 			break
 		}
 
-		if err := controller.messageService.HandleWebSocketMessage(msg, loggedUser); err != nil {
+		if err := controller.messageService.HandleWebSocketMessage(msg, &loggedUser, ws); err != nil {
 			ctx.Logger().Warn(err)
 			continue
 		}

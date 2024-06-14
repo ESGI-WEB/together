@@ -1,8 +1,8 @@
 package services
 
 import (
-	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"together/database"
 	"together/models"
 )
 
@@ -16,55 +16,25 @@ func NewMessageService() *MessageService {
 	}
 }
 
-func (s *MessageService) handleSendChatMessage(wsService *WebSocketService, msg []byte, user models.User) error {
-	var receivedMessage ClientBoundSendChatMessage
-	if err := json.Unmarshal(msg, &receivedMessage); err != nil {
-		return err
-	}
-
+func (s *MessageService) CreatePublication(message models.Message) (*models.Message, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(receivedMessage); err != nil {
-		return err
+	if err := validate.Struct(message); err != nil {
+		return nil, err
 	}
 
-	isInGroup, err := s.groupService.IsUserInGroup(user.ID, receivedMessage.GroupID)
-	if !isInGroup {
-		return nil
-	}
-	if err != nil {
-		return err
+	message.Type = models.PubMessageType // Ensure the message type is set to publication
+
+	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
+		return nil, err
 	}
 
-	response := ServerBoundSendChatMessage{
-		TypeMessage: TypeMessage{
-			Type: ServerBoundSendChatMessageType,
-		},
-		Content: receivedMessage.Content,
-		Author:  &user,
-		GroupID: receivedMessage.GroupID,
-	}
-
-	bytes, err := json.Marshal(response)
-	if err != nil {
-		return err
-	}
-
-	// TODO: Only broadcast to the members of the group
-	if err := wsService.BroadcastWebSocketMessage(bytes); err != nil {
-		return err
-	}
-	return nil
+	return &message, nil
 }
 
-type ClientBoundSendChatMessage struct {
-	TypeMessage
-	Content string `json:"content" validate:"required"`
-	GroupID uint   `json:"group_id" validate:"required"`
-}
-
-type ServerBoundSendChatMessage struct {
-	TypeMessage
-	Content string       `json:"content" validate:"required"`
-	Author  *models.User `json:"author" validate:"required"`
-	GroupID uint         `json:"group_id" validate:"required"`
+func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, error) {
+	var messages []models.Message
+	if err := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
 }
