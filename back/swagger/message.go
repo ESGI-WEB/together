@@ -39,12 +39,12 @@ func SetupMessageSwagger() *swag.API {
 
 	api.AddEndpoint(
 		endpoint.New(
-			http.MethodPut, "/messages/:id",
+			http.MethodPut, "/messages/{id}",
 			endpoint.Handler(messageController.UpdateMessage),
 			endpoint.Summary("Update a message"),
 			endpoint.Description("Updates an existing message with the provided information."),
 			endpoint.Path("id", "integer", "ID of the message to update", true),
-			endpoint.Body(models.Message{}, "Message object with updated data", true),
+			endpoint.Body(models.MessageUpdate{}, "Message object with updated data", true),
 			endpoint.Response(http.StatusOK, "Successfully updated message", endpoint.SchemaResponseOption(models.Message{})),
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnauthorized, "User unauthorized"),

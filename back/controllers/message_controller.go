@@ -97,7 +97,7 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	var jsonBody models.Message
+	var jsonBody models.MessageUpdate
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
@@ -119,9 +119,6 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 	if !isUserInGroup {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
-
-	// Prevent changing the type
-	jsonBody.Type = message.Type
 
 	updatedMessage, err := c.messageService.UpdateMessage(uint(messageID), jsonBody)
 	if err != nil {

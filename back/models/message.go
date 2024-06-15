@@ -33,6 +33,14 @@ type MessageCreate struct {
 	EventID  *uint       `json:"event_id"`
 }
 
+type MessageUpdate struct {
+	Content string `json:"content" validate:"required,min=10,max=300"`
+}
+
+type MessagePinned struct {
+	IsPinned bool `gorm:"default:false;not null" json:"is_pinned"`
+}
+
 func (e MessageCreate) ToMessage() *Message {
 	return &Message{
 		Type:     e.Type,

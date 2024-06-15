@@ -112,20 +112,24 @@ func (s *MessageService) CreatePublication(message models.MessageCreate) (*model
 	return newMessage, nil
 }
 
-func (s *MessageService) UpdateMessage(messageID uint, updatedData models.Message) (*models.Message, error) {
-	var message models.Message
-	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+func (s *MessageService) UpdateMessage(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
+	validate := validator.New()
+	if err := validate.Struct(updatedMessage); err != nil {
 		return nil, err
 	}
 
-	// Prevent changing the type
-	updatedData.Type = message.Type
-
-	if err := database.CurrentDatabase.Model(&message).Updates(updatedData).Error; err != nil {
+	existingMessage := &models.Message{}
+	if err := database.CurrentDatabase.First(existingMessage, messageID).Error; err != nil {
 		return nil, err
 	}
 
-	return &message, nil
+	existingMessage.Content = updatedMessage.Content
+
+	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedMessage).Error; err != nil {
+		return nil, err
+	}
+
+	return existingMessage, nil
 }
 
 func (s *MessageService) DeleteMessage(messageID uint) error {
