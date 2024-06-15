@@ -3,7 +3,11 @@ class MonthlyChartData {
   final int year;
   final int count;
 
-  MonthlyChartData({required this.month, required this.year, required this.count});
+  MonthlyChartData({
+    required this.month,
+    required this.year,
+    required this.count,
+  });
 
   factory MonthlyChartData.fromJson(Map<String, dynamic> json) {
     return MonthlyChartData(

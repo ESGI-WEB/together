@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/admin/admin_screen.dart';
+import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/admin/users/users_screen.dart';
@@ -36,7 +36,7 @@ class AdminDrawer extends StatelessWidget {
             onTap: () {
               // close drawer
               Navigator.pop(context);
-              AdminScreen.navigateTo(context);
+              DashboardScreen.navigateTo(context);
             },
           ),
           ListTile(

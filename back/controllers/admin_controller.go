@@ -16,8 +16,8 @@ func NewAdminController() *AdminController {
 	}
 }
 
-func (c *AdminController) GetLastYearRegistrationsCount(ctx echo.Context) error {
-	stats, err := c.StatsService.GetLastYearRegistrationsCount()
+func (c *AdminController) GetMonthlyLastYearRegistrationsCount(ctx echo.Context) error {
+	stats, err := c.StatsService.GetMonthlyLastYearRegistrationsCount()
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
@@ -25,18 +25,20 @@ func (c *AdminController) GetLastYearRegistrationsCount(ctx echo.Context) error 
 	return ctx.JSON(200, stats)
 }
 
-func (c *AdminController) GetLastDayMessagesCount(ctx echo.Context) error {
-	return ctx.JSON(200, "Last day messages")
+func (c *AdminController) GetMonthlyMessagesCount(ctx echo.Context) error {
+	stats, err := c.StatsService.GetMonthlyMessagesCount()
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(200, stats)
 }
 
-func (c *AdminController) GetNextEvents(ctx echo.Context) error {
-	return ctx.JSON(200, "Next events")
-}
+func (c *AdminController) GetEventTypesCount(ctx echo.Context) error {
+	stats, err := c.StatsService.GetEventTypesCount()
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
 
-func (c *AdminController) GetLastYearEventTypesCount(ctx echo.Context) error {
-	return ctx.JSON(200, "Last year event types")
-}
-
-func (c *AdminController) GetLastCreatedGroups(ctx echo.Context) error {
-	return ctx.JSON(200, "Last created groups")
+	return ctx.JSON(200, stats)
 }

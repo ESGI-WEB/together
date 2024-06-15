@@ -18,9 +18,7 @@ func (r *AdminRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("/users", userController.CreateUser, middlewares.AuthenticationMiddleware(models.AdminRole))
 
 	stats := group.Group("/stats")
-	stats.GET("/last-year-registrations-count", adminController.GetLastYearRegistrationsCount, middlewares.AuthenticationMiddleware(models.AdminRole))
-	stats.GET("/last-day-messages-count", adminController.GetLastDayMessagesCount, middlewares.AuthenticationMiddleware(models.AdminRole))
-	stats.GET("/next-events", adminController.GetNextEvents, middlewares.AuthenticationMiddleware(models.AdminRole))
-	stats.GET("/last-year-event-types-count", adminController.GetLastYearEventTypesCount, middlewares.AuthenticationMiddleware(models.AdminRole))
-	stats.GET("/last-created-groups", adminController.GetLastCreatedGroups, middlewares.AuthenticationMiddleware(models.AdminRole))
+	stats.GET("/monthly-last-year-registration-count", adminController.GetMonthlyLastYearRegistrationsCount, middlewares.AuthenticationMiddleware(models.AdminRole))
+	stats.GET("/monthly-messages-count", adminController.GetMonthlyMessagesCount, middlewares.AuthenticationMiddleware(models.AdminRole))
+	stats.GET("/event-types-count", adminController.GetEventTypesCount, middlewares.AuthenticationMiddleware(models.AdminRole))
 }
