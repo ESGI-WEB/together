@@ -79,9 +79,7 @@ func SetupMessageSwagger() *swag.API {
 			endpoint.Summary("Pin or unpin a message"),
 			endpoint.Description("Pins or unpins an existing message by ID."),
 			endpoint.Path("id", "integer", "ID of the message to pin/unpin", true),
-			endpoint.Body(struct {
-				Pin bool `json:"pin"`
-			}{}, "Pin status", true),
+			endpoint.Body(models.MessagePinned{}, "Pin status", true),
 			endpoint.Response(http.StatusOK, "Successfully pinned/unpinned message", endpoint.SchemaResponseOption(models.Message{})),
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnauthorized, "User unauthorized"),

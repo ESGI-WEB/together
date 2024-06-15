@@ -138,6 +138,7 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 	}
 
 	var jsonBody models.MessagePinned
+
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
