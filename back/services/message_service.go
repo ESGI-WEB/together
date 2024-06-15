@@ -119,8 +119,6 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 		return nil, err
 	}
 
-	fmt.Println(updatedFields)
-
 	existingMessage := &models.Message{}
 	if err := database.CurrentDatabase.First(existingMessage, messageID).Error; err != nil {
 		return nil, err
