@@ -45,13 +45,20 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
 
   Future<void> _initWebSocket(Emitter<WebSocketState> emit) async {
     _webSocketChannel = await ChatService.getChannel();
+    if (_webSocketChannel == null) {
+      Timer(const Duration(seconds: 2), () => _initWebSocket(emit));
+      return;
+    }
 
     _webSocketChannel?.stream.listen((dynamic message) {
       add(NewMessageReceivedEvent(message: message));
     }, onDone: () {
-      print('WebSocket connection closed');
+      _webSocketChannel = null;
+      Timer(const Duration(seconds: 2), () => _initWebSocket(emit));
     }, onError: (error) {
       add(WebSocketErrorEvent(error));
+      _webSocketChannel = null;
+      Timer(const Duration(seconds: 2), () => _initWebSocket(emit));
     });
   }
 

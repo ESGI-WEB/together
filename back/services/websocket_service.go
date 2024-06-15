@@ -125,10 +125,10 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		UserID:  user.ID,
 		EventID: nil,
 	}
-	_, err = s.messageService.CreatePublication(message)
-	if err != nil {
-		return err
-	}
+	_, err = s.messageService.CreateChatMessage(message)
+	//if err != nil {
+	//	return err
+	//}
 
 	response := ServerBoundSendChatMessage{
 		TypeMessage: TypeMessage{

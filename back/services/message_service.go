@@ -6,17 +6,13 @@ import (
 	"together/models"
 )
 
-type MessageService struct {
-	groupService *GroupService
-}
+type MessageService struct{}
 
 func NewMessageService() *MessageService {
-	return &MessageService{
-		groupService: NewGroupService(),
-	}
+	return &MessageService{}
 }
 
-func (s *MessageService) CreatePublication(message models.Message) (*models.Message, error) {
+func (s *MessageService) CreateChatMessage(message models.Message) (*models.Message, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(message); err != nil {
 		return nil, err
