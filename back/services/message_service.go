@@ -96,19 +96,20 @@ func (s *MessageService) handleSendChatMessage(msg []byte, user models.User) err
 	return nil
 }
 
-func (s *MessageService) CreatePublication(message models.Message) (*models.Message, error) {
+func (s *MessageService) CreatePublication(message models.MessageCreate) (*models.Message, error) {
+	message.Type = models.PubMessageType
+
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(message); err != nil {
 		return nil, err
 	}
 
-	message.Type = models.PubMessageType // Ensure the message type is set to publication
-
-	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
+	newMessage := message.ToMessage()
+	if err := database.CurrentDatabase.Create(&newMessage).Error; err != nil {
 		return nil, err
 	}
 
-	return &message, nil
+	return newMessage, nil
 }
 
 func (s *MessageService) UpdateMessage(messageID uint, updatedData models.Message) (*models.Message, error) {
@@ -140,7 +141,7 @@ func (s *MessageService) PinMessage(messageID uint, pin bool) (*models.Message, 
 		return nil, err
 	}
 
-	message.IsPined = pin
+	message.IsPinned = pin
 	if err := database.CurrentDatabase.Save(&message).Error; err != nil {
 		return nil, err
 	}

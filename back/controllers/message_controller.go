@@ -29,7 +29,7 @@ var (
 	upgrader = websocket.Upgrader{}
 )
 
-func (controller *MessageController) Hello(ctx echo.Context) error {
+func (c *MessageController) Hello(ctx echo.Context) error {
 	// Get current authenticated user from context
 	loggedUser := ctx.Get("user").(models.User)
 
@@ -38,7 +38,7 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 		return err
 	}
 
-	defer controller.messageService.AcceptNewConnection(ws)(ws)
+	defer c.messageService.AcceptNewConnection(ws)(ws)
 
 	for {
 		_, msg, err := ws.ReadMessage()
@@ -47,7 +47,7 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 			break
 		}
 
-		if err := controller.messageService.HandleMessage(msg, loggedUser); err != nil {
+		if err := c.messageService.HandleMessage(msg, loggedUser); err != nil {
 			ctx.Logger().Warn(err)
 			continue
 		}
@@ -56,7 +56,7 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 }
 
 func (c *MessageController) CreatePublication(ctx echo.Context) error {
-	var jsonBody models.Message
+	var jsonBody models.MessageCreate
 
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
@@ -188,8 +188,8 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 }
 
 func (c *MessageController) GetPublicationsByEventAndGroup(ctx echo.Context) error {
-	eventIDStr := ctx.Param("eventID")
-	groupIDStr := ctx.Param("groupID")
+	eventIDStr := ctx.Param("eventId")
+	groupIDStr := ctx.Param("groupId")
 
 	eventID, err := strconv.Atoi(eventIDStr)
 	if err != nil {
@@ -215,7 +215,7 @@ func (c *MessageController) GetPublicationsByEventAndGroup(ctx echo.Context) err
 }
 
 func (c *MessageController) GetPublicationsByGroup(ctx echo.Context) error {
-	groupIDStr := ctx.Param("groupID")
+	groupIDStr := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(groupIDStr)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)

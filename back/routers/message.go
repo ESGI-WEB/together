@@ -11,16 +11,16 @@ type MessageRouter struct{}
 func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	messageController := controllers.NewMessageController()
 
-	messages := e.Group("/messages")
+	group := e.Group("/messages")
 
-	messages.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return middlewares.AuthenticationMiddleware()(next)
 	})
 
-	messages.POST("/publication", messageController.CreatePublication)
-	messages.PUT("/:id", messageController.UpdateMessage)
-	messages.DELETE("/:id", messageController.DeleteMessage)
-	messages.POST("/:id/pin", messageController.PinMessage)
-	messages.GET("group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)
-	messages.GET("/group/:groupId", messageController.GetPublicationsByGroup, middlewares.GroupMembershipMiddleware)
+	group.POST("/publication", messageController.CreatePublication)
+	group.PUT("/:id", messageController.UpdateMessage)
+	group.DELETE("/:id", messageController.DeleteMessage)
+	group.POST("/:id/pin", messageController.PinMessage)
+	group.GET("group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)
+	group.GET("/group/:groupId", messageController.GetPublicationsByGroup, middlewares.GroupMembershipMiddleware)
 }

@@ -31,7 +31,7 @@ func AuthenticationMiddleware(roles ...models.Role) echo.MiddlewareFunc {
 
 			userID := claims["id"]
 			var existingUser models.User
-			database.CurrentDatabase.Find(&existingUser, userID)
+			database.CurrentDatabase.Preload("Groups").Find(&existingUser, userID)
 			if existingUser.ID == 0 {
 				return c.JSON(http.StatusUnauthorized, "unauthorized")
 			}
