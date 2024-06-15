@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
 	"together/database"
@@ -112,24 +113,32 @@ func (s *MessageService) CreatePublication(message models.MessageCreate) (*model
 	return newMessage, nil
 }
 
-func (s *MessageService) UpdateMessage(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
-	validate := validator.New()
-	if err := validate.Struct(updatedMessage); err != nil {
+func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields interface{}) (*models.Message, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(updatedFields); err != nil {
 		return nil, err
 	}
+
+	fmt.Println(updatedFields)
 
 	existingMessage := &models.Message{}
 	if err := database.CurrentDatabase.First(existingMessage, messageID).Error; err != nil {
 		return nil, err
 	}
 
-	existingMessage.Content = updatedMessage.Content
-
-	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedMessage).Error; err != nil {
+	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedFields).Error; err != nil {
 		return nil, err
 	}
 
 	return existingMessage, nil
+}
+
+func (s *MessageService) UpdateContent(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
+	return s.updateMessageGeneric(messageID, updatedMessage)
+}
+
+func (s *MessageService) PinnedMessage(messageID uint, updatedMessage models.MessagePinned) (*models.Message, error) {
+	return s.updateMessageGeneric(messageID, updatedMessage)
 }
 
 func (s *MessageService) DeleteMessage(messageID uint) error {
@@ -137,20 +146,6 @@ func (s *MessageService) DeleteMessage(messageID uint) error {
 		return err
 	}
 	return nil
-}
-
-func (s *MessageService) PinMessage(messageID uint, pin bool) (*models.Message, error) {
-	var message models.Message
-	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
-		return nil, err
-	}
-
-	message.IsPinned = pin
-	if err := database.CurrentDatabase.Save(&message).Error; err != nil {
-		return nil, err
-	}
-
-	return &message, nil
 }
 
 func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint) ([]models.Message, error) {

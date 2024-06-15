@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -120,12 +121,43 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	updatedMessage, err := c.messageService.UpdateMessage(uint(messageID), jsonBody)
+	updatedMessage, err := c.messageService.UpdateContent(uint(messageID), jsonBody)
+	fmt.Println("erroe encore", err)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
 	return ctx.JSON(http.StatusOK, updatedMessage)
+}
+
+func (c *MessageController) PinMessage(ctx echo.Context) error {
+	id := ctx.Param("id")
+	messageID, err := strconv.Atoi(id)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	var jsonBody models.MessagePinned
+	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user, ok := ctx.Get("user").(models.User)
+	if !ok || user.ID == 0 {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	var message models.Message
+	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	pinnedMessage, err := c.messageService.PinnedMessage(uint(messageID), jsonBody)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, pinnedMessage)
 }
 
 func (c *MessageController) DeleteMessage(ctx echo.Context) error {
@@ -150,38 +182,6 @@ func (c *MessageController) DeleteMessage(ctx echo.Context) error {
 	}
 
 	return ctx.NoContent(http.StatusNoContent)
-}
-
-func (c *MessageController) PinMessage(ctx echo.Context) error {
-	id := ctx.Param("id")
-	messageID, err := strconv.Atoi(id)
-	if err != nil {
-		return ctx.NoContent(http.StatusBadRequest)
-	}
-
-	var jsonBody struct {
-		Pin bool `json:"pin"`
-	}
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
-		return ctx.NoContent(http.StatusBadRequest)
-	}
-
-	user, ok := ctx.Get("user").(models.User)
-	if !ok || user.ID == 0 {
-		return ctx.NoContent(http.StatusUnauthorized)
-	}
-
-	var message models.Message
-	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
-		return ctx.NoContent(http.StatusNotFound)
-	}
-
-	pinnedMessage, err := c.messageService.PinMessage(uint(messageID), jsonBody.Pin)
-	if err != nil {
-		return ctx.NoContent(http.StatusInternalServerError)
-	}
-
-	return ctx.JSON(http.StatusOK, pinnedMessage)
 }
 
 func (c *MessageController) GetPublicationsByEventAndGroup(ctx echo.Context) error {
