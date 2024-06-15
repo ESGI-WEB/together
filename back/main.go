@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	"together/database"
 	"together/routers"
+	"together/swagger"
 	"together/utils"
 )
 
@@ -29,7 +31,10 @@ func main() {
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
 
-	// cors authorize flutter web dev
+	// Set up Swagger routes
+	swagger.SetupSwaggerRoutes(e)
+
+	// CORS authorize Flutter web dev
 	fmt.Printf("APP_MODE: %s\n", utils.GetEnv("APP_MODE", "production"))
 	if utils.GetEnv("APP_MODE", "production") == "development" {
 		e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -59,8 +64,10 @@ func main() {
 		return
 	}
 
+	// Load routes
 	routers.LoadRoutes(e, appRouters...)
 
+	// Serve static files for Flutter web
 	e.Static("/app", utils.GetEnv("FLUTTER_BUILD_PATH", "flutter_build")+"/web")
 
 	e.Static("/public", "public")
