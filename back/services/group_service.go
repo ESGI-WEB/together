@@ -126,15 +126,3 @@ func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
 	}
 	return &event, nil
 }
-
-func (s *GroupService) UserBelongsToGroup(userID, groupID uint) (bool, error) {
-	var count int64
-	if err := database.CurrentDatabase.Model(&models.Group{}).
-		Joins("JOIN group_users ON groups.id = group_users.group_id").
-		Where("groups.id = ? AND group_users.user_id = ?", groupID, userID).
-		Count(&count).Error; err != nil {
-		return false, err
-	}
-
-	return count > 0, nil
-}

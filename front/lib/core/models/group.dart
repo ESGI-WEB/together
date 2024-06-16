@@ -46,7 +46,7 @@ class Group {
       'Name': name,
       'Description': description,
       'Code': code,
-      'Users': users,
+      'Users': users?.map((user) => user.toJson()),
     };
   }
 }

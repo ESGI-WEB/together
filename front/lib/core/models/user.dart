@@ -56,6 +56,23 @@ class User {
       textColor: ColorServices.getContrastingTextColor(color),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'CreatedAt': createdAt.toIso8601String(),
+      'UpdatedAt': updatedAt.toIso8601String(),
+      'DeletedAt': deletedAt?.toIso8601String(),
+      'name': name,
+      'email': email,
+      'role': role.toString().split('.').last,
+      'biography': biography,
+      'avatar_path': avatarPath,
+      'color': color,
+      'text_color': textColor
+    };
+  }
+
 }
 
 enum UserRole {

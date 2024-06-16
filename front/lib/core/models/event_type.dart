@@ -34,6 +34,17 @@ class EventType {
   static List<EventType> listFromJson(List<dynamic> json) {
     return json.map((e) => EventType.fromJson(e)).toList();
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'name': name,
+      'description': description,
+      'CreatedAt': createdAt.toIso8601String(),
+      'UpdatedAt': updatedAt.toIso8601String(),
+      'image_path': image.url,
+    };
+  }
 }
 
 class EventTypeCreateOrEdit {

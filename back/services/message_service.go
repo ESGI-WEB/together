@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/websocket"
+	"together/database"
 	"together/models"
+	"together/utils"
 )
 
 type MessageService struct {
@@ -93,6 +95,73 @@ func (s *MessageService) handleSendChatMessage(msg []byte, user models.User) err
 		return err
 	}
 	return nil
+}
+
+func (s *MessageService) CreatePublication(message models.MessageCreate) (*models.Message, error) {
+	message.Type = models.PubMessageType
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(message); err != nil {
+		return nil, err
+	}
+
+	newMessage := message.ToMessage()
+	if err := database.CurrentDatabase.Create(&newMessage).Error; err != nil {
+		return nil, err
+	}
+
+	return newMessage, nil
+}
+
+func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields interface{}) (*models.Message, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(updatedFields); err != nil {
+		return nil, err
+	}
+
+	existingMessage := &models.Message{}
+	if err := database.CurrentDatabase.First(existingMessage, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedFields).Error; err != nil {
+		return nil, err
+	}
+
+	return existingMessage, nil
+}
+
+func (s *MessageService) UpdateContent(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
+	return s.updateMessageGeneric(messageID, updatedMessage)
+}
+
+func (s *MessageService) PinnedMessage(messageID uint, updatedMessage models.MessagePinned) (*models.Message, error) {
+	return s.updateMessageGeneric(messageID, updatedMessage)
+}
+
+func (s *MessageService) DeleteMessage(messageID uint) error {
+	if err := database.CurrentDatabase.Delete(&models.Message{}, messageID).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, pagination utils.Pagination) ([]models.Message, error) {
+	var messages []models.Message
+	query := database.CurrentDatabase.Where("event_id = ? AND group_id = ? AND type = ?", eventID, groupID, models.PubMessageType).Find(&messages)
+
+	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
+
+	return messages, nil
+}
+
+func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.Pagination) ([]models.Message, error) {
+	var messages []models.Message
+	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Find(&messages)
+
+	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
+
+	return messages, nil
 }
 
 const (

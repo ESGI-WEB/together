@@ -1,4 +1,4 @@
-import 'package:front/core/models/message.dart';
+import 'package:front/core/models/websocket_message.dart';
 
 abstract class WebSocketState {}
 
