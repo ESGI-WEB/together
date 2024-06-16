@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/add_event_card.dart';
 import 'package:front/core/partials/event_card.dart';
 import 'package:front/core/partials/next_event_of_group/blocs/next_event_of_group_bloc.dart';
-import 'package:front/event/create_event_screen.dart';
+import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:shimmer/shimmer.dart';
 

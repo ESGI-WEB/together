@@ -10,7 +10,7 @@ import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/event/create_event_screen.dart';
+import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
