@@ -60,3 +60,29 @@ func (s *EventService) GetEventAttends(eventID uint, pagination utils.Pagination
 
 	return &pagination, nil
 }
+
+func (s *EventService) GetEvents(pagination utils.Pagination, filters ...EventFilter) (*utils.Pagination, error) {
+	var events []models.Event
+	query := database.CurrentDatabase.Model(models.Event{})
+
+	if len(filters) > 0 {
+		for _, filter := range filters {
+			query = query.Where(filter.Column+" "+filter.Filter.Operator+" ?", filter.Filter.Value)
+		}
+	}
+
+	err := query.Scopes(utils.Paginate(events, &pagination, query)).
+		Find(&events).Error
+	if err != nil {
+		return nil, err
+	}
+
+	pagination.Rows = events
+
+	return &pagination, nil
+}
+
+type EventFilter struct {
+	database.Filter
+	Column string `json:"column" validate:"required,oneof=organizer_id created_at date time type_id address_id group_id"`
+}

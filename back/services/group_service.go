@@ -138,3 +138,31 @@ func (s *GroupService) UserBelongsToGroup(userID, groupID uint) (bool, error) {
 
 	return count > 0, nil
 }
+
+func (s *GroupService) GetAllGroups(pagination utils.Pagination, filters ...GroupFilter) (*utils.Pagination, error) {
+	var groups []models.Group
+
+	query := database.CurrentDatabase.Model(models.Group{})
+
+	if len(filters) > 0 {
+		for _, filter := range filters {
+			query = query.Where(filter.Column, filter.Operator, filter.Value)
+		}
+	}
+
+	err := query.Scopes(utils.Paginate(groups, &pagination, query)).
+		Find(&groups).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	pagination.Rows = groups
+
+	return &pagination, nil
+}
+
+type GroupFilter struct {
+	database.Filter
+	Column string `json:"column" validate:"required,oneof=name code"`
+}

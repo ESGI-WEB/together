@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/admin/admin_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/admin/admin_screen.dart';
+import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/chat/blocs/websocket_bloc.dart';
@@ -151,7 +151,7 @@ final goRouter = GoRouter(
           drawer: const AdminDrawer(),
           child: Center(
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 1200),
+              constraints: const BoxConstraints(maxWidth: 1600),
               child: child,
             ),
           ),
@@ -159,12 +159,12 @@ final goRouter = GoRouter(
       },
       routes: [
         GoRoute(
-          name: AdminScreen.routeName,
+          name: DashboardScreen.routeName,
           path: '/admin',
           pageBuilder: (context, state) => buildPageWithDefaultTransition(
             context: context,
             state: state,
-            child: const AdminScreen(),
+            child: const DashboardScreen(),
           ),
           routes: [
             GoRoute(

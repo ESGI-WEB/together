@@ -88,21 +88,24 @@ class EventScreen extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Participants',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall,
-                                        ),
-                                        const SizedBox(height: 8),
-                                        EventJoinedMembers(
-                                            firstParticipants:
-                                                state.firstParticipants ?? []),
-                                      ],
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Participants',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleSmall,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          EventJoinedMembers(
+                                              firstParticipants:
+                                                  state.firstParticipants ?? []),
+                                        ],
+                                      ),
                                     ),
                                     if (address != null &&
                                         address.latlng != null)

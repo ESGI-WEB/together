@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:front/admin/admin_screen.dart';
+import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/storage_service.dart';
@@ -62,7 +62,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ? IconButton(
                 icon: const Icon(Icons.settings),
                 onPressed: () {
-                  AdminScreen.navigateTo(context);
+                  DashboardScreen.navigateTo(context);
                 },
               )
             : Container(),

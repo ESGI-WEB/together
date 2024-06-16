@@ -18,6 +18,7 @@ class Event {
   final int addressId;
   final Address? address;
   final User? organizer;
+  final int groupId;
 
   Event({
     required this.id,
@@ -34,6 +35,7 @@ class Event {
     required this.addressId,
     this.address,
     this.organizer,
+    required this.groupId,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -55,6 +57,7 @@ class Event {
       organizer:
           json['organizer'] != null ? User.fromJson(json['organizer']) : null,
       type: json['type'] != null ? EventType.fromJson(json['type']) : null,
+      groupId: json['group_id'],
     );
   }
 }
