@@ -61,6 +61,7 @@ func (s *StatsService) GetEventTypesCount() ([]RatioChartData, error) {
 
 	err := database.CurrentDatabase.Model(models.EventType{}).
 		Joins("LEFT JOIN events ON event_types.id = events.type_id").
+		Where("events.deleted_at IS NULL").
 		Select("event_types.name, count(events.id) as count").
 		Group("event_types.name").
 		Order("count DESC").
