@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/core/models/message.dart';
+import 'package:front/core/models/websocket_message.dart';
 import 'package:front/core/partials/avatar.dart';
 
 class MessageBubble extends StatelessWidget {

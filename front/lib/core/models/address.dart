@@ -31,6 +31,18 @@ class Address {
   }
 
   String get fullAddress => '$number $street, $zip $city';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'street': street,
+      'number': number,
+      'city': city,
+      'zip': zip,
+      'latitude': latlng?.latitude,
+      'longitude': latlng?.longitude,
+    };
+  }
 }
 
 class AddressCreate {

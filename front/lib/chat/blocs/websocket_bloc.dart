@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/models/message.dart';
+import 'package:front/core/models/websocket_message.dart';
 import 'package:front/core/services/chat_service.dart';
 import 'package:web_socket_channel/io.dart';
 
