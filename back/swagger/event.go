@@ -61,6 +61,22 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("Event"),
 		),
+		endpoint.New(
+			http.MethodPost, "/events/{id}/duplicate",
+			endpoint.Handler(eventController.DuplicateEvent),
+			endpoint.Summary("Duplicate an event"),
+			endpoint.Description("Duplicates an existing event and schedules it for a new date."),
+			endpoint.Path("id", "integer", "ID of the event to duplicate", true),
+			endpoint.Body(struct {
+				NewDate string `json:"new_date" validate:"required,datetime=2006-01-02"`
+			}{}, "New date for the duplicated event", true),
+			endpoint.Response(http.StatusCreated, "Successfully duplicated event", endpoint.SchemaResponseOption(models.Event{})),
+			endpoint.Response(http.StatusBadRequest, "Invalid input"),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event"),
+		),
 	)
 
 	return api

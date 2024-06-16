@@ -20,4 +20,5 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("", eventController.CreateEvent)
 	group.GET("/:id", eventController.GetEvent)
 	group.GET("/:id/attends", eventController.GetEventAttends)
+	group.POST("/:id/duplicate", eventController.DuplicateEvent)
 }

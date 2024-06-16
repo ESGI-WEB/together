@@ -60,3 +60,22 @@ func (s *EventService) GetEventAttends(eventID uint, pagination utils.Pagination
 
 	return &pagination, nil
 }
+
+func (s *EventService) DuplicateEvent(eventID uint, newDate string, userID uint) (*models.Event, error) {
+	originalEvent, err := s.GetEventByID(eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	duplicatedEvent := *originalEvent
+	duplicatedEvent.ID = 0
+	duplicatedEvent.Date = newDate
+	duplicatedEvent.OrganizerID = userID
+
+	create := database.CurrentDatabase.Create(&duplicatedEvent)
+	if create.Error != nil {
+		return nil, create.Error
+	}
+
+	return &duplicatedEvent, nil
+}

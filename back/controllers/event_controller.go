@@ -102,3 +102,44 @@ func (c *EventController) GetEventAttends(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, attends)
 }
+
+func (c *EventController) DuplicateEvent(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user := ctx.Get("user").(models.User)
+	if user.ID == 0 {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if !user.IsAdmin() && event.OrganizerID != user.ID {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	var jsonBody struct {
+		NewDate string `json:"new_date" validate:"required,datetime=2006-01-02"`
+	}
+	err = json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	duplicatedEvent, err := c.EventService.DuplicateEvent(uint(eventID), jsonBody.NewDate, user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusCreated, duplicatedEvent)
+}
