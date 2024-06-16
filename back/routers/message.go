@@ -21,6 +21,6 @@ func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	group.PUT("/:id", messageController.UpdateMessage)
 	group.DELETE("/:id", messageController.DeleteMessage)
 	group.POST("/:id/pin", messageController.PinMessage)
-	group.GET("group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)
+	group.GET("/group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)
 	group.GET("/group/:groupId", messageController.GetPublicationsByGroup, middlewares.GroupMembershipMiddleware)
 }

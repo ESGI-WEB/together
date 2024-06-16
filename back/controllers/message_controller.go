@@ -204,7 +204,9 @@ func (c *MessageController) GetPublicationsByEventAndGroup(ctx echo.Context) err
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	messages, err := c.messageService.GetPublicationsByEventAndGroup(uint(eventID), uint(groupID))
+	pagination := utils.PaginationFromContext(ctx)
+
+	messages, err := c.messageService.GetPublicationsByEventAndGroup(uint(eventID), uint(groupID), pagination)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
@@ -224,7 +226,9 @@ func (c *MessageController) GetPublicationsByGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	messages, err := c.messageService.GetPublicationsByGroup(uint(groupID))
+	pagination := utils.PaginationFromContext(ctx)
+
+	messages, err := c.messageService.GetPublicationsByGroup(uint(groupID), pagination)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
