@@ -142,3 +142,36 @@ func (c *GroupController) GetNextEvent(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, event)
 }
+
+func (c *GroupController) GetAllGroups(ctx echo.Context) error {
+	var filters []services.GroupFilter
+	// get filters from query params
+	params := ctx.QueryParams().Get("filters")
+	if len(params) > 0 {
+		err := json.Unmarshal([]byte(params), &filters)
+		if err != nil {
+			return ctx.NoContent(http.StatusBadRequest)
+		}
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	for _, filter := range filters {
+		err := validate.Struct(filter)
+		if err != nil {
+			var validationErrs validator.ValidationErrors
+			if errors.As(err, &validationErrs) {
+				validationErrors := utils.GetValidationErrors(validationErrs, filter)
+				return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+			}
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
+	}
+
+	pagination := utils.PaginationFromContext(ctx)
+	groups, err := c.GroupService.GetAllGroups(pagination, filters...)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, groups)
+}
