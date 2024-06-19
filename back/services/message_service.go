@@ -12,7 +12,7 @@ func NewMessageService() *MessageService {
 }
 
 func (s *MessageService) CreateChatMessage(message models.Message) (*models.Message, error) {
-	message.Type = models.PubMessageType // Ensure the message type is set to publication
+	message.Type = models.TChatMessageType // Ensure the message type is set to chat message
 
 	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
 		return nil, err
