@@ -21,7 +21,7 @@ var (
 	upgrader = websocket.Upgrader{}
 )
 
-func (controller *WebSocketController) Hello(ctx echo.Context) error {
+func (controller *WebSocketController) OpenWebSocket(ctx echo.Context) error {
 	// Get current authenticated user from context
 	loggedUser := ctx.Get("user").(models.User)
 

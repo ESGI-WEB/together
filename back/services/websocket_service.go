@@ -126,9 +126,9 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		EventID: nil,
 	}
 	_, err = s.messageService.CreateChatMessage(message)
-	//if err != nil {
-	//	return err
-	//}
+	if err != nil {
+		return err
+	}
 
 	response := ServerBoundSendChatMessage{
 		TypeMessage: TypeMessage{

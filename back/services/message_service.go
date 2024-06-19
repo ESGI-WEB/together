@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/go-playground/validator/v10"
 	"together/database"
 	"together/models"
 )
@@ -13,11 +12,6 @@ func NewMessageService() *MessageService {
 }
 
 func (s *MessageService) CreateChatMessage(message models.Message) (*models.Message, error) {
-	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(message); err != nil {
-		return nil, err
-	}
-
 	message.Type = models.PubMessageType // Ensure the message type is set to publication
 
 	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
