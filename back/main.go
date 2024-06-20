@@ -24,6 +24,7 @@ var appRouters = []routers.Router{
 	&routers.AdminRouter{},
 	&routers.StorageRouter{},
 	&routers.PollRouter{},
+	&routers.WebSocketRouter{},
 }
 
 func main() {

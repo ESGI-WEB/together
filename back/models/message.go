@@ -14,12 +14,12 @@ const (
 type Message struct {
 	gorm.Model
 	Type    MessageType `gorm:"default:tchat"`
-	Content string
-	IsPined string
-	GroupID uint
-	Group   Group
-	UserID  uint
-	User    User
-	EventID *uint
-	Event   *Event
+	Content string      `json:"content" validate:"required"`
+	IsPined bool        `json:"isPined" gorm:"default:false"`
+	GroupID uint        `json:"groupID" validate:"required"`
+	Group   Group       `gorm:"foreignkey:GroupID"`
+	UserID  uint        `json:"userID" validate:"required"`
+	User    User        `gorm:"foreignkey:UserID"`
+	EventID *uint       `json:"eventID"`
+	Event   *Event      `gorm:"foreignkey:EventID"`
 }
