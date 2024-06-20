@@ -16,6 +16,10 @@ class InitializeWebSocketEvent extends WebSocketEvent {
 
 class SendMessageEvent extends WebSocketEvent {
   final String message;
+  final int groupId;
 
-  SendMessageEvent({required this.message});
+  SendMessageEvent({
+    required this.message,
+    required this.groupId,
+  });
 }

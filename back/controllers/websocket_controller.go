@@ -7,13 +7,13 @@ import (
 	"together/services"
 )
 
-type MessageController struct {
-	messageService *services.MessageService
+type WebSocketController struct {
+	messageService *services.WebSocketService
 }
 
-func NewMessageController() *MessageController {
-	return &MessageController{
-		messageService: services.NewMessageService(),
+func NewWebSocketController() *WebSocketController {
+	return &WebSocketController{
+		messageService: services.NewWebSocketService(),
 	}
 }
 
@@ -21,7 +21,7 @@ var (
 	upgrader = websocket.Upgrader{}
 )
 
-func (controller *MessageController) Hello(ctx echo.Context) error {
+func (controller *WebSocketController) OpenWebSocket(ctx echo.Context) error {
 	// Get current authenticated user from context
 	loggedUser := ctx.Get("user").(models.User)
 
@@ -30,7 +30,7 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 		return err
 	}
 
-	defer controller.messageService.AcceptNewConnection(ws)(ws)
+	defer controller.messageService.AcceptNewWebSocketConnection(ws, &loggedUser)(ws)
 
 	for {
 		_, msg, err := ws.ReadMessage()
@@ -39,7 +39,7 @@ func (controller *MessageController) Hello(ctx echo.Context) error {
 			break
 		}
 
-		if err := controller.messageService.HandleMessage(msg, loggedUser); err != nil {
+		if err := controller.messageService.HandleWebSocketMessage(msg, &loggedUser, ws); err != nil {
 			ctx.Logger().Warn(err)
 			continue
 		}
