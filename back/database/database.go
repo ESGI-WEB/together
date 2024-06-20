@@ -41,6 +41,7 @@ var allModels = []interface{}{
 	&models.Reaction{},
 	&models.User{},
 	&models.FeatureFlipping{},
+	&models.PollAnswerChoiceUser{},
 }
 
 func (db *DB) Connect() error {
@@ -147,6 +148,11 @@ func InitDB() (*DB, error) {
 	}
 
 	err = newDB.DB.SetupJoinTable(&models.Event{}, "Participants", &models.Attend{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = newDB.DB.SetupJoinTable(&models.PollAnswerChoice{}, "Users", &models.PollAnswerChoiceUser{})
 	if err != nil {
 		return nil, err
 	}
