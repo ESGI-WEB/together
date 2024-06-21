@@ -11,6 +11,11 @@ import (
 
 var CurrentDatabase *gorm.DB
 
+type Filter struct {
+	Value    interface{} `json:"value" validate:"required"`
+	Operator string      `json:"operator" validate:"required,oneof= != > < >= <= ="`
+}
+
 type Config struct {
 	Host     string
 	Port     int

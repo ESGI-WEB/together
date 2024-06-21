@@ -63,9 +63,10 @@ class _ChatScreenState extends State<ChatScreen> {
                       onPressed: () {
                         String message = _messageController.text.trim();
                         if (message.isNotEmpty) {
-                          context
-                              .read<WebSocketBloc>()
-                              .add(SendMessageEvent(message: message));
+                          context.read<WebSocketBloc>().add(SendMessageEvent(
+                                message: message,
+                                groupId: widget.groupId,
+                              ));
                           _messageController.clear();
                         }
                       },

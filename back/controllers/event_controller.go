@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+	"together/database"
 	"together/models"
 	"together/services"
 	"together/utils"
@@ -101,6 +102,52 @@ func (c *EventController) GetEventAttends(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, attends)
+}
+
+func (c *EventController) GetEvents(ctx echo.Context) error {
+	var filters []services.EventFilter
+
+	// get filters from query params
+	params := ctx.QueryParams().Get("filters")
+	if len(params) > 0 {
+		err := json.Unmarshal([]byte(params), &filters)
+		if err != nil {
+			return ctx.NoContent(http.StatusBadRequest)
+		}
+	}
+
+	currentUser := ctx.Get("user").(models.User)
+	if !currentUser.IsAdmin() {
+		// if not admin, only return events that the user is the organizer
+		filters = append(filters, services.EventFilter{
+			Column: "organizer_id",
+			Filter: database.Filter{
+				Operator: "=",
+				Value:    currentUser.ID,
+			},
+		})
+	}
+
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	for _, filter := range filters {
+		err := validate.Struct(filter)
+		if err != nil {
+			var validationErrs validator.ValidationErrors
+			if errors.As(err, &validationErrs) {
+				validationErrors := utils.GetValidationErrors(validationErrs, filter)
+				return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+			}
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
+	}
+
+	pagination := utils.PaginationFromContext(ctx)
+	events, err := c.EventService.GetEvents(pagination, filters...)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, events)
 }
 
 func (c *EventController) DuplicateEvent(ctx echo.Context) error {

@@ -71,4 +71,22 @@ class GroupServices {
       );
     }
   }
+
+  static Future<Paginated<Group>> getAllGroups({
+    int page = 1,
+    String sort = 'id asc',
+    int? limit,
+  }) async {
+    String url = '/groups/all?page=$page&sort=$sort';
+
+    if (limit != null) {
+      url += '&limit=$limit';
+    }
+
+    final response = await ApiServices.get(url);
+    return Paginated.fromJson(
+      ApiServices.decodeResponse(response),
+      Group.fromJson,
+    );
+  }
 }

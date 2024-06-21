@@ -36,8 +36,10 @@ class ApiServices {
     return '$baseUrl$path';
   }
 
-  static Future<Response> get(String path,
-      [Map<String, String>? headers]) async {
+  static Future<Response> get(
+    String path, [
+    Map<String, String>? headers,
+  ]) async {
     final response = await http.get(
       Uri.parse(getFullUrlFromPath(path)),
       headers: {}
@@ -49,8 +51,11 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> post(String path,
-      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> post(
+    String path, [
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  ]) async {
     final response = await http.post(
       Uri.parse(getFullUrlFromPath(path)),
       headers: {}
@@ -63,8 +68,11 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> put(String path,
-      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> put(
+    String path, [
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  ]) async {
     final response = await http.put(
       Uri.parse(getFullUrlFromPath(path)),
       headers: {}
@@ -77,8 +85,11 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> patch(String path,
-      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
+  static Future<Response> patch(
+    String path, [
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  ]) async {
     final response = await http.patch(
       Uri.parse(getFullUrlFromPath(path)),
       headers: {}
@@ -91,8 +102,10 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> delete(String path,
-      [Map<String, String>? headers]) async {
+  static Future<Response> delete(
+    String path, [
+    Map<String, String>? headers,
+  ]) async {
     final response = await http.delete(
       Uri.parse(getFullUrlFromPath(path)),
       headers: {}
@@ -104,9 +117,14 @@ class ApiServices {
     return response;
   }
 
-  static Future<Response> multipartRequest(String verb, String path,
-      [Map<String, dynamic>? body, Map<String, String>? headers]) async {
-    final request = http.MultipartRequest(verb, Uri.parse(getFullUrlFromPath(path)));
+  static Future<Response> multipartRequest(
+    String verb,
+    String path, [
+    Map<String, dynamic>? body,
+    Map<String, String>? headers,
+  ]) async {
+    final request =
+        http.MultipartRequest(verb, Uri.parse(getFullUrlFromPath(path)));
     request.headers.addAll(await getAllBasicHeaders());
     request.headers.addAll(headers ?? {});
 
@@ -135,7 +153,10 @@ class ApiServices {
     } else if (response.statusCode == 409) {
       throw ConflictException(response: response);
     } else if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw ApiException(response: response, statusCode: response.statusCode, message: response.body);
+      throw ApiException(
+          response: response,
+          statusCode: response.statusCode,
+          message: response.body);
     }
   }
 
