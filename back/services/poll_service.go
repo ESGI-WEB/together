@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 	"together/database"
 	"together/models"
 	"together/utils"
@@ -55,7 +56,11 @@ func (s *PollService) DeletePoll(id uint) error {
 
 func (s *PollService) GetPollByID(id uint) (*models.Poll, error) {
 	var poll models.Poll
-	err := database.CurrentDatabase.Preload("Choices").First(&poll, id).Error
+	err := database.CurrentDatabase.
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Users")
+		}).
+		First(&poll, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +123,8 @@ func (s *PollService) SelectPollChoice(user models.User, choice models.PollAnswe
 func (s *PollService) GetPollChoicesOfUser(pollID uint, userID uint) ([]models.PollAnswerChoice, error) {
 	var choices []models.PollAnswerChoice
 	err := database.CurrentDatabase.
-		Joins("JOIN poll_answer_choice_user ON poll_answer_choices.id = poll_answer_choice_user.poll_answer_choice_id").
-		Where("poll_answer_choices.poll_id = ? AND poll_answer_choice_user.user_id = ?", pollID, userID).
+		Joins("JOIN poll_answer_choice_users ON poll_answer_choices.id = poll_answer_choice_users.poll_answer_choice_id").
+		Where("poll_answer_choices.poll_id = ? AND poll_answer_choice_users.user_id = ?", pollID, userID).
 		Find(&choices).Error
 	if err != nil {
 		return nil, err
@@ -131,7 +136,10 @@ func (s *PollService) GetPollChoicesOfUser(pollID uint, userID uint) ([]models.P
 func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var polls []models.Poll
 
-	query := database.CurrentDatabase.Where("group_id = ?", groupID).Preload("Choices")
+	query := database.CurrentDatabase.Where("group_id = ?", groupID).
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Users")
+		})
 
 	err := query.Scopes(utils.Paginate(polls, &pagination, query)).Find(&polls).Error
 	if err != nil {
@@ -146,7 +154,10 @@ func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination
 func (s *PollService) GetPollsForEvent(eventID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var polls []models.Poll
 
-	query := database.CurrentDatabase.Where("event_id = ?", eventID).Preload("Choices")
+	query := database.CurrentDatabase.Where("event_id = ?", eventID).
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Users")
+		})
 
 	err := query.Scopes(utils.Paginate(polls, &pagination, query)).Find(&polls).Error
 	if err != nil {

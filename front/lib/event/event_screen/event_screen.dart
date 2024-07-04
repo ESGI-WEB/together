@@ -4,7 +4,7 @@ import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
-import 'package:front/event/event_screen/partials/event_joined_members.dart';
+import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
@@ -101,8 +101,8 @@ class EventScreen extends StatelessWidget {
                                                 .titleSmall,
                                           ),
                                           const SizedBox(height: 8),
-                                          EventJoinedMembers(
-                                              firstParticipants:
+                                          AvatarStack(
+                                              users:
                                                   state.firstParticipants ?? []),
                                         ],
                                       ),

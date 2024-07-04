@@ -173,7 +173,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: Text("Créer un événement")),
+            appBar: AppBar(title: const Text("Créer un événement")),
             body: BlocListener<CreateEventBloc, CreateEventState>(
               listener: (context, state) {
                 if (state.status == CreateEventStatus.success) {

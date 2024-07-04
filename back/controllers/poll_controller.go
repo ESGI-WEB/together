@@ -119,6 +119,31 @@ func (c *PollController) GetPollsByGroupID(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, polls)
 }
 
+func (c *PollController) GetPoll(ctx echo.Context) error {
+	poll, err := c.basePollPreRequest(ctx)
+	if err != nil {
+		if errors.Is(err, coreErrors.ErrNotFound) {
+			return ctx.NoContent(http.StatusNotFound)
+		}
+		if errors.Is(err, coreErrors.ErrForbidden) {
+			return ctx.NoContent(http.StatusForbidden)
+		}
+		if errors.Is(err, coreErrors.ErrBadRequest) {
+			return ctx.NoContent(http.StatusBadRequest)
+		}
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	// user must be in the group to see the poll
+	user := ctx.Get("user").(models.User)
+	inGroup, err := c.groupService.IsUserInGroup(user.ID, poll.GroupID)
+	if err != nil || !inGroup {
+		return ctx.String(http.StatusForbidden, "You do not have access to this group")
+	}
+
+	return ctx.JSON(http.StatusOK, poll)
+}
+
 func (c *PollController) EditPoll(ctx echo.Context) error {
 	poll, err := c.basePollPreRequest(ctx)
 	if err != nil {
@@ -302,21 +327,24 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		return ctx.String(http.StatusForbidden, "You do not have access to this group")
 	}
 
+	// check if the choice is already selected by this user
+	selectedChoices, err := c.pollService.GetPollChoicesOfUser(poll.ID, user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	for _, selectedChoice := range selectedChoices {
+		if selectedChoice.ID == choice.ID {
+			return ctx.String(http.StatusConflict, "You have already selected this choice")
+		}
+	}
+
 	if !poll.IsMultiple {
-		// check if user has already selected a choice
-		selectedChoice, err := c.pollService.GetPollChoicesOfUser(poll.ID, user.ID)
-		if err != nil {
-			return ctx.NoContent(http.StatusInternalServerError)
-		}
-
-		if len(selectedChoice) > 0 {
-			return ctx.String(http.StatusConflict, "You have already selected a choice")
-		}
-
-		// check if the choice is already selected by this user
-		for _, selectedChoice := range selectedChoice {
-			if selectedChoice.ID == choice.ID {
-				return ctx.String(http.StatusConflict, "You have already selected this choice")
+		// deselect other choices if the poll is not multiple
+		for _, selectedChoice := range selectedChoices {
+			err = c.pollService.SelectPollChoice(*user, selectedChoice, false)
+			if err != nil {
+				return ctx.NoContent(http.StatusInternalServerError)
 			}
 		}
 	}

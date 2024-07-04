@@ -5,15 +5,15 @@ import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/widget_avatar.dart';
 
-class EventJoinedMembers extends StatelessWidget {
+class AvatarStack extends StatelessWidget {
   final int displayedAvatars;
-  final List<User> firstParticipants;
+  final List<User> users;
 
-  const EventJoinedMembers({super.key, required this.firstParticipants, this.displayedAvatars = 4});
+  const AvatarStack({super.key, required this.users, this.displayedAvatars = 4});
 
   @override
   Widget build(BuildContext context) {
-    if (firstParticipants.isEmpty) {
+    if (users.isEmpty) {
       return const WidgetAvatar(
         child: Text('0'),
       );
@@ -27,18 +27,18 @@ class EventJoinedMembers extends StatelessWidget {
       child: Stack(
         children: [
           for (int index = 0;
-              index < min(displayedAvatars, firstParticipants.length);
+              index < min(displayedAvatars, users.length);
               index++)
             Positioned(
               left: index * 25,
-              child: Avatar(user: firstParticipants[index]),
+              child: Avatar(user: users[index]),
             ),
-          if (firstParticipants.length > displayedAvatars)
+          if (users.length > displayedAvatars)
             Positioned(
               left: displayedAvatars * 25,
               child: WidgetAvatar(
                 child: Text(
-                  '+${firstParticipants.length - displayedAvatars}',
+                  '+${users.length - displayedAvatars}',
                 ),
               ),
             ),

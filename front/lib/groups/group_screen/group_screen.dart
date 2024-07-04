@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
+import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/group_screen_bloc.dart';
@@ -37,10 +38,12 @@ class GroupScreen extends StatelessWidget {
 
           return Column(
             children: [
+              PollGateway(
+                id: id,
+              ),
               NextEventOfGroup(
                 groupId: id,
               ),
-              // Add other widgets related to the group here
             ],
           );
         },
