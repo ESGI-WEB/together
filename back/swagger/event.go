@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"together/controllers"
 	"together/models"
+	"together/services"
 )
 
 func SetupEventSwagger() *swag.API {
@@ -87,9 +88,7 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Summary("Duplicate an event"),
 			endpoint.Description("Duplicates an existing event and schedules it for a new date."),
 			endpoint.Path("id", "integer", "ID of the event to duplicate", true),
-			endpoint.Body(struct {
-				NewDate string `json:"new_date" validate:"required,datetime=2006-01-02"`
-			}{}, "New date for the duplicated event", true),
+			endpoint.Body(services.DuplicateEventRequest{}, "New date for the duplicated event", true),
 			endpoint.Response(http.StatusCreated, "Successfully duplicated event", endpoint.SchemaResponseOption(models.Event{})),
 			endpoint.Response(http.StatusBadRequest, "Invalid input"),
 			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),

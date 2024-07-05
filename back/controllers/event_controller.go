@@ -158,9 +158,6 @@ func (c *EventController) DuplicateEvent(ctx echo.Context) error {
 	}
 
 	user := ctx.Get("user").(models.User)
-	if user.ID == 0 {
-		return ctx.NoContent(http.StatusUnauthorized)
-	}
 
 	event, err := c.EventService.GetEventByID(uint(eventID))
 	if err != nil {
@@ -171,13 +168,15 @@ func (c *EventController) DuplicateEvent(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNotFound)
 	}
 
+	if event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
 	if !user.IsAdmin() && event.OrganizerID != user.ID {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	var jsonBody struct {
-		NewDate string `json:"new_date" validate:"required,datetime=2006-01-02"`
-	}
+	var jsonBody services.DuplicateEventRequest
 	err = json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
@@ -185,6 +184,11 @@ func (c *EventController) DuplicateEvent(ctx echo.Context) error {
 
 	duplicatedEvent, err := c.EventService.DuplicateEvent(uint(eventID), jsonBody.NewDate, user.ID)
 	if err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
+			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
+			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+		}
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

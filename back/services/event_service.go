@@ -7,6 +7,10 @@ import (
 	"together/utils"
 )
 
+type DuplicateEventRequest struct {
+	NewDate string `json:"new_date" validate:"required,datetime=2006-01-02"`
+}
+
 type EventService struct{}
 
 func NewEventService() *EventService {
@@ -62,6 +66,12 @@ func (s *EventService) GetEventAttends(eventID uint, pagination utils.Pagination
 }
 
 func (s *EventService) DuplicateEvent(eventID uint, newDate string, userID uint) (*models.Event, error) {
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Var(newDate, "required,datetime=2006-01-02")
+	if err != nil {
+		return nil, err
+	}
+
 	originalEvent, err := s.GetEventByID(eventID)
 	if err != nil {
 		return nil, err
