@@ -35,6 +35,14 @@ class PollChoiceSaved extends PollEvent {
   });
 }
 
+class PollCreated extends PollEvent {
+  final PollCreateOrEdit poll;
+
+  PollCreated({
+    required this.poll,
+  });
+}
+
 enum PollType {
   group,
   event,

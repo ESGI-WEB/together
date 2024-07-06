@@ -25,7 +25,7 @@ class NoPollCreated extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Créé un sondage',
+                    'Créer un sondage',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),

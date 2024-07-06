@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
+import 'package:front/core/models/poll_choice.dart';
 import 'package:front/core/partials/poll/all_poll_answered.dart';
+import 'package:front/core/partials/poll/create_poll.dart';
 import 'package:front/core/partials/poll/no_poll_created.dart';
-import 'package:front/core/partials/poll/poll_less.dart';
+import 'package:front/core/partials/poll/poll.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:front/core/models/poll.dart' as poll_model;
 
@@ -76,6 +78,10 @@ class _PollGatewayState extends State<PollGateway> {
     }
   }
 
+  void closeDialog() {
+    Navigator.of(context, rootNavigator: true).pop('dialog');
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -85,7 +91,11 @@ class _PollGatewayState extends State<PollGateway> {
           if (state.status == PollStatus.success) {
             setState(() {
               currentPage = state.pollPage;
-              pollList.addAll(state.pollPage?.rows ?? []);
+              if (currentPage?.page == 1) {
+                pollList = state.pollPage?.rows ?? [];
+              } else {
+                pollList.addAll(state.pollPage?.rows ?? []);
+              }
               currentPollIndex =
                   currentPollIndex == 0 ? 0 : currentPollIndex + 1;
             });
@@ -94,6 +104,24 @@ class _PollGatewayState extends State<PollGateway> {
           if (state.status == PollStatus.pollChoiceSaved &&
               state.pollUpdated != null) {
             updatePoll(state.pollUpdated!);
+          }
+
+          if (state.status == PollStatus.pollCreated) {
+            closeDialog();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Le sondage a été ajouté avec succès'),
+              ),
+            );
+          }
+
+          if (state.status == PollStatus.createPollError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    'Une erreur est survenue lors de la création du sondage'),
+              ),
+            );
           }
         },
         child: BlocBuilder<PollBloc, PollState>(
@@ -117,7 +145,50 @@ class _PollGatewayState extends State<PollGateway> {
 
             final pollPage = state.pollPage;
             if (pollPage == null || pollPage.rows.isEmpty) {
-              return const NoPollCreated();
+              return NoPollCreated(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext modalContext) {
+                      return Dialog(
+                        surfaceTintColor:
+                            Theme.of(context).colorScheme.background,
+                        child: Padding(
+                          padding: const EdgeInsets.all(32),
+                          child: SingleChildScrollView(
+                            child: CreatePoll(
+                              saving: state.status == PollStatus.creatingPoll,
+                              onCreate:
+                                  (question, allowMultipleAnswers, answers) {
+                                BlocProvider.of<PollBloc>(context).add(
+                                  PollCreated(
+                                    poll: poll_model.PollCreateOrEdit(
+                                      question: question,
+                                      isMultiple: allowMultipleAnswers,
+                                      choices: answers.map((answer) {
+                                        return PollChoiceCreateOrEdit(
+                                          choice: answer,
+                                        );
+                                      }).toList(),
+                                      groupId: widget.type == PollType.group
+                                          ? widget.id
+                                          : null,
+                                      eventId: widget.type == PollType.event
+                                          ? widget.id
+                                          : null,
+                                    ),
+                                  ),
+                                );
+                              },
+                              onClose: closeDialog,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
             }
 
             final currentPoll = pollList[currentPollIndex];
@@ -153,7 +224,9 @@ class _PollGatewayState extends State<PollGateway> {
                       children: [
                         IconButton(
                           onPressed:
-                              currentPollIndex <= 0 ? null : goToPreviousPoll,
+                              currentPollIndex <= 0 && !showEveryPollsAnswered
+                                  ? null
+                                  : goToPreviousPoll,
                           icon: const Icon(Icons.arrow_back),
                         ),
                         Text(

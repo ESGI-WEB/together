@@ -11,6 +11,9 @@ enum PollStatus {
   gettingPoll,
   gotPoll,
   getPollError,
+  creatingPoll,
+  pollCreated,
+  createPollError,
 }
 
 class PollState {

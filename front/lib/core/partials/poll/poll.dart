@@ -65,11 +65,7 @@ class Poll extends StatelessWidget {
                             checkboxShape: !poll.isMultiple
                                 ? const CircleBorder()
                                 : const RoundedRectangleBorder(),
-                            title: Text(
-                              choice.users.length > 0
-                                  ? '${choice.choice} (${choice.users.length})'
-                                  : choice.choice,
-                            ),
+                            title: Text(choice.choice),
                             secondary: AvatarStack(
                               users: choice.users ?? [],
                               displayedAvatars: 3,

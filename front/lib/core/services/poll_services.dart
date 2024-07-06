@@ -51,4 +51,14 @@ class PollServices {
       '/polls/$pollId/choice/$choiceId/deselect',
     );
   }
+
+  static Future<Poll> createPoll({
+    required PollCreateOrEdit poll,
+  }) async {
+    final newPoll = await ApiServices.post(
+      '/polls',
+      poll.toJson(),
+    );
+    return Poll.fromJson(ApiServices.decodeResponse(newPoll));
+  }
 }

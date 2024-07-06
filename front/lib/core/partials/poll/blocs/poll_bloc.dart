@@ -4,7 +4,6 @@ import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/poll.dart';
-import 'package:front/core/models/user.dart';
 import 'package:front/core/services/poll_services.dart';
 import 'package:front/core/services/storage_service.dart';
 
@@ -38,24 +37,6 @@ class PollBloc extends Bloc<PollEvent, PollState> {
       }
     });
 
-    // on<PollUpdated>((event, emit) async {
-    //   emit(state.copyWith(status: PollStatus.gettingPoll));
-    //
-    //   try {
-    //     final pollUpdated = await PollServices.getPollById(id: event.id);
-    //
-    //     emit(state.copyWith(
-    //       status: PollStatus.gotPoll,
-    //       pollUpdated: pollUpdated,
-    //     ));
-    //   } on ApiException catch (error) {
-    //     emit(state.copyWith(
-    //       status: PollStatus.getPollError,
-    //       errorMessage: error.message,
-    //     ));
-    //   }
-    // });
-
     on<PollChoiceSaved>((event, emit) async {
       emit(state.copyWith(status: PollStatus.savingPollChoice));
 
@@ -80,11 +61,31 @@ class PollBloc extends Bloc<PollEvent, PollState> {
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
-          status: PollStatus.pollChoiceSaveError,
-          errorMessage: error.message
+            status: PollStatus.pollChoiceSaveError,
+            errorMessage: error.message));
+      }
+    });
+
+    on<PollCreated>((event, emit) async {
+      emit(state.copyWith(status: PollStatus.creatingPoll));
+
+      try {
+        final newPoll = await PollServices.createPoll(
+          poll: event.poll,
+        );
+
+        emit(state.copyWith(status: PollStatus.pollCreated));
+
+        // on refresh la liste des sondages
+        add(PollNextPageLoaded(
+          id: newPoll.eventId ?? newPoll.groupId,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PollStatus.createPollError,
+          errorMessage: error.message,
         ));
       }
     });
   }
-
 }

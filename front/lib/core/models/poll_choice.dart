@@ -18,7 +18,21 @@ class PollChoice {
       id: json['ID'],
       choice: json['choice'],
       pollId: json['poll_id'],
-      users: (json['users'] as List).map((user) => User.fromJson(user)).toList(),
+      users: json['users'] != null ? (json['users'] as List).map((user) => User.fromJson(user)).toList() : null,
     );
+  }
+}
+
+class PollChoiceCreateOrEdit {
+  final String? choice;
+
+  PollChoiceCreateOrEdit({
+    this.choice,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'choice': choice,
+    };
   }
 }

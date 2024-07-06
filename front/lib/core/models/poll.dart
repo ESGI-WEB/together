@@ -35,3 +35,40 @@ class Poll {
     );
   }
 }
+
+class PollCreateOrEdit {
+  final String? question;
+  final bool? isMultiple;
+  final bool? isClosed;
+  final List<PollChoiceCreateOrEdit>? choices;
+  final int? groupId;
+  final int? eventId;
+
+  PollCreateOrEdit({
+    this.question,
+    this.isMultiple,
+    this.isClosed,
+    this.choices,
+    this.groupId,
+    this.eventId,
+  });
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = {
+      'question': question,
+      'is_multiple': isMultiple ?? false,
+      'is_closed': isClosed ?? false,
+      'choices': choices?.map((choice) => choice.toJson()).toList(),
+    };
+
+    if (groupId != null) {
+      data['group_id'] = groupId;
+    }
+
+    if (eventId != null) {
+      data['event_id'] = eventId;
+    }
+
+    return data;
+  }
+}
