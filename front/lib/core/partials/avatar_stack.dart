@@ -9,7 +9,19 @@ class AvatarStack extends StatelessWidget {
   final int displayedAvatars;
   final List<User> users;
 
+  final double leftSpacing = 25;
+
   const AvatarStack({super.key, required this.users, this.displayedAvatars = 4});
+
+  double getStackSize() {
+    bool showMoreUsersCircle = this.users.length > this.displayedAvatars;
+    int usersCirclesToDisplay = min(displayedAvatars, this.users.length);
+    int totalCircles = usersCirclesToDisplay + (showMoreUsersCircle ? 1 : 0);
+
+    // displayedCirclesInTotal * avatarLeft + (avatarSize - avatarLeft)
+    return totalCircles * leftSpacing + (40 - leftSpacing);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +34,19 @@ class AvatarStack extends StatelessWidget {
     return SizedBox(
       // avatar's height
       height: 40,
-      // displayedCirclesInTotal * avatarLeft + (avatarSize - avatarLeft)
-      width: (displayedAvatars + 1) * 25 + (40 - 25),
+      width: getStackSize(),
       child: Stack(
         children: [
           for (int index = 0;
               index < min(displayedAvatars, users.length);
               index++)
             Positioned(
-              left: index * 25,
+              left: index * leftSpacing,
               child: Avatar(user: users[index]),
             ),
           if (users.length > displayedAvatars)
             Positioned(
-              left: displayedAvatars * 25,
+              left: displayedAvatars * leftSpacing,
               child: WidgetAvatar(
                 child: Text(
                   '+${users.length - displayedAvatars}',

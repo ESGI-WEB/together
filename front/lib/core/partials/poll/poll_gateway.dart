@@ -1,11 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/partials/poll/all_poll_answered.dart';
 import 'package:front/core/partials/poll/no_poll_created.dart';
-import 'package:front/core/partials/poll/poll.dart';
 import 'package:front/core/partials/poll/poll_less.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:front/core/models/poll.dart' as poll_model;
@@ -54,8 +51,8 @@ class _PollGatewayState extends State<PollGateway> {
     } else if (currentPage == null || currentPage!.page < currentPage!.pages) {
       // if there is no next poll in pollList but another page to load, load the next page
       BlocProvider.of<PollBloc>(context).add(PollNextPageLoaded(
-          id: widget.id,
-          page: currentPage != null ? currentPage!.page + 1 : 1,
+        id: widget.id,
+        page: currentPage != null ? currentPage!.page + 1 : 1,
       ));
     } else {
       setState(() {
@@ -64,7 +61,6 @@ class _PollGatewayState extends State<PollGateway> {
     }
   }
 
-  // faire un bloc listener pour re recuperer un pollid updated
   void choiceChanged(poll_model.Poll poll, BuildContext context) {
     BlocProvider.of<PollBloc>(context).add(PollUpdated(
       id: poll.id,
@@ -90,11 +86,13 @@ class _PollGatewayState extends State<PollGateway> {
             setState(() {
               currentPage = state.pollPage;
               pollList.addAll(state.pollPage?.rows ?? []);
-              currentPollIndex = currentPollIndex == 0 ? 0 : currentPollIndex + 1;
+              currentPollIndex =
+                  currentPollIndex == 0 ? 0 : currentPollIndex + 1;
             });
           }
 
-          if (state.status == PollStatus.pollChoiceSaved && state.pollUpdated != null) {
+          if (state.status == PollStatus.pollChoiceSaved &&
+              state.pollUpdated != null) {
             updatePoll(state.pollUpdated!);
           }
         },
@@ -118,7 +116,7 @@ class _PollGatewayState extends State<PollGateway> {
             }
 
             final pollPage = state.pollPage;
-            if (pollPage == null) {
+            if (pollPage == null || pollPage.rows.isEmpty) {
               return const NoPollCreated();
             }
 
@@ -132,45 +130,30 @@ class _PollGatewayState extends State<PollGateway> {
                     if (showEveryPollsAnswered)
                       const AllPollAnswered()
                     else
-                      PollLess(
-                        poll: currentPoll,
-                        selectedChoices: currentPoll.choices
-                            ?.where((choice) => choice.users
-                                ?.any((user) => user.id == state.userData?.id)
-                                ?? false)
-                            .map((choice) => choice.id)
-                            .toList(),
-                        onChoiceSelected: (choiceId, isSelected) {
-                          BlocProvider.of<PollBloc>(context).add(PollChoiceSaved(
-                            pollId: currentPoll.id,
-                            choiceId: choiceId,
-                            selected: isSelected,
-                          ));
-
-                          // recuperer le poll quand c'est fait puis le mettre a jour
-                          // mettre a jour la liste des choix séléctionnés
-                        }
-                      ),
-                      // Poll(
-                      //     poll: currentPoll,
-                      //     defaultSelectedChoices: currentPoll.choices
-                      //         ?.where((choice) => choice.users
-                      //             ?.any((user) => user.id == state.userData?.id)
-                      //             ?? false)
-                      //         .map((choice) => choice.id)
-                      //         .toList(),
-                      //     onChoiceChanged: (selectedChoices) {
-                      //       choiceChanged(currentPoll, context);
-                      //     }
-                      // ),
+                      Poll(
+                          poll: currentPoll,
+                          selectedChoices: currentPoll.choices
+                              ?.where((choice) =>
+                                  choice.users?.any((user) =>
+                                      user.id == state.userData?.id) ??
+                                  false)
+                              .map((choice) => choice.id)
+                              .toList(),
+                          onChoiceSelected: (choiceId, isSelected) {
+                            BlocProvider.of<PollBloc>(context)
+                                .add(PollChoiceSaved(
+                              pollId: currentPoll.id,
+                              choiceId: choiceId,
+                              selected: isSelected,
+                            ));
+                          }),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          onPressed: currentPollIndex <= 0
-                              ? null
-                              : goToPreviousPoll,
+                          onPressed:
+                              currentPollIndex <= 0 ? null : goToPreviousPoll,
                           icon: const Icon(Icons.arrow_back),
                         ),
                         Text(

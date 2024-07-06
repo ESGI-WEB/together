@@ -9,12 +9,12 @@ import 'package:front/core/models/poll.dart' as poll_model;
 import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 
-class PollLess extends StatelessWidget {
+class Poll extends StatelessWidget {
   final poll_model.Poll poll;
   final List<int>? selectedChoices;
   final Function(int choiceId, bool isSelected)? onChoiceSelected;
 
-  const PollLess({
+  const Poll({
     super.key,
     required this.poll,
     this.selectedChoices,
