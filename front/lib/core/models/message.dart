@@ -45,3 +45,18 @@ class ClientBoundSendChatMessage extends WebSocketMessage {
     };
   }
 }
+
+class ClientBoundFetchChatMessageType extends WebSocketMessage {
+  final int groupId;
+
+  ClientBoundFetchChatMessageType({
+    required this.groupId,
+  }) : super(type: 'fetch_chat_messages');
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'group_id': groupId,
+    };
+  }
+}

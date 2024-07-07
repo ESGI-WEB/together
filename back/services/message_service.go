@@ -23,7 +23,7 @@ func (s *MessageService) CreateChatMessage(message models.Message) (*models.Mess
 
 func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, error) {
 	var messages []models.Message
-	if err := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
+	if err := database.CurrentDatabase.Preload("User").Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
 		return nil, err
 	}
 	return messages, nil
