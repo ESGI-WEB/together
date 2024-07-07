@@ -34,6 +34,18 @@ class Poll {
       choices: (json['choices'] as List).map((choice) => PollChoice.fromJson(choice)).toList(),
     );
   }
+
+  PollCreateOrEdit toCreateOrEdit() {
+    return PollCreateOrEdit(
+      id: id,
+      question: question,
+      isMultiple: isMultiple,
+      isClosed: isClosed,
+      choices: choices?.map((choice) => choice.toCreateOrEdit()).toList(),
+      groupId: groupId,
+      eventId: eventId,
+    );
+  }
 }
 
 class PollCreateOrEdit {

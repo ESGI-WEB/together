@@ -8,12 +8,15 @@ class PollField extends StatelessWidget {
   final poll_model.Poll poll;
   final List<int>? selectedChoices;
   final Function(int choiceId, bool isSelected)? onChoiceSelected;
+  final Function(String choice)? onChoiceAdded;
+  final TextEditingController choiceController = TextEditingController();
 
-  const PollField({
+  PollField({
     super.key,
     required this.poll,
     this.selectedChoices,
     this.onChoiceSelected,
+    this.onChoiceAdded,
   });
 
   @override
@@ -70,6 +73,23 @@ class PollField extends StatelessWidget {
                               displayedAvatars: 3,
                             ),
                             controlAffinity: ListTileControlAffinity.leading,
+                          ),
+                        ),
+                      if (onChoiceAdded != null)
+                        TextFormField(
+                          controller: choiceController,
+                          decoration: InputDecoration(
+                            hintText: 'Ajouter une autre réponse',
+                            hintStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.add),
+                              onPressed: () {
+                                onChoiceAdded?.call(choiceController.text);
+                                choiceController.clear();
+                              },
+                            ),
                           ),
                         ),
                     ],

@@ -1,10 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
+import 'package:front/core/models/poll_choice.dart';
 import 'package:front/core/partials/poll/all_poll_answered.dart';
 import 'package:front/core/partials/poll/create_poll.dart';
 import 'package:front/core/partials/poll/no_poll_created.dart';
-import 'package:front/core/partials/poll/poll.dart';
+import 'package:front/core/partials/poll/poll_field.dart';
 import 'package:front/core/partials/poll/poll_owner_menu.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:front/core/models/poll.dart';
@@ -62,12 +65,6 @@ class _PollGatewayState extends State<PollGateway> {
         showEveryPollsAnswered = true;
       });
     }
-  }
-
-  void choiceChanged(Poll poll, BuildContext context) {
-    BlocProvider.of<PollBloc>(context).add(PollUpdated(
-      id: poll.id,
-    ));
   }
 
   void updatePoll(Poll poll) {
@@ -201,7 +198,8 @@ class _PollGatewayState extends State<PollGateway> {
             });
           }
 
-          if (state.status == PollStatus.pollChoiceSaved &&
+          if ((state.status == PollStatus.pollChoiceSaved ||
+                  state.status == PollStatus.gotPoll) &&
               state.pollUpdated != null) {
             updatePoll(state.pollUpdated!);
           }
@@ -273,22 +271,33 @@ class _PollGatewayState extends State<PollGateway> {
                             const AllPollAnswered()
                           else
                             PollField(
-                                poll: currentPoll,
-                                selectedChoices: currentPoll.choices
-                                    ?.where((choice) =>
-                                        choice.users?.any((user) =>
-                                            user.id == state.userData?.id) ??
-                                        false)
-                                    .map((choice) => choice.id)
-                                    .toList(),
-                                onChoiceSelected: (choiceId, isSelected) {
-                                  BlocProvider.of<PollBloc>(context)
-                                      .add(PollChoiceSaved(
-                                    pollId: currentPoll.id,
-                                    choiceId: choiceId,
-                                    selected: isSelected,
-                                  ));
-                                }),
+                              poll: currentPoll,
+                              selectedChoices: currentPoll.choices
+                                  ?.where((choice) =>
+                                      choice.users?.any((user) =>
+                                          user.id == state.userData?.id) ??
+                                      false)
+                                  .map((choice) => choice.id)
+                                  .toList(),
+                              onChoiceSelected: (choiceId, isSelected) {
+                                BlocProvider.of<PollBloc>(context)
+                                    .add(PollChoiceSaved(
+                                  pollId: currentPoll.id,
+                                  choiceId: choiceId,
+                                  selected: isSelected,
+                                ));
+                              },
+                              onChoiceAdded: (choice) {
+                                BlocProvider.of<PollBloc>(context).add(
+                                  ChoiceAdded(
+                                    poll: currentPoll,
+                                    choice: PollChoiceCreateOrEdit(
+                                      choice: choice,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

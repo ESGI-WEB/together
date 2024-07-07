@@ -21,6 +21,13 @@ class PollChoice {
       users: json['users'] != null ? (json['users'] as List).map((user) => User.fromJson(user)).toList() : null,
     );
   }
+
+  PollChoiceCreateOrEdit toCreateOrEdit() {
+    return PollChoiceCreateOrEdit(
+      id: id,
+      choice: choice,
+    );
+  }
 }
 
 class PollChoiceCreateOrEdit {

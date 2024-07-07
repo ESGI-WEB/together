@@ -36,15 +36,17 @@ class GroupScreen extends StatelessWidget {
             return const Center(child: Text('Groupe introuvable'));
           }
 
-          return Column(
-            children: [
-              PollGateway(
-                id: id,
-              ),
-              NextEventOfGroup(
-                groupId: id,
-              ),
-            ],
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                PollGateway(
+                  id: id,
+                ),
+                NextEventOfGroup(
+                  groupId: id,
+                ),
+              ],
+            ),
           );
         },
       ),

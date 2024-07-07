@@ -4,6 +4,7 @@ import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/poll.dart';
+import 'package:front/core/models/poll_choice.dart';
 import 'package:front/core/services/poll_services.dart';
 import 'package:front/core/services/storage_service.dart';
 
@@ -172,6 +173,48 @@ class PollBloc extends Bloc<PollEvent, PollState> {
       } on ApiException catch (error) {
         emit(state.copyWith(
           status: PollStatus.closePollError,
+          errorMessage: error.message,
+        ));
+      }
+    });
+
+    on<ChoiceAdded>((event, emit) async {
+      emit(state.copyWith(status: PollStatus.addingChoice));
+
+      try {
+        var pollToEdit = event.poll.toCreateOrEdit();
+
+        pollToEdit.choices!.add(event.choice);
+
+        await PollServices.updatePoll(
+          id: event.poll.id,
+          data: pollToEdit.toJson(),
+        );
+
+        emit(state.copyWith(status: PollStatus.choiceAdded));
+
+        add(PollUpdated(id: event.poll.id));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PollStatus.addChoiceError,
+          errorMessage: error.message,
+        ));
+      }
+    });
+
+    on<PollUpdated>((event, emit) async {
+      emit(state.copyWith(status: PollStatus.gettingPoll));
+
+      try {
+        final poll = await PollServices.getPollById(id: event.id);
+
+        emit(state.copyWith(
+          status: PollStatus.gotPoll,
+          pollUpdated: poll,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PollStatus.getPollError,
           errorMessage: error.message,
         ));
       }

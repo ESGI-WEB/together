@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/poll.dart';
-import 'package:front/core/partials/poll/poll.dart';
+import 'package:front/core/partials/poll/poll_field.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'blocs/poll_bloc.dart';
