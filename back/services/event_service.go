@@ -1,7 +1,9 @@
 package services
 
 import (
+	"errors"
 	"github.com/go-playground/validator/v10"
+	"time"
 	"together/database"
 	"together/models"
 	"together/utils"
@@ -114,4 +116,57 @@ func (s *EventService) GetEvents(pagination utils.Pagination, filters ...EventFi
 type EventFilter struct {
 	database.Filter
 	Column string `json:"column" validate:"required,oneof=organizer_id created_at date time type_id address_id group_id"`
+}
+
+func (s *EventService) DuplicateEventForYear(eventID uint, userID uint) ([]models.Event, error) {
+	originalEvent, err := s.GetEventByID(eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	if originalEvent.RecurrenceType == nil {
+		return nil, errors.New("event does not have a recurrence type")
+	}
+
+	var duplicatedEvents []models.Event
+	currentDate, _ := time.Parse(models.DateFormat, originalEvent.Date)
+	endDate := currentDate.AddDate(1, 0, 0)
+
+	switch *originalEvent.RecurrenceType {
+	case models.EachDays:
+		currentDate = currentDate.AddDate(0, 0, 1)
+	case models.EachWeeks:
+		currentDate = currentDate.AddDate(0, 0, 7)
+	case models.EachMonths:
+		currentDate = currentDate.AddDate(0, 1, 0)
+	case models.EachYears:
+		currentDate = currentDate.AddDate(1, 0, 0)
+	}
+
+	for currentDate.Before(endDate) {
+		duplicatedEvent := *originalEvent
+		duplicatedEvent.ID = 0
+		duplicatedEvent.OrganizerID = userID
+		duplicatedEvent.Date = currentDate.Format(models.DateFormat)
+
+		create := database.CurrentDatabase.Create(&duplicatedEvent)
+		if create.Error != nil {
+			return nil, create.Error
+		}
+
+		duplicatedEvents = append(duplicatedEvents, duplicatedEvent)
+
+		switch *originalEvent.RecurrenceType {
+		case models.EachDays:
+			currentDate = currentDate.AddDate(0, 0, 1)
+		case models.EachWeeks:
+			currentDate = currentDate.AddDate(0, 0, 7)
+		case models.EachMonths:
+			currentDate = currentDate.AddDate(0, 1, 0)
+		case models.EachYears:
+			currentDate = currentDate.AddDate(1, 0, 0)
+		}
+	}
+
+	return duplicatedEvents, nil
 }

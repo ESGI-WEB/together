@@ -18,4 +18,6 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 	group.GET("/:id", eventController.GetEvent, middlewares.AuthenticationMiddleware())
 	group.GET("/:id/attends", eventController.GetEventAttends, middlewares.AuthenticationMiddleware())
 	group.POST("/:id/duplicate", eventController.DuplicateEvent, middlewares.AuthenticationMiddleware())
+	group.POST("/:id/duplicate/year", eventController.DuplicateEventForYear, middlewares.AuthenticationMiddleware())
+
 }

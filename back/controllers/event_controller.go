@@ -194,3 +194,37 @@ func (c *EventController) DuplicateEvent(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusCreated, duplicatedEvent)
 }
+
+func (c *EventController) DuplicateEventForYear(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user := ctx.Get("user").(models.User)
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if !user.IsAdmin() && event.OrganizerID != user.ID {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	duplicatedEvents, err := c.EventService.DuplicateEventForYear(uint(eventID), user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusCreated, duplicatedEvents)
+}
