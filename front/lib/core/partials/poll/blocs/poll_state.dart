@@ -14,6 +14,12 @@ enum PollStatus {
   creatingPoll,
   pollCreated,
   createPollError,
+  deletingPoll,
+  pollDeleted,
+  deletePollError,
+  closingPoll,
+  pollClosed,
+  closePollError,
 }
 
 class PollState {
@@ -22,6 +28,8 @@ class PollState {
   final Poll? pollUpdated;
   final String? errorMessage;
   final JwtData? userData;
+  final int? id;
+  final PollType? type;
 
   PollState({
     this.status = PollStatus.initial,
@@ -29,6 +37,8 @@ class PollState {
     this.pollUpdated,
     this.errorMessage,
     this.userData,
+    this.id,
+    this.type,
   });
 
   PollState copyWith({
@@ -37,6 +47,8 @@ class PollState {
     Poll? pollUpdated,
     String? errorMessage,
     JwtData? userData,
+    int? id,
+    PollType? type,
   }) {
     return PollState(
       status: status ?? this.status,
@@ -44,6 +56,8 @@ class PollState {
       pollUpdated: pollUpdated ?? this.pollUpdated,
       errorMessage: errorMessage ?? this.errorMessage,
       userData: userData ?? this.userData,
+      id: id ?? this.id,
+      type: type ?? this.type,
     );
   }
 }

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class NoPollCreated extends StatelessWidget {
   final void Function()? onTap;
+  final void Function()? onSeeClosedPolls;
 
   const NoPollCreated({
     super.key,
     this.onTap,
+    this.onSeeClosedPolls,
   });
 
   @override
@@ -34,17 +36,30 @@ class NoPollCreated extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: onTap,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: onTap,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text("C'est parti !"),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text("C'est parti !"),
+                      if (onSeeClosedPolls != null)
+                        PopupMenuButton<void>(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              onTap: onSeeClosedPolls,
+                              child: Text('Voir les sondages clôturés'),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
                 ],
               ),

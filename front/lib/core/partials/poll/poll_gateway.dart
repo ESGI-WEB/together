@@ -6,6 +6,7 @@ import 'package:front/core/partials/poll/all_poll_answered.dart';
 import 'package:front/core/partials/poll/create_poll.dart';
 import 'package:front/core/partials/poll/no_poll_created.dart';
 import 'package:front/core/partials/poll/poll.dart';
+import 'package:front/core/partials/poll/poll_owner_menu.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:front/core/models/poll.dart' as poll_model;
 
@@ -82,22 +83,102 @@ class _PollGatewayState extends State<PollGateway> {
     Navigator.of(context, rootNavigator: true).pop('dialog');
   }
 
+  void openDialog(BuildContext context, PollState state) {
+    showDialog(
+      context: context,
+      builder: (BuildContext modalContext) {
+        return Dialog(
+          surfaceTintColor: Theme
+              .of(context)
+              .colorScheme
+              .background,
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: SingleChildScrollView(
+              child: CreatePoll(
+                saving: state.status == PollStatus.creatingPoll,
+                onCreate: (question, allowMultipleAnswers, answers) {
+                  BlocProvider.of<PollBloc>(context).add(
+                    PollCreated(
+                      poll: poll_model.PollCreateOrEdit(
+                        question: question,
+                        isMultiple: allowMultipleAnswers,
+                        choices: answers.map((answer) {
+                          return PollChoiceCreateOrEdit(
+                            choice: answer,
+                          );
+                        }).toList(),
+                        groupId:
+                        widget.type == PollType.group ? widget.id : null,
+                        eventId:
+                        widget.type == PollType.event ? widget.id : null,
+                      ),
+                    ),
+                  );
+                },
+                onClose: closeDialog,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void deletePoll(BuildContext context, int id) {
+    BlocProvider.of<PollBloc>(context).add(
+      PollDeleted(
+        id: id,
+      ),
+    );
+  }
+
+  void closePoll(BuildContext context, int id) {
+    BlocProvider.of<PollBloc>(context).add(
+      PollClosed(
+        id: id,
+      ),
+    );
+  }
+
+  void openClosedPolls(BuildContext context) {
+
+  }
+
+  PollOwnerMenu _buildMenu(
+      BuildContext context,
+      PollState state,
+      poll_model.Poll currentPoll,
+  ) {
+    return PollOwnerMenu(
+      onAddPoll: () => openDialog(context, state),
+      onEditPoll: () {},
+      onDeletePoll: () => deletePoll(context, currentPoll.id),
+      onClosePoll: () => closePoll(context, currentPoll.id),
+      onSeeClosedPolls: () => openClosedPolls(context),
+      isOnDeletePollLoading: state.status == PollStatus.deletingPoll,
+      isOnClosePollLoading: state.status == PollStatus.closingPoll,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PollBloc()..add(PollNextPageLoaded(id: widget.id)),
+      create: (context) =>
+      PollBloc()
+        ..add(PollNextPageLoaded(id: widget.id)),
       child: BlocListener<PollBloc, PollState>(
         listener: (context, state) {
           if (state.status == PollStatus.success) {
             setState(() {
               currentPage = state.pollPage;
               if (currentPage?.page == 1) {
+                currentPollIndex = 0;
                 pollList = state.pollPage?.rows ?? [];
               } else {
+                currentPollIndex = currentPollIndex + 1;
                 pollList.addAll(state.pollPage?.rows ?? []);
               }
-              currentPollIndex =
-                  currentPollIndex == 0 ? 0 : currentPollIndex + 1;
             });
           }
 
@@ -146,104 +227,76 @@ class _PollGatewayState extends State<PollGateway> {
             final pollPage = state.pollPage;
             if (pollPage == null || pollPage.rows.isEmpty) {
               return NoPollCreated(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext modalContext) {
-                      return Dialog(
-                        surfaceTintColor:
-                            Theme.of(context).colorScheme.background,
-                        child: Padding(
-                          padding: const EdgeInsets.all(32),
-                          child: SingleChildScrollView(
-                            child: CreatePoll(
-                              saving: state.status == PollStatus.creatingPoll,
-                              onCreate:
-                                  (question, allowMultipleAnswers, answers) {
-                                BlocProvider.of<PollBloc>(context).add(
-                                  PollCreated(
-                                    poll: poll_model.PollCreateOrEdit(
-                                      question: question,
-                                      isMultiple: allowMultipleAnswers,
-                                      choices: answers.map((answer) {
-                                        return PollChoiceCreateOrEdit(
-                                          choice: answer,
-                                        );
-                                      }).toList(),
-                                      groupId: widget.type == PollType.group
-                                          ? widget.id
-                                          : null,
-                                      eventId: widget.type == PollType.event
-                                          ? widget.id
-                                          : null,
-                                    ),
-                                  ),
-                                );
-                              },
-                              onClose: closeDialog,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
+                  onTap: () => openDialog(context, state),
+                  onSeeClosedPolls: () => openClosedPolls(context),
               );
             }
 
             final currentPoll = pollList[currentPollIndex];
 
-            return Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    if (showEveryPollsAnswered)
-                      const AllPollAnswered()
-                    else
-                      Poll(
-                          poll: currentPoll,
-                          selectedChoices: currentPoll.choices
-                              ?.where((choice) =>
-                                  choice.users?.any((user) =>
-                                      user.id == state.userData?.id) ??
-                                  false)
-                              .map((choice) => choice.id)
-                              .toList(),
-                          onChoiceSelected: (choiceId, isSelected) {
-                            BlocProvider.of<PollBloc>(context)
-                                .add(PollChoiceSaved(
-                              pollId: currentPoll.id,
-                              choiceId: choiceId,
-                              selected: isSelected,
-                            ));
-                          }),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          onPressed:
-                              currentPollIndex <= 0 && !showEveryPollsAnswered
-                                  ? null
-                                  : goToPreviousPoll,
-                          icon: const Icon(Icons.arrow_back),
-                        ),
-                        Text(
-                          '${currentPollIndex + 1} / ${pollPage.total}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        IconButton(
-                          onPressed: showEveryPollsAnswered
-                              ? null
-                              : () => goToNextPoll(context),
-                          icon: const Icon(Icons.arrow_forward),
-                        ),
-                      ],
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          if (showEveryPollsAnswered)
+                            const AllPollAnswered()
+                          else
+                            Poll(
+                                poll: currentPoll,
+                                selectedChoices: currentPoll.choices
+                                    ?.where((choice) =>
+                                choice.users?.any((user) =>
+                                user.id == state.userData?.id) ??
+                                    false)
+                                    .map((choice) => choice.id)
+                                    .toList(),
+                                onChoiceSelected: (choiceId, isSelected) {
+                                  BlocProvider.of<PollBloc>(context)
+                                      .add(PollChoiceSaved(
+                                    pollId: currentPoll.id,
+                                    choiceId: choiceId,
+                                    selected: isSelected,
+                                  ));
+                                }),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: currentPollIndex <= 0 &&
+                                    !showEveryPollsAnswered
+                                    ? null
+                                    : goToPreviousPoll,
+                                icon: const Icon(Icons.arrow_back),
+                              ),
+                              Text(
+                                '${currentPollIndex + 1} / ${pollPage.total}',
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodySmall,
+                              ),
+                              IconButton(
+                                onPressed: showEveryPollsAnswered
+                                    ? null
+                                    : () => goToNextPoll(context),
+                                icon: const Icon(Icons.arrow_forward),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                if (!showEveryPollsAnswered)
+                  _buildMenu(context, state, currentPoll),
+              ],
             );
           },
         ),

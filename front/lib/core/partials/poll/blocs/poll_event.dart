@@ -43,6 +43,22 @@ class PollCreated extends PollEvent {
   });
 }
 
+class PollDeleted extends PollEvent {
+  final int id;
+
+  PollDeleted({
+    required this.id,
+  });
+}
+
+class PollClosed extends PollEvent {
+  final int id;
+
+  PollClosed({
+    required this.id,
+  });
+}
+
 enum PollType {
   group,
   event,

@@ -3,11 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/poll.dart' as poll_model;
 import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/models/poll.dart' as poll_model;
-import 'package:front/core/partials/avatar_stack.dart';
-import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 
 class Poll extends StatelessWidget {
   final poll_model.Poll poll;

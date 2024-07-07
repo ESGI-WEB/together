@@ -61,4 +61,20 @@ class PollServices {
     );
     return Poll.fromJson(ApiServices.decodeResponse(newPoll));
   }
+
+  static Future<void> deletePoll({
+    required int id,
+  }) async {
+    await ApiServices.delete('/polls/$id');
+  }
+
+  static Future<void> updatePoll({
+    required int id,
+    Map<String, dynamic>? data,
+  }) async {
+    await ApiServices.put(
+      '/polls/$id',
+      data,
+    );
+  }
 }

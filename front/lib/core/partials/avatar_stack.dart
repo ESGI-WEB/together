@@ -14,8 +14,8 @@ class AvatarStack extends StatelessWidget {
   const AvatarStack({super.key, required this.users, this.displayedAvatars = 4});
 
   double getStackSize() {
-    bool showMoreUsersCircle = this.users.length > this.displayedAvatars;
-    int usersCirclesToDisplay = min(displayedAvatars, this.users.length);
+    bool showMoreUsersCircle = users.length > displayedAvatars;
+    int usersCirclesToDisplay = min(displayedAvatars, users.length);
     int totalCircles = usersCirclesToDisplay + (showMoreUsersCircle ? 1 : 0);
 
     // displayedCirclesInTotal * avatarLeft + (avatarSize - avatarLeft)
