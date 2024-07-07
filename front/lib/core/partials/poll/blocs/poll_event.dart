@@ -15,6 +15,14 @@ class PollNextPageLoaded extends PollEvent {
   });
 }
 
+class ClosedPollNextPageLoaded extends PollNextPageLoaded {
+  ClosedPollNextPageLoaded({
+    required super.id,
+    super.type,
+    super.page,
+  });
+}
+
 class PollUpdated extends PollEvent {
   final int id;
 

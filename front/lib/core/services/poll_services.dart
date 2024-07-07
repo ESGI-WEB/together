@@ -12,9 +12,10 @@ class PollServices {
     required int id,
     PollType type = PollType.group,
     int page = 1,
+    bool closed = false,
   }) async {
     var urlTypePart = type == PollType.group ? '/group/$id' : '/event/$id';
-    var url = '/polls$urlTypePart?page=$page';
+    var url = '/polls$urlTypePart?page=$page&closed=$closed';
 
     final response = await ApiServices.get(url);
     return Paginated.fromJson(

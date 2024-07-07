@@ -48,14 +48,14 @@ class NoPollCreated extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: Text("C'est parti !"),
+                        child: const Text("C'est parti !"),
                       ),
                       if (onSeeClosedPolls != null)
                         PopupMenuButton<void>(
                           itemBuilder: (context) => [
                             PopupMenuItem(
                               onTap: onSeeClosedPolls,
-                              child: Text('Voir les sondages clôturés'),
+                              child: const Text('Voir les sondages clôturés'),
                             ),
                           ],
                         ),

@@ -43,7 +43,8 @@ class AppTheme {
       scaffoldBackgroundColor: scheme.background,
       canvasColor: scheme.background,
       cardColor: scheme.background,
-      disabledColor: const Color(0xfff5f5f5),
+      highlightColor: scheme.background,
+      disabledColor: const Color(0xff7a7a7a),
       textTheme: TextTheme(
         displayLarge: TextStyle(
           color: scheme.primary,
@@ -190,6 +191,10 @@ class AppTheme {
         clipBehavior: Clip.antiAlias,
         color: Colors.white,
         shadowColor: scheme.background,
+        surfaceTintColor: scheme.background,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.background,
         surfaceTintColor: scheme.background,
       ),
     );

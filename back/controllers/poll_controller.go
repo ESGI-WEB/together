@@ -88,7 +88,8 @@ func (c *PollController) GetPollsByEventID(ctx echo.Context) error {
 	}
 
 	pagination := utils.PaginationFromContext(ctx)
-	polls, err := c.pollService.GetPollsForEvent(eventID, pagination)
+	closed := ctx.QueryParam("closed") == "true"
+	polls, err := c.pollService.GetPollsForEvent(eventID, pagination, closed)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
@@ -111,7 +112,8 @@ func (c *PollController) GetPollsByGroupID(ctx echo.Context) error {
 	}
 
 	pagination := utils.PaginationFromContext(ctx)
-	polls, err := c.pollService.GetPollsForGroup(groupID, pagination)
+	closed := ctx.QueryParam("closed") == "true"
+	polls, err := c.pollService.GetPollsForGroup(groupID, pagination, closed)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

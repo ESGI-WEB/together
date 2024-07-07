@@ -4,12 +4,12 @@ import 'package:front/core/models/poll.dart' as poll_model;
 import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 
-class Poll extends StatelessWidget {
+class PollField extends StatelessWidget {
   final poll_model.Poll poll;
   final List<int>? selectedChoices;
   final Function(int choiceId, bool isSelected)? onChoiceSelected;
 
-  const Poll({
+  const PollField({
     super.key,
     required this.poll,
     this.selectedChoices,
@@ -31,8 +31,8 @@ class Poll extends StatelessWidget {
               ),
               Text(
                 poll.isMultiple
-                    ? 'Choisissez une ou plusieurs réponses'
-                    : 'Choisissez une réponse',
+                    ? 'Plusieurs réponses possibles'
+                    : 'Une seule réponse possible',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
@@ -53,10 +53,14 @@ class Poll extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: CheckboxListTile(
-                            value: selectedChoices?.contains(choice.id) ?? false,
-                            onChanged: (value) {
-                              onChoiceSelected?.call(choice.id, value ?? true);
-                            },
+                            value:
+                                selectedChoices?.contains(choice.id) ?? false,
+                            onChanged: onChoiceSelected != null
+                                ? (value) {
+                                    onChoiceSelected?.call(
+                                        choice.id, value ?? true);
+                                  }
+                                : null,
                             checkboxShape: !poll.isMultiple
                                 ? const CircleBorder()
                                 : const RoundedRectangleBorder(),

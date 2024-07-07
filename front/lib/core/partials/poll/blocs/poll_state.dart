@@ -20,6 +20,9 @@ enum PollStatus {
   closingPoll,
   pollClosed,
   closePollError,
+  loadingClosedPolls,
+  closedPollsSuccess,
+  loadClosedPollsError,
 }
 
 class PollState {

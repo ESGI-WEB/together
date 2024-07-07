@@ -8,9 +8,10 @@ import 'package:front/core/partials/poll/no_poll_created.dart';
 import 'package:front/core/partials/poll/poll.dart';
 import 'package:front/core/partials/poll/poll_owner_menu.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:front/core/models/poll.dart' as poll_model;
+import 'package:front/core/models/poll.dart';
 
 import 'blocs/poll_bloc.dart';
+import 'closed_polls.dart';
 
 class PollGateway extends StatefulWidget {
   final int id;
@@ -27,8 +28,8 @@ class PollGateway extends StatefulWidget {
 }
 
 class _PollGatewayState extends State<PollGateway> {
-  Paginated<poll_model.Poll>? currentPage;
-  var pollList = <poll_model.Poll>[];
+  Paginated<Poll>? currentPage;
+  var pollList = <Poll>[];
   var currentPollIndex = 0;
   var showEveryPollsAnswered = false;
 
@@ -64,13 +65,13 @@ class _PollGatewayState extends State<PollGateway> {
     }
   }
 
-  void choiceChanged(poll_model.Poll poll, BuildContext context) {
+  void choiceChanged(Poll poll, BuildContext context) {
     BlocProvider.of<PollBloc>(context).add(PollUpdated(
       id: poll.id,
     ));
   }
 
-  void updatePoll(poll_model.Poll poll) {
+  void updatePoll(Poll poll) {
     final index = pollList.indexWhere((element) => element.id == poll.id);
     if (index != -1) {
       setState(() {
@@ -88,10 +89,7 @@ class _PollGatewayState extends State<PollGateway> {
       context: context,
       builder: (BuildContext modalContext) {
         return Dialog(
-          surfaceTintColor: Theme
-              .of(context)
-              .colorScheme
-              .background,
+          surfaceTintColor: Theme.of(context).colorScheme.background,
           child: Padding(
             padding: const EdgeInsets.all(32),
             child: SingleChildScrollView(
@@ -100,7 +98,7 @@ class _PollGatewayState extends State<PollGateway> {
                 onCreate: (question, allowMultipleAnswers, answers) {
                   BlocProvider.of<PollBloc>(context).add(
                     PollCreated(
-                      poll: poll_model.PollCreateOrEdit(
+                      poll: PollCreateOrEdit(
                         question: question,
                         isMultiple: allowMultipleAnswers,
                         choices: answers.map((answer) {
@@ -109,9 +107,9 @@ class _PollGatewayState extends State<PollGateway> {
                           );
                         }).toList(),
                         groupId:
-                        widget.type == PollType.group ? widget.id : null,
+                            widget.type == PollType.group ? widget.id : null,
                         eventId:
-                        widget.type == PollType.event ? widget.id : null,
+                            widget.type == PollType.event ? widget.id : null,
                       ),
                     ),
                   );
@@ -141,21 +139,36 @@ class _PollGatewayState extends State<PollGateway> {
     );
   }
 
-  void openClosedPolls(BuildContext context) {
-
+  void openClosedPolls(BuildContext context, int id, PollType type) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext modalContext) {
+        return Padding(
+          padding: const EdgeInsets.all(32),
+          child: ClosedPolls(
+            id: id,
+            type: type,
+          ),
+        );
+      },
+    );
   }
 
   PollOwnerMenu _buildMenu(
-      BuildContext context,
-      PollState state,
-      poll_model.Poll currentPoll,
+    BuildContext context,
+    PollState state,
+    Poll currentPoll,
   ) {
     return PollOwnerMenu(
       onAddPoll: () => openDialog(context, state),
       onEditPoll: () {},
       onDeletePoll: () => deletePoll(context, currentPoll.id),
       onClosePoll: () => closePoll(context, currentPoll.id),
-      onSeeClosedPolls: () => openClosedPolls(context),
+      onSeeClosedPolls: () => openClosedPolls(
+        context,
+        widget.id,
+        widget.type,
+      ),
       isOnDeletePollLoading: state.status == PollStatus.deletingPoll,
       isOnClosePollLoading: state.status == PollStatus.closingPoll,
     );
@@ -164,9 +177,7 @@ class _PollGatewayState extends State<PollGateway> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-      PollBloc()
-        ..add(PollNextPageLoaded(id: widget.id)),
+      create: (context) => PollBloc()..add(PollNextPageLoaded(id: widget.id)),
       child: BlocListener<PollBloc, PollState>(
         listener: (context, state) {
           if (state.status == PollStatus.success) {
@@ -227,8 +238,12 @@ class _PollGatewayState extends State<PollGateway> {
             final pollPage = state.pollPage;
             if (pollPage == null || pollPage.rows.isEmpty) {
               return NoPollCreated(
-                  onTap: () => openDialog(context, state),
-                  onSeeClosedPolls: () => openClosedPolls(context),
+                onTap: () => openDialog(context, state),
+                onSeeClosedPolls: () => openClosedPolls(
+                  context,
+                  widget.id,
+                  widget.type,
+                ),
               );
             }
 
@@ -246,13 +261,13 @@ class _PollGatewayState extends State<PollGateway> {
                           if (showEveryPollsAnswered)
                             const AllPollAnswered()
                           else
-                            Poll(
+                            PollField(
                                 poll: currentPoll,
                                 selectedChoices: currentPoll.choices
                                     ?.where((choice) =>
-                                choice.users?.any((user) =>
-                                user.id == state.userData?.id) ??
-                                    false)
+                                        choice.users?.any((user) =>
+                                            user.id == state.userData?.id) ??
+                                        false)
                                     .map((choice) => choice.id)
                                     .toList(),
                                 onChoiceSelected: (choiceId, isSelected) {
@@ -269,17 +284,14 @@ class _PollGatewayState extends State<PollGateway> {
                             children: [
                               IconButton(
                                 onPressed: currentPollIndex <= 0 &&
-                                    !showEveryPollsAnswered
+                                        !showEveryPollsAnswered
                                     ? null
                                     : goToPreviousPoll,
                                 icon: const Icon(Icons.arrow_back),
                               ),
                               Text(
                                 '${currentPollIndex + 1} / ${pollPage.total}',
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .bodySmall,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                               IconButton(
                                 onPressed: showEveryPollsAnswered

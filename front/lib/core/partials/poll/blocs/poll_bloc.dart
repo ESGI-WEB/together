@@ -40,6 +40,32 @@ class PollBloc extends Bloc<PollEvent, PollState> {
       }
     });
 
+    on<ClosedPollNextPageLoaded>((event, emit) async {
+      emit(state.copyWith(status: PollStatus.loadingClosedPolls));
+
+      try {
+        final pollPage = await PollServices.get(
+          page: event.page,
+          id: event.id,
+          type: event.type,
+          closed: true,
+        );
+
+        final userData = await StorageService.readJwtDataFromToken();
+
+        emit(state.copyWith(
+          status: PollStatus.closedPollsSuccess,
+          pollPage: pollPage,
+          userData: userData,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PollStatus.loadClosedPollsError,
+          errorMessage: error.message,
+        ));
+      }
+    });
+
     on<PollChoiceSaved>((event, emit) async {
       emit(state.copyWith(status: PollStatus.savingPollChoice));
 
@@ -122,22 +148,20 @@ class PollBloc extends Bloc<PollEvent, PollState> {
     on<PollClosed>((event, emit) async {
       emit(state.copyWith(status: PollStatus.closingPoll));
 
-      if (state.id != null && state.type != null) {
-        // on refresh la liste des sondages
-        add(PollNextPageLoaded(
-          id: state.id!,
-          type: state.type!,
-        ));
-      }
       try {
-        await PollServices.updatePoll(
-          id: event.id,
-          data: {
-            "is_closed": true,
-          }
-        );
+        await PollServices.updatePoll(id: event.id, data: {
+          "is_closed": true,
+        });
 
         emit(state.copyWith(status: PollStatus.pollClosed));
+
+        if (state.id != null && state.type != null) {
+          // on refresh la liste des sondages
+          add(PollNextPageLoaded(
+            id: state.id!,
+            type: state.type!,
+          ));
+        }
       } on ApiException catch (error) {
         emit(state.copyWith(
           status: PollStatus.closePollError,
