@@ -43,10 +43,10 @@ class PollChoiceSaved extends PollEvent {
   });
 }
 
-class PollCreated extends PollEvent {
+class PollCreatedOrEdited extends PollEvent {
   final PollCreateOrEdit poll;
 
-  PollCreated({
+  PollCreatedOrEdited({
     required this.poll,
   });
 }

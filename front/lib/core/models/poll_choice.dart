@@ -24,15 +24,23 @@ class PollChoice {
 }
 
 class PollChoiceCreateOrEdit {
-  final String? choice;
+  final int? id;
+  final String choice;
 
   PollChoiceCreateOrEdit({
-    this.choice,
+    required this.choice,
+    this.id,
   });
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> data = {
       'choice': choice,
     };
+
+    if (id != null) {
+      data['ID'] = id;
+    }
+
+    return data;
   }
 }

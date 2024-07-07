@@ -102,37 +102,44 @@ class _ClosedPollsState extends State<ClosedPolls> {
             }
 
             final poll = pollList[currentPollIndex];
-            return Column(
-              children: [
-                PollField(
-                  poll: poll,
-                  selectedChoices: poll.choices
-                      ?.where((choice) =>
-                          choice.users
-                              ?.map((user) => user.id)
-                              .contains(state.userData?.id) ??
-                          false)
-                      .map((choice) => choice.id)
-                      .toList(),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: currentPollIndex > 0 ? goToPreviousPoll : null,
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_forward),
-                      onPressed: (
-                          currentPollIndex + 1 < pollList.length ||
-                          (currentPage != null && currentPage!.page < currentPage!.pages)
-                      ) ? () => goToNextPoll(context) : null,
-                    ),
-                  ],
-                ),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Text(
+                    "${pollPage.total} sondages clos",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 10),
+                  PollField(
+                    poll: poll,
+                    selectedChoices: poll.choices
+                        ?.where((choice) =>
+                            choice.users
+                                ?.map((user) => user.id)
+                                .contains(state.userData?.id) ??
+                            false)
+                        .map((choice) => choice.id)
+                        .toList(),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: currentPollIndex > 0 ? goToPreviousPoll : null,
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.arrow_forward),
+                        onPressed: (
+                            currentPollIndex + 1 < pollList.length ||
+                            (currentPage != null && currentPage!.page < currentPage!.pages)
+                        ) ? () => goToNextPoll(context) : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             );
           },
         ),

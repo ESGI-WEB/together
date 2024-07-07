@@ -37,6 +37,7 @@ class Poll {
 }
 
 class PollCreateOrEdit {
+  final int? id;
   final String? question;
   final bool? isMultiple;
   final bool? isClosed;
@@ -45,6 +46,7 @@ class PollCreateOrEdit {
   final int? eventId;
 
   PollCreateOrEdit({
+    this.id,
     this.question,
     this.isMultiple,
     this.isClosed,
@@ -67,6 +69,10 @@ class PollCreateOrEdit {
 
     if (eventId != null) {
       data['event_id'] = eventId;
+    }
+
+    if (id != null) {
+      data['ID'] = id;
     }
 
     return data;

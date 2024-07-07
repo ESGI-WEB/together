@@ -1,38 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/poll.dart';
+import 'package:front/core/models/poll_choice.dart';
 
 class CreatePoll extends StatefulWidget {
-  final Function(
-          String question, bool allowMultipleAnswers, List<String> answers)?
-      onCreate;
+  final Function(String question, bool allowMultipleAnswers,
+      List<PollChoiceCreateOrEdit> answers)? onSave;
   final void Function()? onClose;
   final bool? saving;
+  final Poll? pollToEdit;
 
   const CreatePoll({
     super.key,
-    this.onCreate,
+    this.onSave,
     this.onClose,
     this.saving,
+    this.pollToEdit,
   });
 
   @override
   State<CreatePoll> createState() => _CreatePollState();
 }
 
+class PollChoiceWithController {
+  final TextEditingController controller;
+  final PollChoiceCreateOrEdit pollChoice;
+
+  PollChoiceWithController({
+    required this.controller,
+    required this.pollChoice,
+  });
+}
+
 class _CreatePollState extends State<CreatePoll> {
   final _formKey = GlobalKey<FormState>();
   final _questionController = TextEditingController();
-  final _answersController = <TextEditingController>[
-    TextEditingController(),
-    TextEditingController(),
+  final _answersController = <PollChoiceWithController>[
+    PollChoiceWithController(
+      controller: TextEditingController(),
+      pollChoice: PollChoiceCreateOrEdit(choice: ''),
+    ),
+    PollChoiceWithController(
+      controller: TextEditingController(),
+      pollChoice: PollChoiceCreateOrEdit(choice: ''),
+    ),
   ];
   bool allowMultipleAnswers = false;
 
+  @override
+  void initState() {
+    super.initState();
+    final pollToEdit = widget.pollToEdit;
+    final pollChoices = pollToEdit?.choices;
+    if (pollToEdit != null && pollChoices != null) {
+      _questionController.text = pollToEdit.question;
+      _answersController.clear();
+      _answersController.addAll(
+        pollChoices.map(
+          (choice) => PollChoiceWithController(
+            controller: TextEditingController(text: choice.choice),
+            pollChoice: PollChoiceCreateOrEdit(
+              id: choice.id,
+              choice: choice.choice,
+            ),
+          ),
+        ),
+      );
+      allowMultipleAnswers = pollToEdit.isMultiple;
+    }
+  }
+
   void submit() {
     if (_formKey.currentState!.validate()) {
-      widget.onCreate?.call(
+      widget.onSave?.call(
         _questionController.text,
         allowMultipleAnswers,
-        _answersController.map((e) => e.text).toList(),
+        _answersController
+            .map((e) => PollChoiceCreateOrEdit(
+                  choice: e.controller.text,
+                  id: e.pollChoice.id,
+                ))
+            .toList(),
       );
       reset();
     }
@@ -43,8 +90,14 @@ class _CreatePollState extends State<CreatePoll> {
       _questionController.clear();
       _answersController.clear();
       _answersController.addAll([
-        TextEditingController(),
-        TextEditingController(),
+        PollChoiceWithController(
+          controller: TextEditingController(),
+          pollChoice: PollChoiceCreateOrEdit(choice: ''),
+        ),
+        PollChoiceWithController(
+          controller: TextEditingController(),
+          pollChoice: PollChoiceCreateOrEdit(choice: ''),
+        ),
       ]);
       allowMultipleAnswers = false;
     });
@@ -58,7 +111,9 @@ class _CreatePollState extends State<CreatePoll> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Créer un sondage',
+            widget.pollToEdit == null
+                ? 'Créer un sondage'
+                : 'Modifier le sondage',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           TextFormField(
@@ -96,7 +151,7 @@ class _CreatePollState extends State<CreatePoll> {
                       children: [
                         Expanded(
                           child: TextFormField(
-                            controller: _answersController[i],
+                            controller: _answersController[i].controller,
                             decoration: const InputDecoration(
                               labelText: 'Réponse',
                             ),
@@ -131,7 +186,12 @@ class _CreatePollState extends State<CreatePoll> {
           OutlinedButton.icon(
             onPressed: () {
               setState(() {
-                _answersController.add(TextEditingController());
+                _answersController.add(
+                  PollChoiceWithController(
+                    controller: TextEditingController(),
+                    pollChoice: PollChoiceCreateOrEdit(choice: ''),
+                  ),
+                );
               });
             },
             icon: const Icon(Icons.add),
@@ -174,7 +234,7 @@ class _CreatePollState extends State<CreatePoll> {
                         ),
                       ),
                 onPressed: widget.saving != true ? submit : null,
-                label: const Text('Créer'),
+                label: const Text('Enregistrer'),
               ),
             ],
           ),

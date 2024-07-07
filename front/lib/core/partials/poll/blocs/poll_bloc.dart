@@ -95,13 +95,20 @@ class PollBloc extends Bloc<PollEvent, PollState> {
       }
     });
 
-    on<PollCreated>((event, emit) async {
+    on<PollCreatedOrEdited>((event, emit) async {
       emit(state.copyWith(status: PollStatus.creatingPoll));
 
       try {
-        await PollServices.createPoll(
-          poll: event.poll,
-        );
+        if (event.poll.id != null) {
+          await PollServices.updatePoll(
+            id: event.poll.id!,
+            data: event.poll.toJson(),
+          );
+        } else {
+          await PollServices.createPoll(
+            poll: event.poll,
+          );
+        }
 
         emit(state.copyWith(status: PollStatus.pollCreated));
 

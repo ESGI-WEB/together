@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
-import 'package:front/core/models/poll_choice.dart';
 import 'package:front/core/partials/poll/all_poll_answered.dart';
 import 'package:front/core/partials/poll/create_poll.dart';
 import 'package:front/core/partials/poll/no_poll_created.dart';
@@ -84,7 +83,11 @@ class _PollGatewayState extends State<PollGateway> {
     Navigator.of(context, rootNavigator: true).pop('dialog');
   }
 
-  void openDialog(BuildContext context, PollState state) {
+  void openDialog({
+    required BuildContext context,
+    required PollState state,
+    Poll? poll,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext modalContext) {
@@ -94,18 +97,16 @@ class _PollGatewayState extends State<PollGateway> {
             padding: const EdgeInsets.all(32),
             child: SingleChildScrollView(
               child: CreatePoll(
+                pollToEdit: poll,
                 saving: state.status == PollStatus.creatingPoll,
-                onCreate: (question, allowMultipleAnswers, answers) {
+                onSave: (question, allowMultipleAnswers, answers) {
                   BlocProvider.of<PollBloc>(context).add(
-                    PollCreated(
+                    PollCreatedOrEdited(
                       poll: PollCreateOrEdit(
+                        id: poll?.id,
                         question: question,
                         isMultiple: allowMultipleAnswers,
-                        choices: answers.map((answer) {
-                          return PollChoiceCreateOrEdit(
-                            choice: answer,
-                          );
-                        }).toList(),
+                        choices: answers,
                         groupId:
                             widget.type == PollType.group ? widget.id : null,
                         eventId:
@@ -160,8 +161,15 @@ class _PollGatewayState extends State<PollGateway> {
     Poll currentPoll,
   ) {
     return PollOwnerMenu(
-      onAddPoll: () => openDialog(context, state),
-      onEditPoll: () {},
+      onAddPoll: () => openDialog(
+        context: context,
+        state: state,
+      ),
+      onEditPoll: () => openDialog(
+        context: context,
+        state: state,
+        poll: currentPoll,
+      ),
       onDeletePoll: () => deletePoll(context, currentPoll.id),
       onClosePoll: () => closePoll(context, currentPoll.id),
       onSeeClosedPolls: () => openClosedPolls(
@@ -238,7 +246,10 @@ class _PollGatewayState extends State<PollGateway> {
             final pollPage = state.pollPage;
             if (pollPage == null || pollPage.rows.isEmpty) {
               return NoPollCreated(
-                onTap: () => openDialog(context, state),
+                onTap: () => openDialog(
+                  context: context,
+                  state: state,
+                ),
                 onSeeClosedPolls: () => openClosedPolls(
                   context,
                   widget.id,

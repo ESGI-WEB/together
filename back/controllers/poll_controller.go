@@ -183,18 +183,37 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 		poll.IsMultiple = *jsonBody.IsMultiple
 	}
 
-	// used to add new choices, beware, it will not remove the old ones
-	// use the delete choice endpoint to remove choices instead
+	editedChoices := make([]models.PollAnswerChoice, 0)
 	if jsonBody.Choices != nil {
-		choices := *poll.Choices
-
+		// it's a PUT, so all choices must be sent
+		// if choice has an id, it is an existing choice that is being edited
+		// otherwise, it is a new choice to create
+		// if the choice is not in the json body, it is deleted
 		for _, choice := range *jsonBody.Choices {
 			choiceParsed := choice.ToPollAnswerChoice()
 			choiceParsed.PollID = poll.ID
-			choices = append(choices, choiceParsed)
-		}
 
-		poll.Choices = &choices
+			if choice.ID != nil {
+				// TODO check if the choice belongs to the poll
+				choiceTarget, err := c.pollService.GetPollChoiceByID(*choice.ID)
+				if err != nil {
+					return ctx.NoContent(http.StatusInternalServerError)
+				}
+				if choiceTarget.PollID != poll.ID {
+					return ctx.String(http.StatusForbidden, "Choice does not belong to the poll")
+				}
+				choiceParsed.ID = *choice.ID
+			}
+
+			editedChoices = append(editedChoices, choiceParsed)
+		}
+	}
+
+	if len(editedChoices) > 0 {
+		err = c.pollService.EditPollChoices(*poll, editedChoices)
+		if err != nil {
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
 	}
 
 	editedPoll, err := c.pollService.EditPoll(*poll)

@@ -36,13 +36,37 @@ func (s *PollService) EditPoll(poll models.Poll) (*models.Poll, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	err = database.CurrentDatabase.Save(&poll).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return &poll, nil
+}
+
+func (s *PollService) EditPollChoices(poll models.Poll, choices []models.PollAnswerChoice) error {
+	choicesIds := make([]uint, len(choices))
+
+	for _, choice := range choices {
+		choicesIds = append(choicesIds, choice.ID)
+	}
+
+	// find poll choices that are not in the choices array and delete them
+	err := database.CurrentDatabase.
+		Where("poll_id = ? AND id NOT IN ?", poll.ID, choicesIds).
+		Delete(&models.PollAnswerChoice{}).Error
+	if err != nil {
+		return err
+	}
+
+	for _, choice := range choices {
+		err := database.CurrentDatabase.Save(&choice).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *PollService) DeletePoll(id uint) error {
