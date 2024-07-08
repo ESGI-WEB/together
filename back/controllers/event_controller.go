@@ -56,6 +56,13 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	if newEvent.RecurrenceType != nil {
+		_, err := c.EventService.DuplicateEventForYear(newEvent.ID, user.ID)
+		if err != nil {
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
+	}
+
 	return ctx.JSON(http.StatusCreated, newEvent)
 }
 
