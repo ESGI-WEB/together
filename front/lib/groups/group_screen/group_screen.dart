@@ -74,11 +74,13 @@ class _GroupScreenState extends State<GroupScreen> {
           }
 
           return Scaffold(
+            backgroundColor: Colors.grey[300],
             body: Column(
               children: [
                 InkWell(
                   onTap: () => _showBottomSheet(context),
                   child: Container(
+                    color: Colors.white,
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
@@ -94,10 +96,8 @@ class _GroupScreenState extends State<GroupScreen> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: NextEventOfGroup(
-                    groupId: widget.id,
-                  ),
+                NextEventOfGroup(
+                  groupId: widget.id,
                 ),
               ],
             ),
