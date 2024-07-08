@@ -72,16 +72,14 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     _webSocketChannel?.sink.close();
   }
 
-  MessagesState _buildMessageState(
-    ServerBoundSendChatMessage newMessage,
-  ) {
+  MessagesState _buildMessageState(ServerBoundSendChatMessage newMessage) {
     final lastFetchedGroup = state is WebSocketReady
         ? (state as WebSocketReady).lastFetchedGroup
         : null;
 
-    final List<ServerBoundSendChatMessage> messages =
+    final List<ChatMessage> messages =
         state is MessagesState ? (state as MessagesState).messages : [];
-    messages.add(newMessage);
+    messages.add(newMessage.toChatMessage());
 
     return MessagesState(
       messages: messages,

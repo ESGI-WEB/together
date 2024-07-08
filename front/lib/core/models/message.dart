@@ -1,5 +1,27 @@
 import 'package:front/core/models/user.dart';
 
+class ChatMessage {
+  final String content;
+  final User author;
+  final int groupId;
+
+  ChatMessage({
+    required this.content,
+    required this.author,
+    required this.groupId,
+  });
+
+  factory ChatMessage.fromServerBoundChatMessage(
+    ServerBoundSendChatMessage serverBoundSendChatMessage,
+  ) {
+    return ChatMessage(
+      content: serverBoundSendChatMessage.content,
+      author: serverBoundSendChatMessage.author,
+      groupId: serverBoundSendChatMessage.groupId,
+    );
+  }
+}
+
 class WebSocketMessage {
   final String type;
 
@@ -25,6 +47,10 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
       author: User.fromJson(json['author']),
       groupId: json['group_id'],
     );
+  }
+
+  ChatMessage toChatMessage() {
+    return ChatMessage.fromServerBoundChatMessage(this);
   }
 }
 

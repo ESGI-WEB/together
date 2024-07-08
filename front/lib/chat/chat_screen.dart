@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
               .read<WebSocketBloc>()
               .add(FetchMessagesEvent(groupId: widget.groupId));
         }
-  
+
         if (state is MessagesState) {
           return Column(
             children: [

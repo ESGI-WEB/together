@@ -15,7 +15,7 @@ class WebSocketReady extends WebSocketState {
 }
 
 class MessagesState extends WebSocketReady {
-  final List<ServerBoundSendChatMessage> messages;
+  final List<ChatMessage> messages;
 
   MessagesState({
     required this.messages,
