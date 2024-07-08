@@ -62,7 +62,9 @@ class GroupServices {
   static Future<Event?> getGroupNextEvent(int groupId) async {
     try {
       final response = await ApiServices.get('/groups/$groupId/next-event');
-      return Event.fromJson(ApiServices.decodeResponse(response));
+      if(response.body.isNotEmpty){
+        return Event.fromJson(ApiServices.decodeResponse(response));
+      }
     } on ApiException catch (e) {
       throw ApiException(
         message: e.message,
@@ -70,5 +72,6 @@ class GroupServices {
         response: e.response,
       );
     }
+    return null;
   }
 }

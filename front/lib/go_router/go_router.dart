@@ -18,6 +18,7 @@ import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
+import 'package:front/publication/create_publication_screen/create_publication_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -118,6 +119,18 @@ final goRouter = GoRouter(
                           eventId: int.parse(state.pathParameters['eventId']!),
                         );
                       },
+                      routes: [
+                        GoRoute(
+                          name: CreatePublicationScreen.routeNameForEvent,
+                          path: 'publication',
+                          builder: (context, state) {
+                            return CreatePublicationScreen(
+                              groupId: int.parse(state.pathParameters['groupId']!),
+                              eventId:  int.parse(state.pathParameters['eventId']!),
+                            );
+                          },
+                        )
+                      ]
                     ),
                     GoRoute(
                       name: CreateEventScreen.routeName,
@@ -133,6 +146,15 @@ final goRouter = GoRouter(
                       path: 'messaging',
                       builder: (context, state) {
                         return ChatScreen(
+                          groupId: int.parse(state.pathParameters['groupId']!),
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      name: CreatePublicationScreen.routeName,
+                      path: 'publication',
+                      builder: (context, state) {
+                        return CreatePublicationScreen(
                           groupId: int.parse(state.pathParameters['groupId']!),
                         );
                       },

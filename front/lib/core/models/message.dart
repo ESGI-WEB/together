@@ -41,7 +41,7 @@ class Message {
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),
       updatedAt: DateTime.parse(json['UpdatedAt']),
-      type: json['type'],
+      type: MessageType.values.firstWhere((e) => e.toString() == 'MessageType.${json['type']}'),
       content: json['content'],
       isPinned: json['is_pinned'],
       groupId: json['group_id'],
@@ -62,7 +62,7 @@ class Message {
       'content': content,
       'is_pinned': isPinned,
       'group_id': groupId,
-      'group': group,
+      'group': group.toJson(),
       'user_id': userId,
       'user': user.toJson(),
       'event_id': eventId,
@@ -90,7 +90,7 @@ class MessageCreate {
 
   Map<String, dynamic> toJson() {
     return {
-      'type': type,
+      'type': type.toString().split('.').last,
       'content': content,
       'is_pinned': isPinned,
       'group_id': groupId,
