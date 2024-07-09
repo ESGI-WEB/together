@@ -1,5 +1,27 @@
 import 'package:front/core/models/user.dart';
 
+class ChatMessage {
+  final String content;
+  final User author;
+  final int groupId;
+
+  ChatMessage({
+    required this.content,
+    required this.author,
+    required this.groupId,
+  });
+
+  factory ChatMessage.fromServerBoundChatMessage(
+    ServerBoundSendChatMessage serverBoundSendChatMessage,
+  ) {
+    return ChatMessage(
+      content: serverBoundSendChatMessage.content,
+      author: serverBoundSendChatMessage.author,
+      groupId: serverBoundSendChatMessage.groupId,
+    );
+  }
+}
+
 class WebSocketMessage {
   final String type;
 
@@ -26,6 +48,10 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
       groupId: json['group_id'],
     );
   }
+
+  ChatMessage toChatMessage() {
+    return ChatMessage.fromServerBoundChatMessage(this);
+  }
 }
 
 class ClientBoundSendChatMessage extends WebSocketMessage {
@@ -41,6 +67,21 @@ class ClientBoundSendChatMessage extends WebSocketMessage {
     return {
       'type': type,
       'content': content,
+      'group_id': groupId,
+    };
+  }
+}
+
+class ClientBoundFetchChatMessageType extends WebSocketMessage {
+  final int groupId;
+
+  ClientBoundFetchChatMessageType({
+    required this.groupId,
+  }) : super(type: 'fetch_chat_messages');
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
       'group_id': groupId,
     };
   }

@@ -23,3 +23,7 @@ type Message struct {
 	EventID *uint       `json:"eventID"`
 	Event   *Event      `gorm:"foreignkey:EventID"`
 }
+
+type CreateMessageReaction struct {
+	ReactionContent string `json:"reaction"`
+}

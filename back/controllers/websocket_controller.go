@@ -8,12 +8,12 @@ import (
 )
 
 type WebSocketController struct {
-	messageService *services.WebSocketService
+	webSocketService *services.WebSocketService
 }
 
 func NewWebSocketController() *WebSocketController {
 	return &WebSocketController{
-		messageService: services.NewWebSocketService(),
+		webSocketService: services.NewWebSocketService(),
 	}
 }
 
@@ -30,7 +30,7 @@ func (controller *WebSocketController) OpenWebSocket(ctx echo.Context) error {
 		return err
 	}
 
-	defer controller.messageService.AcceptNewWebSocketConnection(ws, &loggedUser)(ws)
+	defer controller.webSocketService.AcceptNewWebSocketConnection(ws, &loggedUser)(ws)
 
 	for {
 		_, msg, err := ws.ReadMessage()
@@ -39,7 +39,7 @@ func (controller *WebSocketController) OpenWebSocket(ctx echo.Context) error {
 			break
 		}
 
-		if err := controller.messageService.HandleWebSocketMessage(msg, &loggedUser, ws); err != nil {
+		if err := controller.webSocketService.HandleWebSocketMessage(msg, &loggedUser, ws); err != nil {
 			ctx.Logger().Warn(err)
 			continue
 		}
