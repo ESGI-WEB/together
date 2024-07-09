@@ -5,7 +5,8 @@ import (
 	"together/models"
 )
 
-type MessageService struct{}
+type MessageService struct {
+}
 
 func NewMessageService() *MessageService {
 	return &MessageService{}
@@ -27,4 +28,20 @@ func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, 
 		return nil, err
 	}
 	return messages, nil
+}
+
+func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReactedID uint) (*models.Reaction, error) {
+	var message models.Message
+	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	reaction := models.Reaction{
+		Content:   reactionContent,
+		MessageID: message.ID,
+		UserID:    whoReactedID,
+	}
+	database.CurrentDatabase.Create(reaction)
+
+	return &reaction, nil
 }
