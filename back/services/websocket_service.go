@@ -86,12 +86,12 @@ func (s *WebSocketService) Broadcast(data []byte) error {
 
 func (s *WebSocketService) BroadcastToGroup(data []byte, groupId uint) error {
 	for _, connection := range connections {
-		isInGroup, err := s.groupService.IsUserInGroup(connection.user.ID, groupId)
-		if err != nil || !isInGroup {
-			continue
-		}
+		//isInGroup, err := s.groupService.IsUserInGroup(connection.user.ID, groupId)
+		//if err != nil || !isInGroup {
+		//	continue
+		//}
 
-		err = s.sendWebSocketMessage(data, connection.connection)
+		err := s.sendWebSocketMessage(data, connection.connection)
 		if err != nil {
 			return err
 		}
@@ -208,10 +208,17 @@ type ClientBoundFetchChatMessage struct {
 	GroupId uint `json:"group_id" validate:"required"`
 }
 
+type ServerBoundGroupBroadcast struct {
+	TypeMessage
+	Content interface{} `json:"content" validate:"required"`
+	GroupId uint        `json:"group_id" validate:"required"`
+}
+
 const (
-	ClientBoundSendChatMessageType  string = "send_chat_message"
-	ClientBoundFetchChatMessageType        = "fetch_chat_messages"
-	ServerBoundSendChatMessageType         = "send_chat_message"
+	ClientBoundSendChatMessageType    string = "send_chat_message"
+	ClientBoundFetchChatMessageType          = "fetch_chat_messages"
+	ServerBoundSendChatMessageType           = "send_chat_message"
+	ServerBoundPollUpdatedMessageType        = "poll_updated"
 )
 
 type TypeMessage struct {

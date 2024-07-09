@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/labstack/echo/v4"
@@ -15,9 +16,10 @@ import (
 )
 
 type PollController struct {
-	pollService  *services.PollService
-	eventService *services.EventService
-	groupService *services.GroupService
+	pollService      *services.PollService
+	eventService     *services.EventService
+	groupService     *services.GroupService
+	websocketService *services.WebSocketService
 }
 
 func NewPollController() *PollController {
@@ -65,6 +67,7 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(newPoll.ID)
 	return ctx.JSON(http.StatusCreated, newPoll)
 }
 
@@ -226,6 +229,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(editedPoll.ID)
 	return ctx.JSON(http.StatusOK, editedPoll)
 }
 
@@ -254,6 +258,7 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.NoContent(http.StatusNoContent)
 
 }
@@ -296,6 +301,7 @@ func (c *PollController) AddChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.JSON(http.StatusCreated, choice)
 }
 
@@ -324,6 +330,7 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.NoContent(http.StatusNoContent)
 }
 
@@ -379,6 +386,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.NoContent(http.StatusNoContent)
 }
 
@@ -407,6 +415,8 @@ func (c *PollController) DeselectChoice(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
+
+	c.notifyUsersOfPollChange(poll.ID)
 
 	return ctx.NoContent(http.StatusNoContent)
 }
@@ -450,4 +460,36 @@ func (c *PollController) basePollPreRequest(ctx echo.Context) (*models.Poll, err
 	}
 
 	return poll, nil
+}
+
+func (c *PollController) notifyUsersOfPollChange(pollID uint) {
+	poll, err := c.pollService.GetPollByID(pollID)
+	if err != nil {
+		fmt.Println("ERREUR 1")
+		fmt.Println(err)
+		return
+	}
+
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundPollUpdatedMessageType,
+		},
+		Content: poll,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		fmt.Println("ERREUR 2")
+		fmt.Println(err)
+		return
+	}
+
+	err = c.websocketService.BroadcastToGroup(bytes, poll.GroupID)
+	if err != nil {
+		fmt.Println("ERREUR 3")
+		fmt.Println(err)
+		return
+	}
+
+	return
 }
