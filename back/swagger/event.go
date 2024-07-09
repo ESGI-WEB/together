@@ -109,6 +109,16 @@ func SetupEventSwagger() *swag.API {
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("Event"),
 		),
+		endpoint.New(
+			http.MethodPost, "/events/duplicate-tomorrow",
+			endpoint.Handler(eventController.DuplicateEventsForTomorrow),
+			endpoint.Summary("Duplicate events for tomorrow"),
+			endpoint.Description("Checks for events scheduled for tomorrow and duplicates them to the same date but one year later if they have a recurrence type."),
+			endpoint.Response(http.StatusOK, "Successfully duplicated events for tomorrow"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Event"),
+		),
 	)
 
 	return api

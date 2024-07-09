@@ -170,3 +170,28 @@ func (s *EventService) DuplicateEventForYear(eventID uint, userID uint) ([]model
 
 	return duplicatedEvents, nil
 }
+
+func (s *EventService) DuplicateEventsForTomorrow() error {
+	tomorrow := time.Now().AddDate(0, 0, 1).Format(models.DateFormat)
+
+	var events []models.Event
+	result := database.CurrentDatabase.Where("date = ?", tomorrow).Find(&events)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, event := range events {
+		if event.RecurrenceType != nil {
+			newEvent := event
+			newEvent.ID = 0
+			newEvent.Date = time.Now().AddDate(1, 0, 1).Format(models.DateFormat)
+
+			create := database.CurrentDatabase.Create(&newEvent)
+			if create.Error != nil {
+				return create.Error
+			}
+		}
+	}
+
+	return nil
+}

@@ -235,3 +235,11 @@ func (c *EventController) DuplicateEventForYear(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusCreated, duplicatedEvents)
 }
+
+func (c *EventController) DuplicateEventsForTomorrow(ctx echo.Context) error {
+	err := c.EventService.DuplicateEventsForTomorrow()
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+	return ctx.NoContent(http.StatusOK)
+}
