@@ -6,7 +6,8 @@ import (
 	"together/middlewares"
 )
 
-type WebSocketRouter struct{}
+type WebSocketRouter struct {
+}
 
 func (r *WebSocketRouter) SetupRoutes(e *echo.Echo) {
 	webSocketController := controllers.NewWebSocketController()
