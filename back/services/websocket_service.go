@@ -219,6 +219,7 @@ const (
 	ClientBoundFetchChatMessageType          = "fetch_chat_messages"
 	ServerBoundSendChatMessageType           = "send_chat_message"
 	ServerBoundPollUpdatedMessageType        = "poll_updated"
+	ServerBoundPollDeletedMessageType        = "poll_deleted"
 )
 
 type TypeMessage struct {

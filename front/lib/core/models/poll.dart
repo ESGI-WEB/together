@@ -10,6 +10,9 @@ class Poll {
   final int userId;
   final int? eventId;
   final List<PollChoice>? choices;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   Poll({
     required this.id,
@@ -20,6 +23,9 @@ class Poll {
     required this.userId,
     this.eventId,
     required this.choices,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
   });
 
   factory Poll.fromJson(Map<String, dynamic> json) {
@@ -32,6 +38,9 @@ class Poll {
       userId: json['user_id'],
       eventId: json['event_id'],
       choices: (json['choices'] as List).map((choice) => PollChoice.fromJson(choice)).toList(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at']) : null,
     );
   }
 

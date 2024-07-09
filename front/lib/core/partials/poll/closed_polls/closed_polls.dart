@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/poll.dart';
+import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 import 'package:front/core/partials/poll/poll_field.dart';
 import 'package:shimmer/shimmer.dart';
 
-import 'blocs/poll_bloc.dart';
+import 'blocs/closed_poll_bloc.dart';
 
 class ClosedPolls extends StatefulWidget {
   final int id;
@@ -43,7 +44,7 @@ class _ClosedPollsState extends State<ClosedPolls> {
       return;
     } else if (currentPage == null || currentPage!.page < currentPage!.pages) {
       // if there is no next poll in pollList but another page to load, load the next page
-      BlocProvider.of<PollBloc>(context).add(PollNextPageLoaded(
+      BlocProvider.of<ClosedPollBloc>(context).add(ClosedPollNextPageLoaded(
         id: widget.id,
         page: currentPage != null ? currentPage!.page + 1 : 1,
       ));
@@ -53,7 +54,7 @@ class _ClosedPollsState extends State<ClosedPolls> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PollBloc()
+      create: (context) => ClosedPollBloc()
         ..add(
           ClosedPollNextPageLoaded(
             id: widget.id,
@@ -61,10 +62,11 @@ class _ClosedPollsState extends State<ClosedPolls> {
             page: 1,
           ),
         ),
-      child: BlocListener<PollBloc, PollState>(
+      child: BlocListener<ClosedPollBloc, ClosedPollState>(
         listener: (context, state) {
           final page = state.pollPage;
-          if (state.status == PollStatus.closedPollsSuccess && page != null) {
+          if (state.status == ClosedPollStatus.closedPollsSuccess &&
+              page != null) {
             setState(() {
               currentPage = page;
               if (page.page == 1) {
@@ -75,9 +77,9 @@ class _ClosedPollsState extends State<ClosedPolls> {
             });
           }
         },
-        child: BlocBuilder<PollBloc, PollState>(
+        child: BlocBuilder<ClosedPollBloc, ClosedPollState>(
           builder: (context, state) {
-            if (state.status == PollStatus.loading) {
+            if (state.status == ClosedPollStatus.loadingClosedPolls) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
@@ -89,7 +91,7 @@ class _ClosedPollsState extends State<ClosedPolls> {
               );
             }
 
-            if (state.status == PollStatus.error) {
+            if (state.status == ClosedPollStatus.loadClosedPollsError) {
               return Center(
                   child: Text(state.errorMessage ?? 'Une erreur est survenue'));
             }
@@ -126,15 +128,17 @@ class _ClosedPollsState extends State<ClosedPolls> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.arrow_back),
-                        onPressed: currentPollIndex > 0 ? goToPreviousPoll : null,
+                        onPressed:
+                            currentPollIndex > 0 ? goToPreviousPoll : null,
                       ),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.arrow_forward),
-                        onPressed: (
-                            currentPollIndex + 1 < pollList.length ||
-                            (currentPage != null && currentPage!.page < currentPage!.pages)
-                        ) ? () => goToNextPoll(context) : null,
+                        onPressed: (currentPollIndex + 1 < pollList.length ||
+                                (currentPage != null &&
+                                    currentPage!.page < currentPage!.pages))
+                            ? () => goToNextPoll(context)
+                            : null,
                       ),
                     ],
                   ),

@@ -86,8 +86,10 @@ class PollField extends StatelessWidget {
                             suffixIcon: IconButton(
                               icon: const Icon(Icons.add),
                               onPressed: () {
-                                onChoiceAdded?.call(choiceController.text);
-                                choiceController.clear();
+                                if (choiceController.text.isNotEmpty) {
+                                  onChoiceAdded?.call(choiceController.text);
+                                  choiceController.clear();
+                                }
                               },
                             ),
                           ),

@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/labstack/echo/v4"
@@ -258,7 +257,7 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
-	c.notifyUsersOfPollChange(poll.ID)
+	c.notifyUsersOfPollDeleted(poll.ID, poll.GroupID)
 	return ctx.NoContent(http.StatusNoContent)
 
 }
@@ -465,8 +464,6 @@ func (c *PollController) basePollPreRequest(ctx echo.Context) (*models.Poll, err
 func (c *PollController) notifyUsersOfPollChange(pollID uint) {
 	poll, err := c.pollService.GetPollByID(pollID)
 	if err != nil {
-		fmt.Println("ERREUR 1")
-		fmt.Println(err)
 		return
 	}
 
@@ -479,15 +476,32 @@ func (c *PollController) notifyUsersOfPollChange(pollID uint) {
 
 	bytes, err := json.Marshal(pollWsMessage)
 	if err != nil {
-		fmt.Println("ERREUR 2")
-		fmt.Println(err)
 		return
 	}
 
 	err = c.websocketService.BroadcastToGroup(bytes, poll.GroupID)
 	if err != nil {
-		fmt.Println("ERREUR 3")
-		fmt.Println(err)
+		return
+	}
+
+	return
+}
+
+func (c *PollController) notifyUsersOfPollDeleted(pollID uint, groupID uint) {
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundPollDeletedMessageType,
+		},
+		Content: pollID,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		return
+	}
+
+	err = c.websocketService.BroadcastToGroup(bytes, groupID)
+	if err != nil {
 		return
 	}
 
