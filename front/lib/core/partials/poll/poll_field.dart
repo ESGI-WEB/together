@@ -41,7 +41,7 @@ class PollField extends StatelessWidget {
               const SizedBox(height: 16),
               Container(
                 constraints: const BoxConstraints(
-                  maxHeight: 250,
+                  maxHeight: 230,
                 ),
                 child: SingleChildScrollView(
                   child: Wrap(
