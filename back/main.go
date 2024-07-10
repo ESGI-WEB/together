@@ -26,6 +26,7 @@ var appRouters = []routers.Router{
 	&routers.EventTypeRouter{},
 	&routers.AdminRouter{},
 	&routers.StorageRouter{},
+	&routers.PollRouter{},
 	&routers.MessageRouter{},
 	&routers.WebSocketRouter{},
 }
