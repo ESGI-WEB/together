@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:front/core/models/message.dart';
+import 'package:front/core/models/websocket.dart';
 
 abstract class WebSocketEvent {}
 

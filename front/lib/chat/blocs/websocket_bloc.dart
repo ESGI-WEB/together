@@ -3,7 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/message.dart';
-import 'package:front/core/services/chat_service.dart';
+import 'package:front/core/models/websocket.dart';
+import 'package:front/core/services/websocket_service.dart';
 import 'package:web_socket_channel/io.dart';
 
 import 'websocket_event.dart';
@@ -50,7 +51,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
   }
 
   Future<void> _initWebSocket(Emitter<WebSocketState> emit) async {
-    _webSocketChannel = await ChatService.getChannel();
+    _webSocketChannel = await WebSocketService.getChannel();
     if (_webSocketChannel == null) {
       Timer(const Duration(seconds: 2), () => _initWebSocket(emit));
       return;

@@ -30,18 +30,21 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 	id := ctx.Param("id")
 	messageID, err := strconv.Atoi(id)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	var jsonBody models.CreateMessageReaction
 
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	reaction, err := c.messageService.ReactToMessage(messageID, jsonBody.ReactionContent, user.ID)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
@@ -58,10 +61,12 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 
 	bytes, err := json.Marshal(response)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return err
 	}
 
 	if err := c.webSocketService.BroadcastToGroup(bytes, reaction.Message.GroupID); err != nil {
+		ctx.Logger().Error(err)
 		return err
 	}
 

@@ -125,7 +125,7 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		UserID:  user.ID,
 		EventID: nil,
 	}
-	_, err = s.messageService.CreateChatMessage(message)
+	createdMessage, err := s.messageService.CreateChatMessage(message)
 	if err != nil {
 		return err
 	}
@@ -134,9 +134,10 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		TypeMessage: TypeMessage{
 			Type: ServerBoundSendChatMessageType,
 		},
-		Content: receivedMessage.Content,
-		Author:  user,
-		GroupId: receivedMessage.GroupId,
+		Content:   createdMessage.Content,
+		Author:    user,
+		GroupId:   createdMessage.GroupID,
+		MessageId: createdMessage.ID,
 	}
 
 	bytes, err := json.Marshal(response)
@@ -171,9 +172,10 @@ func (s *WebSocketService) handleFetchChatMessage(msg []byte, ws *websocket.Conn
 			TypeMessage: TypeMessage{
 				Type: ServerBoundSendChatMessageType,
 			},
-			Content: groupMessage.Content,
-			Author:  &groupMessage.User,
-			GroupId: groupMessage.GroupID,
+			Content:   groupMessage.Content,
+			Author:    &groupMessage.User,
+			GroupId:   groupMessage.GroupID,
+			MessageId: groupMessage.ID,
 		}
 
 		bytes, err := json.Marshal(response)
@@ -198,9 +200,10 @@ type ClientBoundSendChatMessage struct {
 
 type ServerBoundSendChatMessage struct {
 	TypeMessage
-	Content string       `json:"content" validate:"required"`
-	Author  *models.User `json:"author" validate:"required"`
-	GroupId uint         `json:"group_id" validate:"required"`
+	Content   string       `json:"content" validate:"required"`
+	Author    *models.User `json:"author" validate:"required"`
+	GroupId   uint         `json:"group_id" validate:"required"`
+	MessageId uint         `json:"message_id" validate:"required"`
 }
 
 type ClientBoundFetchChatMessage struct {

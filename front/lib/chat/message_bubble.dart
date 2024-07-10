@@ -59,8 +59,9 @@ class MessageBubbleState extends State<MessageBubble> {
                 ),
               ),
               if (_showReactions)
-                const ReactionRow(
-                  reactions: ["👍", "😂", "👏", "💕"],
+                ReactionRow(
+                  reactions: const ["👍", "😂", "👏", "💕"],
+                  messageId: widget.message.messageId,
                 ),
             ],
           ),

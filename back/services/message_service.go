@@ -41,7 +41,10 @@ func (s *MessageService) ReactToMessage(messageID int, reactionContent string, w
 		MessageID: message.ID,
 		UserID:    whoReactedID,
 	}
-	database.CurrentDatabase.Create(reaction)
+
+	if err := database.CurrentDatabase.Create(reaction).Error; err != nil {
+		return nil, err
+	}
 
 	return &reaction, nil
 }
