@@ -23,9 +23,10 @@ type PollController struct {
 
 func NewPollController() *PollController {
 	return &PollController{
-		pollService:  services.NewPollService(),
-		eventService: services.NewEventService(),
-		groupService: services.NewGroupService(),
+		pollService:      services.NewPollService(),
+		eventService:     services.NewEventService(),
+		groupService:     services.NewGroupService(),
+		websocketService: services.NewWebSocketService(),
 	}
 }
 
