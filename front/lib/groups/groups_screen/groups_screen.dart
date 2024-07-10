@@ -119,8 +119,8 @@ class GroupsScreen extends StatelessWidget {
                           label: 'Créer',
                           onPressed: () {
                             final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(CreateGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            CreateGroupScreen.navigateTo(
+                                context, groupsScreenBloc);
                           },
                         ),
                         const SizedBox(width: 16),
@@ -129,8 +129,8 @@ class GroupsScreen extends StatelessWidget {
                           label: 'Rejoindre',
                           onPressed: () {
                             final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(JoinGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            JoinGroupScreen.navigateTo(
+                                context, groupsScreenBloc);
                           },
                         ),
                       ],

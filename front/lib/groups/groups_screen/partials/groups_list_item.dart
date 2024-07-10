@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:front/publications/blocs/publications_bloc.dart';
 
 class GroupsListItem extends StatelessWidget {
   final Group group;
@@ -20,7 +21,8 @@ class GroupsListItem extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          GroupScreen.navigateTo(context, id: group.id);
+          final publicationsBloc = PublicationsBloc();
+          GroupScreen.navigateTo(context, id: group.id, publicationsBloc: publicationsBloc);  // Pass the bloc to navigateTo
         },
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),

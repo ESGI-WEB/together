@@ -11,21 +11,24 @@ class GroupCreatePublicationBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CreatePublicationBloc(),
-      child: BlocListener<CreatePublicationBloc, CreatePublicationState>(
-        listener: (context, state) {
-          if (state.status == CreatePublicationStatus.success) {
-            Navigator.pop(context);
-          } else if (state.status == CreatePublicationStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.errorMessage ?? 'Erreur inconnue')),
-            );
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CreatePublicationForm(groupId: groupId),
+    return Container(
+      color: Colors.white,
+      child: BlocProvider(
+        create: (context) => CreatePublicationBloc(),
+        child: BlocListener<CreatePublicationBloc, CreatePublicationState>(
+          listener: (context, state) {
+            if (state.status == CreatePublicationStatus.success) {
+              Navigator.pop(context);
+            } else if (state.status == CreatePublicationStatus.error) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.errorMessage ?? 'Erreur inconnue')),
+              );
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: CreatePublicationForm(groupId: groupId),
+          ),
         ),
       ),
     );

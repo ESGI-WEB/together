@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:front/admin/admin_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/admin/admin_drawer.dart';
 import 'package:front/admin/admin_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/chat/blocs/websocket_bloc.dart';
 import 'package:front/admin/users/users_screen.dart';
+import 'package:front/chat/blocs/websocket_bloc.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
@@ -19,6 +19,7 @@ import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/publication/create_publication_screen/create_publication_screen.dart';
+import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -105,33 +106,37 @@ final goRouter = GoRouter(
                   name: GroupScreen.routeName,
                   path: ':groupId',
                   builder: (context, state) {
+                    final publicationsBloc = PublicationsBloc();
                     return GroupScreen(
-                      id: int.parse(state.pathParameters['groupId']!),
-                    );
+                        id: int.parse(state.pathParameters['groupId']!),
+                        publicationsBloc: publicationsBloc);
                   },
                   routes: [
                     GoRoute(
-                      name: EventScreen.routeName,
-                      path: 'event/:eventId',
-                      builder: (context, state) {
-                        return EventScreen(
-                          groupId: int.parse(state.pathParameters['groupId']!),
-                          eventId: int.parse(state.pathParameters['eventId']!),
-                        );
-                      },
-                      routes: [
-                        GoRoute(
-                          name: CreatePublicationScreen.routeNameForEvent,
-                          path: 'publication',
-                          builder: (context, state) {
-                            return CreatePublicationScreen(
-                              groupId: int.parse(state.pathParameters['groupId']!),
-                              eventId:  int.parse(state.pathParameters['eventId']!),
-                            );
-                          },
-                        )
-                      ]
-                    ),
+                        name: EventScreen.routeName,
+                        path: 'event/:eventId',
+                        builder: (context, state) {
+                          return EventScreen(
+                            groupId:
+                                int.parse(state.pathParameters['groupId']!),
+                            eventId:
+                                int.parse(state.pathParameters['eventId']!),
+                          );
+                        },
+                        routes: [
+                          GoRoute(
+                            name: CreatePublicationScreen.routeNameForEvent,
+                            path: 'publication',
+                            builder: (context, state) {
+                              return CreatePublicationScreen(
+                                groupId:
+                                    int.parse(state.pathParameters['groupId']!),
+                                eventId:
+                                    int.parse(state.pathParameters['eventId']!),
+                              );
+                            },
+                          )
+                        ]),
                     GoRoute(
                       name: CreateEventScreen.routeName,
                       path: 'create_event',

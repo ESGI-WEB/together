@@ -146,22 +146,26 @@ func (s *MessageService) DeleteMessage(messageID uint) error {
 	return nil
 }
 
-func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, pagination utils.Pagination) ([]models.Message, error) {
+func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var messages []models.Message
 	query := database.CurrentDatabase.Where("event_id = ? AND group_id = ? AND type = ?", eventID, groupID, models.PubMessageType).Find(&messages)
 
 	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
 
-	return messages, nil
+	pagination.Rows = messages
+
+	return &pagination, nil
 }
 
-func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.Pagination) ([]models.Message, error) {
+func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var messages []models.Message
 	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Find(&messages)
 
 	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
 
-	return messages, nil
+	pagination.Rows = messages
+
+	return &pagination, nil
 }
 
 const (
