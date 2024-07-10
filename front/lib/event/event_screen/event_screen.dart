@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/partials/error_occurred.dart';
+import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
+import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
 import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
-import 'package:front/event/event_screen/partials/event_screen_poll.dart';
 import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatelessWidget {
@@ -117,7 +118,10 @@ class EventScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            const EventScreenPoll(),
+                            PollGateway(
+                              id: event.id,
+                              type: PollType.event,
+                            ),
                             const SizedBox(height: 16),
                             EventScreenAbout(event: event),
                           ],

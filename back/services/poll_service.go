@@ -160,7 +160,9 @@ func (s *PollService) GetPollChoicesOfUser(pollID uint, userID uint) ([]models.P
 func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination, closed bool) (*utils.Pagination, error) {
 	var polls []models.Poll
 
-	query := database.CurrentDatabase.Where("group_id = ?", groupID).
+	query := database.CurrentDatabase.
+		Where("group_id = ?", groupID).
+		Where("event_id IS NULL").
 		Where("is_closed = ?", closed).
 		Preload("Choices", func(db *gorm.DB) *gorm.DB {
 			return db.Order("ID").Preload("Users")

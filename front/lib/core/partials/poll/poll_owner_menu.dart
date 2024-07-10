@@ -57,9 +57,7 @@ class PollOwnerMenu extends StatelessWidget {
     return PopupMenuItem(
       value: value,
       onTap: onTap,
-      child: isLoading == true
-          ? _buildLoadingIndicator(text)
-          : Text(text),
+      child: isLoading == true ? _buildLoadingIndicator(text) : Text(text),
     );
   }
 
@@ -67,36 +65,41 @@ class PollOwnerMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<PollMenuItems>(
       itemBuilder: (context) => [
-        _buildMenuItem(
-          value: PollMenuItems.addPoll,
-          onTap: onAddPoll,
-          text: 'Ajouter un sondage',
-          isLoading: isOnAddPollLoading,
-        ),
-        _buildMenuItem(
-          value: PollMenuItems.editPoll,
-          onTap: onEditPoll,
-          text: 'Modifier le sondage',
-          isLoading: isOnEditPollLoading,
-        ),
-        _buildMenuItem(
-          value: PollMenuItems.deletePoll,
-          onTap: onDeletePoll,
-          text: 'Supprimer le sondage',
-          isLoading: isOnDeletePollLoading,
-        ),
-        _buildMenuItem(
-          value: PollMenuItems.closePoll,
-          onTap: onClosePoll,
-          text: 'Clôturer le sondage',
-          isLoading: isOnClosePollLoading,
-        ),
-        _buildMenuItem(
-          value: PollMenuItems.seeClosedPolls,
-          onTap: onSeeClosedPolls,
-          text: 'Voir les sondages clôturés',
-          isLoading: isOnSeeClosedPollsLoading,
-        ),
+        if (onAddPoll != null)
+          _buildMenuItem(
+            value: PollMenuItems.addPoll,
+            onTap: onAddPoll,
+            text: 'Ajouter un sondage',
+            isLoading: isOnAddPollLoading,
+          ),
+        if (onEditPoll != null)
+          _buildMenuItem(
+            value: PollMenuItems.editPoll,
+            onTap: onEditPoll,
+            text: 'Modifier le sondage',
+            isLoading: isOnEditPollLoading,
+          ),
+        if (onDeletePoll != null)
+          _buildMenuItem(
+            value: PollMenuItems.deletePoll,
+            onTap: onDeletePoll,
+            text: 'Supprimer le sondage',
+            isLoading: isOnDeletePollLoading,
+          ),
+        if (onClosePoll != null)
+          _buildMenuItem(
+            value: PollMenuItems.closePoll,
+            onTap: onClosePoll,
+            text: 'Clôturer le sondage',
+            isLoading: isOnClosePollLoading,
+          ),
+        if (onSeeClosedPolls != null)
+          _buildMenuItem(
+            value: PollMenuItems.seeClosedPolls,
+            onTap: onSeeClosedPolls,
+            text: 'Voir les sondages clôturés',
+            isLoading: isOnSeeClosedPollsLoading,
+          ),
       ],
     );
   }

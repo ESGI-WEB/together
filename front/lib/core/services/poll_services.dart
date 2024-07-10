@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/poll.dart';
+import 'package:front/core/models/poll_choice.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 
 import 'api_services.dart';
@@ -76,6 +77,16 @@ class PollServices {
     await ApiServices.put(
       '/polls/$id',
       data,
+    );
+  }
+
+  static Future<void> addChoiceToPoll({
+    required int id,
+    required PollChoiceCreateOrEdit choice,
+  }) async {
+    await ApiServices.post(
+      '/polls/$id/choice',
+      choice.toJson(),
     );
   }
 }

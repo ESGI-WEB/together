@@ -61,6 +61,7 @@ class _PollGatewayState extends State<PollGateway> {
       BlocProvider.of<PollBloc>(context).add(PollNextPageLoaded(
         id: widget.id,
         page: currentPage != null ? currentPage!.page + 1 : 1,
+        type: widget.type,
       ));
     } else {
       setState(() {
@@ -76,6 +77,7 @@ class _PollGatewayState extends State<PollGateway> {
         PollNextPageLoaded(
           id: widget.id,
           page: currentPage != null ? currentPage!.page : 1,
+          type: widget.type,
         ),
       );
     });
@@ -85,16 +87,17 @@ class _PollGatewayState extends State<PollGateway> {
     if (poll.isClosed) {
       // if the poll is closed, we need to remove it from the list
       pollDeleted(context);
-    } else if (pollList.isEmpty || currentPage == null || currentPage!.page == currentPage!.pages){
+    } else if (pollList.isEmpty ||
+        currentPage == null ||
+        currentPage!.page == currentPage!.pages) {
       // if the poll is not in the list or it the first one to be created
       // or if the user is on the last page of the poll list
       // we need to refresh the page
-      BlocProvider.of<PollBloc>(context).add(
-          PollNextPageLoaded(
-              id: widget.id,
-              page: currentPage != null ? currentPage!.page : 1
-          )
-      );
+      BlocProvider.of<PollBloc>(context).add(PollNextPageLoaded(
+        id: widget.id,
+        page: currentPage != null ? currentPage!.page : 1,
+        type: widget.type,
+      ));
     } else {
       final index = pollList.indexWhere((element) => element.id == poll.id);
       if (index != -1) {
@@ -185,19 +188,26 @@ class _PollGatewayState extends State<PollGateway> {
     BuildContext context,
     PollState state,
     Poll currentPoll,
+    bool isPollOwner,
   ) {
     return PollOwnerMenu(
       onAddPoll: () => openDialog(
         context: context,
         state: state,
       ),
-      onEditPoll: () => openDialog(
-        context: context,
-        state: state,
-        poll: currentPoll,
-      ),
-      onDeletePoll: () => deletePoll(context, currentPoll.id),
-      onClosePoll: () => closePoll(context, currentPoll.id),
+      onEditPoll: isPollOwner == false
+          ? null
+          : () => openDialog(
+                context: context,
+                state: state,
+                poll: currentPoll,
+              ),
+      onDeletePoll: isPollOwner == false
+          ? null
+          : () => deletePoll(context, currentPoll.id),
+      onClosePoll: isPollOwner == false
+          ? null
+          : () => closePoll(context, currentPoll.id),
       onSeeClosedPolls: () => openClosedPolls(
         context,
         widget.id,
@@ -211,17 +221,21 @@ class _PollGatewayState extends State<PollGateway> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PollBloc()..add(PollNextPageLoaded(id: widget.id)),
+      create: (context) => PollBloc()
+        ..add(PollNextPageLoaded(
+          id: widget.id,
+          type: widget.type,
+        )),
       child: BlocBuilder<WebSocketBloc, WebSocketState>(
         builder: (context, state) {
           return BlocListener<WebSocketBloc, WebSocketState>(
             listener: (context, state) {
-                if (state is PollUpdatedState) {
-                  pollUpdated(state.poll, context);
-                }
-                if (state is PollDeletedState) {
-                  pollDeleted(context);
-                }
+              if (state is PollUpdatedState) {
+                pollUpdated(state.poll, context);
+              }
+              if (state is PollDeletedState) {
+                pollDeleted(context);
+              }
             },
             child: BlocListener<PollBloc, PollState>(
               listener: (context, state) {
@@ -282,7 +296,8 @@ class _PollGatewayState extends State<PollGateway> {
 
                   if (state.status == PollStatus.error) {
                     return Center(
-                        child: Text(state.errorMessage ?? 'Une erreur est survenue'));
+                        child: Text(
+                            state.errorMessage ?? 'Une erreur est survenue'));
                   }
 
                   final pollPage = state.pollPage;
@@ -302,77 +317,96 @@ class _PollGatewayState extends State<PollGateway> {
 
                   final currentPoll = pollList[currentPollIndex];
 
-                  return Stack(
+                  return Column(
                     children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              if (showEveryPollsAnswered)
-                                const AllPollAnswered()
-                              else
-                                PollField(
-                                  poll: currentPoll,
-                                  selectedChoices: currentPoll.choices
-                                      ?.where((choice) =>
-                                  choice.users?.any((user) =>
-                                  user.id == state.userData?.id) ??
-                                      false)
-                                      .map((choice) => choice.id)
-                                      .toList(),
-                                  onChoiceSelected: (choiceId, isSelected) {
-                                    BlocProvider.of<PollBloc>(context)
-                                        .add(PollChoiceSaved(
-                                      pollId: currentPoll.id,
-                                      choiceId: choiceId,
-                                      selected: isSelected,
-                                    ));
-                                  },
-                                  onChoiceAdded: (choice) {
-                                    BlocProvider.of<PollBloc>(context).add(
-                                      ChoiceAdded(
-                                        poll: currentPoll,
-                                        choice: PollChoiceCreateOrEdit(
-                                          choice: choice,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Text(
+                        widget.type == PollType.group
+                            ? 'Sondage de groupe'
+                            : "Sondage d'évènement",
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      Stack(
+                        children: [
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
                                 children: [
-                                  IconButton(
-                                    onPressed: currentPollIndex <= 0 &&
-                                        !showEveryPollsAnswered
-                                        ? null
-                                        : goToPreviousPoll,
-                                    icon: const Icon(Icons.arrow_back),
-                                  ),
-                                  Text(
-                                    '${currentPollIndex + 1} / ${pollPage.total}',
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                  IconButton(
-                                    onPressed: showEveryPollsAnswered
-                                        ? null
-                                        : () => goToNextPoll(context),
-                                    icon: const Icon(Icons.arrow_forward),
+                                  if (showEveryPollsAnswered)
+                                    const AllPollAnswered()
+                                  else
+                                    PollField(
+                                      poll: currentPoll,
+                                      selectedChoices: currentPoll.choices
+                                          ?.where((choice) =>
+                                              choice.users?.any((user) =>
+                                                  user.id ==
+                                                  state.userData?.id) ??
+                                              false)
+                                          .map((choice) => choice.id)
+                                          .toList(),
+                                      onChoiceSelected: (choiceId, isSelected) {
+                                        BlocProvider.of<PollBloc>(context)
+                                            .add(PollChoiceSaved(
+                                          pollId: currentPoll.id,
+                                          choiceId: choiceId,
+                                          selected: isSelected,
+                                        ));
+                                      },
+                                      onChoiceAdded: (choice) {
+                                        BlocProvider.of<PollBloc>(context).add(
+                                          ChoiceAdded(
+                                            poll: currentPoll,
+                                            choice: PollChoiceCreateOrEdit(
+                                              choice: choice,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                        onPressed: currentPollIndex <= 0 &&
+                                                !showEveryPollsAnswered
+                                            ? null
+                                            : goToPreviousPoll,
+                                        icon: const Icon(Icons.arrow_back),
+                                      ),
+                                      Text(
+                                        '${currentPollIndex + 1} / ${pollPage.total}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
+                                      ),
+                                      IconButton(
+                                        onPressed: showEveryPollsAnswered
+                                            ? null
+                                            : () => goToNextPoll(context),
+                                        icon: const Icon(Icons.arrow_forward),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          if (!showEveryPollsAnswered)
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: _buildMenu(
+                                context,
+                                state,
+                                currentPoll,
+                                currentPoll.userId == state.userData?.id,
+                              ),
+                            ),
+                        ],
                       ),
-                      if (!showEveryPollsAnswered)
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: _buildMenu(context, state, currentPoll),
-                        ),
                     ],
                   );
                 },

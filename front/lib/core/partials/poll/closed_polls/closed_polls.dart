@@ -47,6 +47,7 @@ class _ClosedPollsState extends State<ClosedPolls> {
       BlocProvider.of<ClosedPollBloc>(context).add(ClosedPollNextPageLoaded(
         id: widget.id,
         page: currentPage != null ? currentPage!.page + 1 : 1,
+        type: widget.type,
       ));
     }
   }

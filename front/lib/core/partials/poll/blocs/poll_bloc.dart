@@ -30,8 +30,6 @@ class PollBloc extends Bloc<PollEvent, PollState> {
           status: PollStatus.success,
           pollPage: pollPage,
           userData: userData,
-          id: event.id,
-          type: event.type,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
@@ -134,13 +132,9 @@ class PollBloc extends Bloc<PollEvent, PollState> {
       emit(state.copyWith(status: PollStatus.addingChoice));
 
       try {
-        var pollToEdit = event.poll.toCreateOrEdit();
-
-        pollToEdit.choices!.add(event.choice);
-
-        await PollServices.updatePoll(
+        await PollServices.addChoiceToPoll(
           id: event.poll.id,
-          data: pollToEdit.toJson(),
+          choice: event.choice,
         );
 
         emit(state.copyWith(status: PollStatus.choiceAdded));

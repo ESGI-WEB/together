@@ -172,164 +172,160 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       create: (context) => CreateEventBloc(),
       child: Builder(
         builder: (context) {
-          return Scaffold(
-            appBar: AppBar(title: const Text("Créer un événement")),
-            body: BlocListener<CreateEventBloc, CreateEventState>(
-              listener: (context, state) {
-                if (state.status == CreateEventStatus.success) {
-                  EventScreen.navigateTo(
-                    context,
-                    groupId: widget.groupId,
-                    eventId: state.newEvent!.id,
-                  );
-                } else if (state.status == CreateEventStatus.error) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            "Erreur sur la création d'évènement: ${state.errorMessage}")),
-                  );
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: ListView(
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Nom'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un nom';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          name = value!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration:
-                            const InputDecoration(labelText: 'Description'),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer une description';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          description = value!;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Date'),
-                        readOnly: true,
-                        onTap: () => _selectDate(context),
-                        controller: TextEditingController(text: date),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez sélectionner une date';
-                          }
-                          return null;
-                        },
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Heure'),
-                        readOnly: true,
-                        onTap: () => _selectTime(context),
-                        controller: TextEditingController(text: time),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez sélectionner une heure';
-                          }
-                          return null;
-                        },
-                      ),
-                      DropdownButtonFormField<EventType>(
-                        decoration: const InputDecoration(
-                            labelText: "Type d'évènement"),
-                        items: eventTypes.map((EventType type) {
-                          return DropdownMenuItem<EventType>(
-                            value: type,
-                            child: Text(type.name),
+          return BlocListener<CreateEventBloc, CreateEventState>(
+            listener: (context, state) {
+              if (state.status == CreateEventStatus.success) {
+                EventScreen.navigateTo(
+                  context,
+                  groupId: widget.groupId,
+                  eventId: state.newEvent!.id,
+                );
+              } else if (state.status == CreateEventStatus.error) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          "Erreur sur la création d'évènement: ${state.errorMessage}")),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    TextFormField(
+                      decoration: const InputDecoration(labelText: 'Nom'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer un nom';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        name = value!;
+                      },
+                    ),
+                    TextFormField(
+                      decoration:
+                          const InputDecoration(labelText: 'Description'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez entrer une description';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        description = value!;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(labelText: 'Date'),
+                      readOnly: true,
+                      onTap: () => _selectDate(context),
+                      controller: TextEditingController(text: date),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez sélectionner une date';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(labelText: 'Heure'),
+                      readOnly: true,
+                      onTap: () => _selectTime(context),
+                      controller: TextEditingController(text: time),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez sélectionner une heure';
+                        }
+                        return null;
+                      },
+                    ),
+                    DropdownButtonFormField<EventType>(
+                      decoration:
+                          const InputDecoration(labelText: "Type d'évènement"),
+                      items: eventTypes.map((EventType type) {
+                        return DropdownMenuItem<EventType>(
+                          value: type,
+                          child: Text(type.name),
+                        );
+                      }).toList(),
+                      onChanged: (EventType? value) {
+                        setState(() {
+                          selectedEventType = value;
+                          typeId = value?.id ?? 0;
+                        });
+                      },
+                      selectedItemBuilder: (BuildContext context) {
+                        return eventTypes.map<Widget>((EventType type) {
+                          return Text(
+                            type.name,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                            ),
                           );
-                        }).toList(),
-                        onChanged: (EventType? value) {
-                          setState(() {
-                            selectedEventType = value;
-                            typeId = value?.id ?? 0;
-                          });
-                        },
-                        selectedItemBuilder: (BuildContext context) {
-                          return eventTypes.map<Widget>((EventType type) {
-                            return Text(
-                              type.name,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            );
-                          }).toList();
-                        },
-                        validator: (value) {
-                          if (value == null) {
-                            return "Veuillez sélectionner un type d'événement";
-                          }
-                          return null;
-                        },
-                      ),
-                      Autocomplete<Map<String, String>>(
-                        optionsBuilder: (TextEditingValue textEditingValue) {
-                          if (textEditingValue.text.length < 5) {
-                            return const Iterable<Map<String, String>>.empty();
-                          }
-                          _fetchAddressSuggestions(textEditingValue.text);
-                          return addressSuggestions;
-                        },
-                        displayStringForOption: (option) => option['label']!,
-                        fieldViewBuilder:
-                            (context, controller, focusNode, onFieldSubmitted) {
-                          return TextFormField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            decoration:
-                                const InputDecoration(labelText: 'Adresse'),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer une adresse';
-                              }
-                              return null;
-                            },
-                          );
-                        },
-                        onSelected: (Map<String, String> selection) {
-                          setState(() {
-                            street = selection['street']!;
-                            number = selection['housenumber']!;
-                            city = selection['city']!;
-                            zip = selection['postcode']!;
-                            latitude = double.tryParse(selection['latitude']!);
-                            longitude =
-                                double.tryParse(selection['longitude']!);
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => _submitForm(context),
-                        child: const Text("Créer l'évènement"),
-                      ),
-                      BlocBuilder<CreateEventBloc, CreateEventState>(
-                        builder: (context, state) {
-                          if (state.status == CreateEventStatus.loading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ],
-                  ),
+                        }).toList();
+                      },
+                      validator: (value) {
+                        if (value == null) {
+                          return "Veuillez sélectionner un type d'événement";
+                        }
+                        return null;
+                      },
+                    ),
+                    Autocomplete<Map<String, String>>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.length < 5) {
+                          return const Iterable<Map<String, String>>.empty();
+                        }
+                        _fetchAddressSuggestions(textEditingValue.text);
+                        return addressSuggestions;
+                      },
+                      displayStringForOption: (option) => option['label']!,
+                      fieldViewBuilder:
+                          (context, controller, focusNode, onFieldSubmitted) {
+                        return TextFormField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          decoration:
+                              const InputDecoration(labelText: 'Adresse'),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Veuillez entrer une adresse';
+                            }
+                            return null;
+                          },
+                        );
+                      },
+                      onSelected: (Map<String, String> selection) {
+                        setState(() {
+                          street = selection['street']!;
+                          number = selection['housenumber']!;
+                          city = selection['city']!;
+                          zip = selection['postcode']!;
+                          latitude = double.tryParse(selection['latitude']!);
+                          longitude = double.tryParse(selection['longitude']!);
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => _submitForm(context),
+                      child: const Text("Créer l'évènement"),
+                    ),
+                    BlocBuilder<CreateEventBloc, CreateEventState>(
+                      builder: (context, state) {
+                        if (state.status == CreateEventStatus.loading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),

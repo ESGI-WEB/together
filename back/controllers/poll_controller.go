@@ -40,17 +40,14 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 
 	user := ctx.Get("user").(models.User)
 
-	// check event access
+	// check event exists
 	if jsonBody.EventID != nil {
 		event, err := c.eventService.GetEventByID(*jsonBody.EventID)
-		if err != nil {
+		if err != nil || event == nil || event.ID == 0 {
 			ctx.Logger().Error(err)
 			return ctx.String(http.StatusNotFound, "Event not found")
 		}
-
-		if event.OrganizerID != user.ID {
-			return ctx.String(http.StatusForbidden, "You are not the organizer of this event")
-		}
+		jsonBody.GroupID = &event.GroupID
 	}
 
 	// check group access
