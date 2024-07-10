@@ -20,9 +20,6 @@ class EventCard extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.all(4),
-          constraints: const BoxConstraints(
-            maxWidth: 400,
-          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
           ),

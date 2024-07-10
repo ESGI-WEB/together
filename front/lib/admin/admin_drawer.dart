@@ -64,14 +64,6 @@ class AdminDrawer extends StatelessWidget {
               EventTypesScreen.navigateTo(context);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text("Retour aux groupes"),
-            onTap: () {
-              Navigator.pop(context);
-              GroupsScreen.navigateTo(context);
-            },
-          ),
         ],
       ),
     );
