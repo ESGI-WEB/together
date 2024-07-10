@@ -33,6 +33,7 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 	var jsonBody models.PollCreateOrEdit
 	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
@@ -42,6 +43,7 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 	if jsonBody.EventID != nil {
 		event, err := c.eventService.GetEventByID(*jsonBody.EventID)
 		if err != nil {
+			ctx.Logger().Error(err)
 			return ctx.String(http.StatusNotFound, "Event not found")
 		}
 
@@ -53,11 +55,13 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 	// check group access
 	inGroup, err := c.groupService.IsUserInGroup(user.ID, *jsonBody.GroupID)
 	if err != nil || !inGroup {
+		ctx.Logger().Error(err)
 		return ctx.String(http.StatusForbidden, "You do not have access to this group")
 	}
 
 	newPoll, err := c.pollService.CreatePoll(user.ID, jsonBody)
 	if err != nil {
+		ctx.Logger().Error(err)
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
