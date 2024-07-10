@@ -31,6 +31,21 @@ class CreateEventScreen extends StatefulWidget {
   State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
+String getRecurrenceLabel(RecurrenceType type) {
+  switch (type) {
+    case RecurrenceType.eachDays:
+      return 'Tous les jours';
+    case RecurrenceType.eachWeeks:
+      return 'Toutes les semaines';
+    case RecurrenceType.eachMonths:
+      return 'Tous les mois';
+    case RecurrenceType.eachYears:
+      return 'Tous les ans';
+    default:
+      return '';
+  }
+}
+
 class _CreateEventScreenState extends State<CreateEventScreen> {
   final _formKey = GlobalKey<FormState>();
 
@@ -49,6 +64,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   List<EventType> eventTypes = [];
   EventType? selectedEventType;
   List<Map<String, String>> addressSuggestions = [];
+  RecurrenceType? selectedRecurrenceType;
+
+  final List<RecurrenceType> recurrenceTypes = [
+    RecurrenceType.eachDays,
+    RecurrenceType.eachWeeks,
+    RecurrenceType.eachMonths,
+    RecurrenceType.eachYears,
+  ];
 
   @override
   void initState() {
@@ -160,6 +183,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           latitude: latitude,
           longitude: longitude,
         ),
+        recurrenceType: selectedRecurrenceType,
       );
 
       context.read<CreateEventBloc>().add(CreateEventSubmitted(event));
@@ -245,6 +269,26 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           return null;
                         },
                       ),
+                      DropdownButtonFormField<RecurrenceType>(
+                        decoration: const InputDecoration(
+                          labelText: 'Evènement récurrent',
+                        ),
+                        value: selectedRecurrenceType,
+                        items: recurrenceTypes.map((RecurrenceType type) {
+                          return DropdownMenuItem<RecurrenceType>(
+                            value: type,
+                            child: Text(getRecurrenceLabel(type)),
+                          );
+                        }).toList(),
+                        onChanged: (RecurrenceType? newValue) {
+                          setState(() {
+                            selectedRecurrenceType = newValue;
+                          });
+                        },
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 16), // Style de l'élément sélectionné
+                      ),
                       DropdownButtonFormField<EventType>(
                         decoration: const InputDecoration(
                             labelText: "Type d'évènement"),
@@ -260,6 +304,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             typeId = value?.id ?? 0;
                           });
                         },
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 16),
                         selectedItemBuilder: (BuildContext context) {
                           return eventTypes.map<Widget>((EventType type) {
                             return Text(
