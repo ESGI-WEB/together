@@ -14,3 +14,9 @@ class PublicationsLoadMore extends PublicationsEvent {
 
   PublicationsLoadMore(this.groupId);
 }
+
+class PublicationAdded extends PublicationsEvent {
+  final Message publication;
+
+  PublicationAdded(this.publication);
+}

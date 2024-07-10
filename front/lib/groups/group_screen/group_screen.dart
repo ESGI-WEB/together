@@ -34,12 +34,13 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
-  late User _authenticatedUser;
+  User? _authenticatedUser;
 
   @override
   void initState() {
     super.initState();
     _getAuthenticatedUser();
+    widget.publicationsBloc.add(PublicationsLoaded(widget.id));
   }
 
   Future<void> _getAuthenticatedUser() async {
@@ -66,12 +67,10 @@ class _GroupScreenState extends State<GroupScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-              GroupScreenBloc()..add(LoadGroupScreen(groupId: widget.id)),
+          create: (context) => GroupScreenBloc()..add(LoadGroupScreen(groupId: widget.id)),
         ),
-        BlocProvider(
-          create: (context) =>
-              widget.publicationsBloc..add(PublicationsLoaded(widget.id)),
+        BlocProvider.value(
+          value: widget.publicationsBloc,
         ),
       ],
       child: Scaffold(
@@ -85,7 +84,8 @@ class _GroupScreenState extends State<GroupScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Avatar(user: _authenticatedUser),
+                    if (_authenticatedUser != null)
+                      Avatar(user: _authenticatedUser!),
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(

@@ -54,5 +54,13 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
         ));
       }
     });
+
+    on<PublicationAdded>((event, emit) {
+      final updatedPublications = List<Message>.from(state.publications ?? [])..add(event.publication);
+      emit(state.copyWith(
+        publications: updatedPublications,
+        status: PublicationsStatus.success,
+      ));
+    });
   }
 }

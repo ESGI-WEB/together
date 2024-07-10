@@ -118,9 +118,9 @@ class GroupsScreen extends StatelessWidget {
                           icon: Icons.add,
                           label: 'Créer',
                           onPressed: () {
-                            final groupsScreenBloc = context.read<GroupsBloc>();
+                            final groupsBloc = context.read<GroupsBloc>();
                             CreateGroupScreen.navigateTo(
-                                context, groupsScreenBloc);
+                                context, groupsBloc);
                           },
                         ),
                         const SizedBox(width: 16),

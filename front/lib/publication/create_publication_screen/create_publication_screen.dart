@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/create_publication_bloc.dart';
@@ -30,8 +31,8 @@ class CreatePublicationScreen extends StatelessWidget {
           child: BlocListener<CreatePublicationBloc, CreatePublicationState>(
             listener: (context, state) {
               if (state.status == CreatePublicationStatus.success && state.newPublication?.id != null) {
-                // Rediriger ou notifier
-                context.pop();
+                context.read<PublicationsBloc>().add(PublicationAdded(state.newPublication!));
+                //context.pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Publication créée avec succès!')),
                 );
