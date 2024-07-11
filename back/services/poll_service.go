@@ -196,3 +196,22 @@ func (s *PollService) GetPollsForEvent(eventID uint, pagination utils.Pagination
 
 	return &pagination, nil
 }
+
+func (s *PollService) HasEditPermission(userId uint, pollId uint) bool {
+	if userId == 0 || pollId == 0 {
+		return false
+	}
+
+	var poll models.Poll
+	err := database.CurrentDatabase.
+		Preload("Group").
+		Preload("Event").
+		First(&poll, pollId).
+		Error
+	if err != nil {
+		return false
+	}
+
+	// if user is owner of the poll, group or event, he can edit the poll
+	return poll.UserID == userId || poll.Group.OwnerID == userId || poll.Event.OrganizerID == userId
+}

@@ -41,8 +41,13 @@ class EventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          EventScreenBloc()..add(EventScreenLoaded(eventId: eventId)),
+      create: (context) => EventScreenBloc()
+        ..add(
+          EventScreenLoaded(
+            eventId: eventId,
+            groupId: groupId,
+          ),
+        ),
       child: BlocBuilder<EventScreenBloc, EventScreenState>(
         builder: (context, state) {
           if (state.status == EventScreenStatus.loading) {
@@ -51,9 +56,12 @@ class EventScreen extends StatelessWidget {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context
-                  .read<EventScreenBloc>()
-                  .add(EventScreenLoaded(eventId: eventId));
+              context.read<EventScreenBloc>().add(
+                    EventScreenLoaded(
+                      eventId: eventId,
+                      groupId: groupId,
+                    ),
+                  );
             },
             child: Builder(
               builder: (context) {
@@ -71,6 +79,9 @@ class EventScreen extends StatelessWidget {
                 }
 
                 final Address? address = event.address;
+                final bool hasParentEditionRights =
+                    state.event?.organizerId == state.userData?.id ||
+                        state.group?.ownerId == state.userData?.id;
 
                 return SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -103,8 +114,8 @@ class EventScreen extends StatelessWidget {
                                           ),
                                           const SizedBox(height: 8),
                                           AvatarStack(
-                                              users:
-                                                  state.firstParticipants ?? []),
+                                              users: state.firstParticipants ??
+                                                  []),
                                         ],
                                       ),
                                     ),
@@ -121,6 +132,7 @@ class EventScreen extends StatelessWidget {
                             PollGateway(
                               id: event.id,
                               type: PollType.event,
+                              hasParentEditionRights: hasParentEditionRights,
                             ),
                             const SizedBox(height: 16),
                             EventScreenAbout(event: event),

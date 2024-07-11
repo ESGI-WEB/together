@@ -10,6 +10,7 @@ type Group struct {
 	Description *string `json:"description" validate:"max=100"`
 	Code        string  `json:"code" gorm:"unique;not null" validate:"required,min=5,max=20"`
 	Users       []User  `gorm:"many2many:group_users;"`
+	OwnerID     uint    `json:"owner_id" validate:"required"`
 }
 
 type JoinGroupRequest struct {
@@ -21,5 +22,6 @@ func (gc Group) ToGroup() *Group {
 		Name:        gc.Name,
 		Description: gc.Description,
 		Code:        gc.Code,
+		OwnerID:     gc.OwnerID,
 	}
 }

@@ -20,11 +20,13 @@ import 'closed_polls/closed_polls.dart';
 class PollGateway extends StatefulWidget {
   final int id;
   final PollType type;
+  final bool hasParentEditionRights;
 
   const PollGateway({
     super.key,
     required this.id,
     this.type = PollType.group,
+    this.hasParentEditionRights = false,
   });
 
   @override
@@ -402,7 +404,7 @@ class _PollGatewayState extends State<PollGateway> {
                                 context,
                                 state,
                                 currentPoll,
-                                currentPoll.userId == state.userData?.id,
+                                widget.hasParentEditionRights || currentPoll.userId == state.userData?.id,
                               ),
                             ),
                         ],

@@ -166,8 +166,8 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 	}
 
 	user := ctx.Get("user").(models.User)
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	var jsonBody models.PollCreateOrEdit
@@ -250,8 +250,8 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 	}
 
 	user := ctx.Get("user").(models.User)
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	err = c.pollService.DeletePoll(poll.ID)
@@ -322,8 +322,8 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 	}
 
 	// to delete a choice, the user must be owner of the poll
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	err = c.pollService.DeletePollChoice(choice.ID)

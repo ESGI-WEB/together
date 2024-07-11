@@ -3,7 +3,6 @@ import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/admin/users/users_screen.dart';
-import 'package:front/groups/groups_screen/groups_screen.dart';
 
 class AdminDrawer extends StatelessWidget {
   const AdminDrawer({super.key});

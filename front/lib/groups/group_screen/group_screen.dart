@@ -36,11 +36,14 @@ class GroupScreen extends StatelessWidget {
             return const Center(child: Text('Groupe introuvable'));
           }
 
+          final isGroupOwner = state.group?.ownerId == state.userData?.id;
+
           return SingleChildScrollView(
             child: Column(
               children: [
                 PollGateway(
                   id: id,
+                  hasParentEditionRights: isGroupOwner,
                 ),
                 NextEventOfGroup(
                   groupId: id,
