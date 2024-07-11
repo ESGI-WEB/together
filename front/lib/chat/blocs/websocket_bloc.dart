@@ -78,8 +78,11 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
             pollId: message['content'] as int,
           ));
           break;
-        default:
+        case "send_chat_message":
+        case "fetch_chat_messages":
           add(NewMessageReceivedEvent.fromString(message));
+          break;
+        default:
           break;
       }
     }, onDone: () {
