@@ -148,7 +148,7 @@ func (s *MessageService) DeleteMessage(messageID uint) error {
 
 func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var messages []models.Message
-	query := database.CurrentDatabase.Where("event_id = ? AND group_id = ? AND type = ?", eventID, groupID, models.PubMessageType).Find(&messages)
+	query := database.CurrentDatabase.Where("event_id = ? AND group_id = ? AND type = ?", eventID, groupID, models.PubMessageType).Order("is_pinned DESC").Find(&messages).Find(&messages)
 
 	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
 
@@ -159,7 +159,7 @@ func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, p
 
 func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var messages []models.Message
-	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Find(&messages)
+	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Order("is_pinned DESC").Find(&messages)
 
 	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
 

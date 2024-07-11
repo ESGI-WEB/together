@@ -1,29 +1,29 @@
-part of 'group_screen_bloc.dart';
+part of 'group_bloc.dart';
 
-enum GroupScreenStatus {
+enum GroupStatus {
   initial,
   loading,
   success,
   error,
 }
 
-class GroupScreenState {
-  final GroupScreenStatus status;
+class GroupState {
+  final GroupStatus status;
   final Group? group;
   final String? errorMessage;
 
-  GroupScreenState({
-    this.status = GroupScreenStatus.initial,
+  GroupState({
+    this.status = GroupStatus.initial,
     this.group,
     this.errorMessage,
   });
 
-  GroupScreenState copyWith({
-    GroupScreenStatus? status,
+  GroupState copyWith({
+    GroupStatus? status,
     Group? group,
     String? errorMessage,
   }) {
-    return GroupScreenState(
+    return GroupState(
       status: status ?? this.status,
       group: group ?? this.group,
       errorMessage: errorMessage ?? this.errorMessage,

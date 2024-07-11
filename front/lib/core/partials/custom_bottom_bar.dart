@@ -42,8 +42,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     });
     switch (index) {
       case 0:
-        final publicationsBloc = PublicationsBloc();
-        GroupScreen.navigateTo(context, id: widget.groupId, publicationsBloc: publicationsBloc);
+        GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
         ChatScreen.navigateTo(context, id: widget.groupId);

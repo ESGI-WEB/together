@@ -73,8 +73,7 @@ final goRouter = GoRouter(
           name: GroupsScreen.routeName,
           path: '/groups',
           builder: (context, state) {
-            return BlocProvider(
-                create: (context) => GroupsBloc(), child: const GroupsScreen());
+            return const GroupsScreen();
           },
           routes: [
             GoRoute(
@@ -106,10 +105,8 @@ final goRouter = GoRouter(
                   name: GroupScreen.routeName,
                   path: ':groupId',
                   builder: (context, state) {
-                    final publicationsBloc = PublicationsBloc();
                     return GroupScreen(
-                        id: int.parse(state.pathParameters['groupId']!),
-                        publicationsBloc: publicationsBloc);
+                        id: int.parse(state.pathParameters['groupId']!),);
                   },
                   routes: [
                     GoRoute(

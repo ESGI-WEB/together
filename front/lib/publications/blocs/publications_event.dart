@@ -3,10 +3,10 @@ part of 'publications_bloc.dart';
 @immutable
 sealed class PublicationsEvent {}
 
-class PublicationsLoaded extends PublicationsEvent {
+class LoadPublications extends PublicationsEvent {
   final int groupId;
 
-  PublicationsLoaded(this.groupId);
+  LoadPublications({required this.groupId});
 }
 
 class PublicationsLoadMore extends PublicationsEvent {

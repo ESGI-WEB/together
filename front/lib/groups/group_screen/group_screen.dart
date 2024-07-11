@@ -9,23 +9,20 @@ import 'package:front/groups/group_screen/partials/group_create_publication_bott
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'blocs/group_screen_bloc.dart';
+import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatefulWidget {
   static const String routeName = 'group';
 
   final int id;
-  final PublicationsBloc publicationsBloc;
 
   const GroupScreen(
-      {super.key, required this.id, required this.publicationsBloc});
+      {super.key, required this.id});
 
-  static void navigateTo(BuildContext context,
-      {required int id, required PublicationsBloc publicationsBloc}) {
+  static void navigateTo(BuildContext context, {required int id}) {
     context.goNamed(
       routeName,
       pathParameters: {'groupId': id.toString()},
-      extra: publicationsBloc,
     );
   }
 
@@ -40,7 +37,6 @@ class _GroupScreenState extends State<GroupScreen> {
   void initState() {
     super.initState();
     _getAuthenticatedUser();
-    widget.publicationsBloc.add(PublicationsLoaded(widget.id));
   }
 
   Future<void> _getAuthenticatedUser() async {
@@ -67,10 +63,12 @@ class _GroupScreenState extends State<GroupScreen> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => GroupScreenBloc()..add(LoadGroupScreen(groupId: widget.id)),
+          create: (context) =>
+              GroupBloc()..add(LoadGroup(groupId: widget.id)),
         ),
-        BlocProvider.value(
-          value: widget.publicationsBloc,
+        BlocProvider(
+          create: (context) =>
+          PublicationsBloc()..add(LoadPublications(groupId: widget.id)),
         ),
       ],
       child: Scaffold(
@@ -100,13 +98,13 @@ class _GroupScreenState extends State<GroupScreen> {
             NextEventOfGroup(
               groupId: widget.id,
             ),
-            BlocBuilder<GroupScreenBloc, GroupScreenState>(
+            BlocBuilder<GroupBloc, GroupState>(
               builder: (context, state) {
-                if (state.status == GroupScreenStatus.loading) {
+                if (state.status == GroupStatus.loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (state.status == GroupScreenStatus.error) {
+                if (state.status == GroupStatus.error) {
                   return Center(
                       child: Text(state.errorMessage ?? 'Erreur inconnue'));
                 }
@@ -146,7 +144,8 @@ class _GroupScreenState extends State<GroupScreen> {
                           }
                           return false;
                         },
-                        child: ListView.builder(
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => const Divider(),
                           itemCount: publications.length +
                               (state.status == PublicationsStatus.loadingMore
                                   ? 1
@@ -156,9 +155,70 @@ class _GroupScreenState extends State<GroupScreen> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             } else {
-                              return ListTile(
-                                title: Text(publications[index].content),
-                                subtitle: Text(publications[index].content),
+                              final publication = publications[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (_authenticatedUser != null)
+                                          Avatar(user: _authenticatedUser!),
+                                        SizedBox(width: 8.0),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      publication.user.name,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium,
+                                                    ),
+                                                  ),
+                                                  if (publication.isPinned)
+                                                    Icon(Icons.push_pin,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                        size: 16),
+                                                ],
+                                              ),
+                                              Text(
+                                                '${publication.createdAt}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall,
+                                              ),
+                                              if (publication.updatedAt !=
+                                                  publication.createdAt)
+                                                Text(
+                                                  'Updated: ${publication.updatedAt}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      publication.content,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ],
+                                ),
                               );
                             }
                           },

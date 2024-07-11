@@ -47,8 +47,7 @@ class JoinGroupScreen extends StatelessWidget {
 
               if (state.status == JoinGroupStatus.success &&
                   state.newGroup?.id != null) {
-                final publicationsBloc = PublicationsBloc();
-                GroupScreen.navigateTo(context, id: state.newGroup!.id, publicationsBloc: publicationsBloc);
+                GroupScreen.navigateTo(context, id: state.newGroup!.id);
                 context.read<GroupsBloc>().add(GroupJoined(state.newGroup!));
               }
               return const JoinGroupForm();

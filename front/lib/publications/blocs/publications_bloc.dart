@@ -9,7 +9,7 @@ part 'publications_state.dart';
 
 class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
   PublicationsBloc() : super(PublicationsState()) {
-    on<PublicationsLoaded>((event, emit) async {
+    on<LoadPublications>((event, emit) async {
       emit(state.copyWith(
         status: PublicationsStatus.loading,
         page: 1,
