@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
-import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'blocs/create_group_bloc.dart';

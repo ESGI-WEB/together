@@ -19,7 +19,6 @@ import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/publication/create_publication_screen/create_publication_screen.dart';
-import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 

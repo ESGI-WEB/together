@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
-import 'package:front/publications/blocs/publications_bloc.dart';
 
 class GroupsListItem extends StatelessWidget {
   final Group group;
