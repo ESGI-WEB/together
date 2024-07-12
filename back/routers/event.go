@@ -17,4 +17,6 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("", eventController.CreateEvent, middlewares.AuthenticationMiddleware())
 	group.GET("/:id", eventController.GetEvent, middlewares.AuthenticationMiddleware())
 	group.GET("/:id/attends", eventController.GetEventAttends, middlewares.AuthenticationMiddleware())
+	group.GET("/:id/user-event-attend", eventController.GetUserEventAttend, middlewares.AuthenticationMiddleware())
+	group.POST("/:id/user-event-attend", eventController.ChangeAttend, middlewares.AuthenticationMiddleware())
 }

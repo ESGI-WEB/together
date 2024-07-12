@@ -10,6 +10,7 @@ import 'package:front/core/services/group_services.dart';
 import 'package:front/core/services/storage_service.dart';
 
 part 'event_screen_event.dart';
+
 part 'event_screen_state.dart';
 
 class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
@@ -20,7 +21,13 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
       ));
 
       try {
-        final (nextEvent, acceptedParticipants, group, userData) = await (
+        final (
+          nextEvent,
+          acceptedParticipants,
+          group,
+          userData,
+          userAttend,
+        ) = await (
           EventsServices.getEventById(event.eventId),
           EventsServices.getEventAttends(
             eventId: event.eventId,
@@ -28,6 +35,9 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
           ),
           GroupServices.getGroupById(event.groupId),
           StorageService.readJwtDataFromToken(),
+          EventsServices.getUserAttendEvent(
+            event.eventId,
+          ),
         ).wait;
 
         emit(state.copyWith(
@@ -39,10 +49,34 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
               .toList(),
           group: group,
           userData: userData,
+          isAttending: userAttend?.hasAttended ?? false,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
           status: EventScreenStatus.error,
+          errorMessage: error.message,
+        ));
+      }
+    });
+
+    on<EventAttendChanged>((event, emit) async {
+      emit(state.copyWith(
+        status: EventScreenStatus.changeAttendanceLoading,
+      ));
+
+      try {
+        final attend = await EventsServices.changeEventAttend(
+          eventId: event.eventId,
+          isAttending: event.isAttending,
+        );
+
+        emit(state.copyWith(
+          status: EventScreenStatus.success,
+          isAttending: attend.hasAttended,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: EventScreenStatus.changeAttendanceError,
           errorMessage: error.message,
         ));
       }

@@ -57,4 +57,21 @@ class EventsServices {
       Event.fromJson,
     );
   }
+
+  static Future<Attend> changeEventAttend({
+    required int eventId,
+    required bool isAttending,
+  }) async {
+    final response = await ApiServices.post(
+      '/events/$eventId/user-event-attend',
+      {'is_attending': isAttending},
+    );
+    return Attend.fromJson(ApiServices.decodeResponse(response));
+  }
+
+  static Future<Attend?> getUserAttendEvent(int eventId) async {
+    final response = await ApiServices.get('/events/$eventId/user-event-attend');
+    final decodedResponse = ApiServices.decodeResponse(response);
+    return decodedResponse == null ? null : Attend.fromJson(decodedResponse);
+  }
 }

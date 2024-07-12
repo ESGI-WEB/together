@@ -5,6 +5,12 @@ enum EventScreenStatus {
   loading,
   success,
   error,
+  attendLoading,
+  attendSuccess,
+  attendError,
+  changeAttendanceLoading,
+  changeAttendanceSuccess,
+  changeAttendanceError,
 }
 
 class EventScreenState {
@@ -14,6 +20,7 @@ class EventScreenState {
   final JwtData? userData;
   final List<User>? firstParticipants;
   final String? errorMessage;
+  final bool? isAttending;
 
   EventScreenState({
     this.status = EventScreenStatus.initial,
@@ -22,6 +29,7 @@ class EventScreenState {
     this.userData,
     this.firstParticipants,
     this.errorMessage,
+    this.isAttending,
   });
 
   EventScreenState copyWith({
@@ -31,6 +39,7 @@ class EventScreenState {
     JwtData? userData,
     List<User>? firstParticipants,
     String? errorMessage,
+    bool? isAttending,
   }) {
     return EventScreenState(
       status: status ?? this.status,
@@ -39,6 +48,7 @@ class EventScreenState {
       userData: userData ?? this.userData,
       firstParticipants: firstParticipants ?? this.firstParticipants,
       errorMessage: errorMessage ?? this.errorMessage,
+      isAttending: isAttending ?? this.isAttending,
     );
   }
 }

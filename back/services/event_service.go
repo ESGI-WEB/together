@@ -82,6 +82,45 @@ func (s *EventService) GetEvents(pagination utils.Pagination, filters ...EventFi
 	return &pagination, nil
 }
 
+func (s *EventService) GetUserEventAttend(eventID uint, userID uint) *models.Attend {
+	var attend models.Attend
+	database.CurrentDatabase.
+		Where("event_id = ? AND user_id = ?", eventID, userID).
+		First(&attend)
+
+	if attend.UserID == 0 {
+		return nil
+	}
+
+	return &attend
+}
+
+func (s *EventService) ChangeUserEventAttend(isAttending bool, eventID uint, userID uint) (*models.Attend, error) {
+	// check if a user event attend already exists to update
+	// if not, create a new one
+	attend := s.GetUserEventAttend(eventID, userID)
+	if attend == nil {
+		attend = &models.Attend{
+			EventID:     eventID,
+			UserID:      userID,
+			HasAttended: isAttending,
+		}
+
+		err := database.CurrentDatabase.Create(&attend).Error
+		if err != nil {
+			return nil, err
+		}
+		return attend, nil
+	} else {
+		attend.HasAttended = isAttending
+		err := database.CurrentDatabase.Save(&attend).Error
+		if err != nil {
+			return nil, err
+		}
+		return attend, nil
+	}
+}
+
 type EventFilter struct {
 	database.Filter
 	Column string `json:"column" validate:"required,oneof=organizer_id created_at date time type_id address_id group_id"`

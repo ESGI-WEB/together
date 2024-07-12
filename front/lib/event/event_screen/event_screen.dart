@@ -38,6 +38,15 @@ class EventScreen extends StatelessWidget {
     required this.eventId,
   });
 
+  void _onAttendChanged(BuildContext context, EventScreenState state) {
+    context.read<EventScreenBloc>().add(
+          EventAttendChanged(
+            eventId: eventId,
+            isAttending: state.isAttending != null ? !state.isAttending! : true,
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -116,6 +125,25 @@ class EventScreen extends StatelessWidget {
                                           AvatarStack(
                                               users: state.firstParticipants ??
                                                   []),
+                                          OutlinedButton(
+                                              onPressed: state.status == EventScreenStatus.changeAttendanceLoading
+                                                  ? null
+                                                  : () =>
+                                                      _onAttendChanged(context, state),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    state.isAttending == true
+                                                        ? Icons.remove
+                                                        : Icons.add,
+                                                  ),
+                                                  Text(
+                                                    state.isAttending == true
+                                                        ? "Je n'y vais plus"
+                                                        : "J'y vais !",
+                                                  ),
+                                                ],
+                                              ))
                                         ],
                                       ),
                                     ),
