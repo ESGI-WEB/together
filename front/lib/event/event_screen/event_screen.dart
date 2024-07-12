@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/chat/blocs/websocket_bloc.dart';
+import 'package:front/chat/blocs/websocket_state.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/partials/error_occurred.dart';
@@ -49,132 +51,151 @@ class EventScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => EventScreenBloc()
-        ..add(
-          EventScreenLoaded(
-            eventId: eventId,
-            groupId: groupId,
-          ),
-        ),
-      child: BlocBuilder<EventScreenBloc, EventScreenState>(
-        builder: (context, state) {
-          if (state.status == EventScreenStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              context.read<EventScreenBloc>().add(
-                    EventScreenLoaded(
-                      eventId: eventId,
-                      groupId: groupId,
-                    ),
-                  );
-            },
-            child: Builder(
-              builder: (context) {
-                final Event? event = state.event;
-                if (state.status == EventScreenStatus.error || event == null) {
-                  return const ErrorOccurred(
-                    image: Image(
-                      width: 150,
-                      image: AssetImage('assets/images/event.gif'),
-                    ),
-                    alertMessage: "Oups ! Une erreur est survenue",
-                    bodyMessage:
-                        "Nous n'avons pas pu récuperer votre évènement",
-                  );
+    return BlocBuilder<WebSocketBloc, WebSocketState>(
+      builder: (context, state) {
+        return BlocListener<WebSocketBloc, WebSocketState>(
+          listener: (context, state) {
+            if (state is EventAttendChangedState) {
+              // todo event de pagination des attendees, utilisé pour la liste aussi
+            }
+          },
+          child: BlocProvider(
+            create: (context) => EventScreenBloc()
+              ..add(
+                EventScreenLoaded(
+                  eventId: eventId,
+                  groupId: groupId,
+                ),
+              ),
+            child: BlocBuilder<EventScreenBloc, EventScreenState>(
+              builder: (context, state) {
+                if (state.status == EventScreenStatus.loading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
 
-                final Address? address = event.address;
-                final bool hasParentEditionRights =
-                    state.event?.organizerId == state.userData?.id ||
-                        state.group?.ownerId == state.userData?.id;
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<EventScreenBloc>().add(
+                          EventScreenLoaded(
+                            eventId: eventId,
+                            groupId: groupId,
+                          ),
+                        );
+                  },
+                  child: Builder(
+                    builder: (context) {
+                      final Event? event = state.event;
+                      if (state.status == EventScreenStatus.error ||
+                          event == null) {
+                        return const ErrorOccurred(
+                          image: Image(
+                            width: 150,
+                            image: AssetImage('assets/images/event.gif'),
+                          ),
+                          alertMessage: "Oups ! Une erreur est survenue",
+                          bodyMessage:
+                              "Nous n'avons pas pu récuperer votre évènement",
+                        );
+                      }
 
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      EventScreenHeader(event: event),
-                      Container(
-                        padding: const EdgeInsets.all(16),
+                      final Address? address = event.address;
+                      final bool hasParentEditionRights =
+                          state.event?.organizerId == state.userData?.id ||
+                              state.group?.ownerId == state.userData?.id;
+
+                      return SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Card(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                            EventScreenHeader(event: event),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                children: [
+                                  Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 16),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            'Participants',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall,
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Participants',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall,
+                                                ),
+                                                const SizedBox(height: 8),
+                                                AvatarStack(
+                                                    users: state
+                                                            .firstParticipants ??
+                                                        []),
+                                                OutlinedButton(
+                                                    onPressed: state.status ==
+                                                            EventScreenStatus
+                                                                .changeAttendanceLoading
+                                                        ? null
+                                                        : () =>
+                                                            _onAttendChanged(
+                                                                context, state),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          state.isAttending ==
+                                                                  true
+                                                              ? Icons.remove
+                                                              : Icons.add,
+                                                        ),
+                                                        Text(
+                                                          state.isAttending ==
+                                                                  true
+                                                              ? "Je n'y vais plus"
+                                                              : "J'y vais !",
+                                                        ),
+                                                      ],
+                                                    ))
+                                              ],
+                                            ),
                                           ),
-                                          const SizedBox(height: 8),
-                                          AvatarStack(
-                                              users: state.firstParticipants ??
-                                                  []),
-                                          OutlinedButton(
-                                              onPressed: state.status == EventScreenStatus.changeAttendanceLoading
-                                                  ? null
-                                                  : () =>
-                                                      _onAttendChanged(context, state),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    state.isAttending == true
-                                                        ? Icons.remove
-                                                        : Icons.add,
-                                                  ),
-                                                  Text(
-                                                    state.isAttending == true
-                                                        ? "Je n'y vais plus"
-                                                        : "J'y vais !",
-                                                  ),
-                                                ],
-                                              ))
+                                          if (address != null &&
+                                              address.latlng != null)
+                                            EventScreenLocation(
+                                              localisation: address.latlng!,
+                                            ),
                                         ],
                                       ),
                                     ),
-                                    if (address != null &&
-                                        address.latlng != null)
-                                      EventScreenLocation(
-                                        localisation: address.latlng!,
-                                      ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  PollGateway(
+                                    id: event.id,
+                                    type: PollType.event,
+                                    hasParentEditionRights:
+                                        hasParentEditionRights,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  EventScreenAbout(event: event),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            PollGateway(
-                              id: event.id,
-                              type: PollType.event,
-                              hasParentEditionRights: hasParentEditionRights,
-                            ),
-                            const SizedBox(height: 16),
-                            EventScreenAbout(event: event),
                           ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 );
               },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

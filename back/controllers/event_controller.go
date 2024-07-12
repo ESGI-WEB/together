@@ -14,15 +14,18 @@ import (
 )
 
 type EventController struct {
-	GroupService   *services.GroupService
-	EventService   *services.EventService
-	AddressService *services.AddressService
+	GroupService     *services.GroupService
+	EventService     *services.EventService
+	AddressService   *services.AddressService
+	WebsocketService *services.WebSocketService
 }
 
 func NewEventController() *EventController {
 	return &EventController{
-		EventService:   services.NewEventService(),
-		AddressService: services.NewAddressService(),
+		EventService:     services.NewEventService(),
+		AddressService:   services.NewAddressService(),
+		GroupService:     services.NewGroupService(),
+		WebsocketService: services.NewWebSocketService(),
 	}
 }
 
@@ -204,5 +207,33 @@ func (c *EventController) ChangeAttend(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfAttendsChanged(user.ID, eventID)
+
 	return ctx.JSON(http.StatusOK, attend)
+}
+
+func (c *EventController) notifyUsersOfAttendsChanged(userID uint, eventID uint) {
+	attend := c.EventService.GetUserEventAttend(userID, eventID, "User", "Event")
+	if attend == nil {
+		return
+	}
+
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundEventAttendChangedMessageType,
+		},
+		Content: attend,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		return
+	}
+
+	err = c.WebsocketService.BroadcastToGroup(bytes, attend.Event.GroupID)
+	if err != nil {
+		return
+	}
+
+	return
 }

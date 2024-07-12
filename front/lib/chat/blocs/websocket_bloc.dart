@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/models/poll.dart';
 import 'package:front/core/services/chat_service.dart';
@@ -29,6 +30,10 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
 
     on<PollDeletedEvent>((event, emit) async {
       emit(PollDeletedState(event.pollId));
+    });
+
+    on<EventAttendChangedEvent>((event, emit) async {
+      emit(EventAttendChangedState(event.attend));
     });
 
     on<SendMessageEvent>((event, emit) async {
@@ -76,6 +81,11 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
         case 'poll_deleted':
           add(PollDeletedEvent(
             pollId: message['content'] as int,
+          ));
+          break;
+        case 'event_attend_changed':
+          add(EventAttendChangedEvent(
+            attend: Attend.fromJson(message['content']),
           ));
           break;
         case "send_chat_message":

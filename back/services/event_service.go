@@ -82,11 +82,17 @@ func (s *EventService) GetEvents(pagination utils.Pagination, filters ...EventFi
 	return &pagination, nil
 }
 
-func (s *EventService) GetUserEventAttend(eventID uint, userID uint) *models.Attend {
+func (s *EventService) GetUserEventAttend(eventID uint, userID uint, preloads ...string) *models.Attend {
 	var attend models.Attend
-	database.CurrentDatabase.
-		Where("event_id = ? AND user_id = ?", eventID, userID).
-		First(&attend)
+	query := database.CurrentDatabase.Where("event_id = ? AND user_id = ?", eventID, userID)
+
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			query = query.Preload(preload)
+		}
+	}
+
+	query.First(&attend)
 
 	if attend.UserID == 0 {
 		return nil

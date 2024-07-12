@@ -16,6 +16,7 @@ import 'package:front/core/models/poll.dart';
 
 import 'blocs/poll_bloc.dart';
 import 'closed_polls/closed_polls.dart';
+import 'having_poll_to_answer.dart';
 
 class PollGateway extends StatefulWidget {
   final int id;
@@ -38,6 +39,7 @@ class _PollGatewayState extends State<PollGateway> {
   var pollList = <Poll>[];
   var currentPollIndex = 0;
   var showEveryPollsAnswered = false;
+  var showHavingPollToAnswer = true;
 
   void goToPreviousPoll() {
     if (showEveryPollsAnswered) {
@@ -48,12 +50,20 @@ class _PollGatewayState extends State<PollGateway> {
       setState(() {
         currentPollIndex--;
       });
+    } else {
+      setState(() {
+        showHavingPollToAnswer = true;
+      });
     }
   }
 
   void goToNextPoll(context) {
     // first check if there is a next poll in pollList
-    if (currentPollIndex + 1 < pollList.length) {
+    if (showHavingPollToAnswer) {
+      setState(() {
+        showHavingPollToAnswer = false;
+      });
+    } else if (currentPollIndex + 1 < pollList.length) {
       setState(() {
         currentPollIndex++;
       });
@@ -336,6 +346,11 @@ class _PollGatewayState extends State<PollGateway> {
                                 children: [
                                   if (showEveryPollsAnswered)
                                     const AllPollAnswered()
+                                  else if (showHavingPollToAnswer)
+                                    HavingPollToAnswer(
+                                      pollCount: pollPage.total,
+                                      onPressed: () => goToNextPoll(context),
+                                    )
                                   else
                                     PollField(
                                       poll: currentPoll,
@@ -367,36 +382,37 @@ class _PollGatewayState extends State<PollGateway> {
                                       },
                                     ),
                                   const SizedBox(height: 16),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        onPressed: currentPollIndex <= 0 &&
-                                                !showEveryPollsAnswered
-                                            ? null
-                                            : goToPreviousPoll,
-                                        icon: const Icon(Icons.arrow_back),
-                                      ),
-                                      Text(
-                                        '${currentPollIndex + 1} / ${pollPage.total}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall,
-                                      ),
-                                      IconButton(
-                                        onPressed: showEveryPollsAnswered
-                                            ? null
-                                            : () => goToNextPoll(context),
-                                        icon: const Icon(Icons.arrow_forward),
-                                      ),
-                                    ],
-                                  ),
+                                  if (!showHavingPollToAnswer)
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        IconButton(
+                                          onPressed: showHavingPollToAnswer
+                                              ? null
+                                              : goToPreviousPoll,
+                                          icon: const Icon(Icons.arrow_back),
+                                        ),
+                                        Text(
+                                          '${currentPollIndex + 1} / ${pollPage.total}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        ),
+                                        IconButton(
+                                          onPressed: showEveryPollsAnswered
+                                              ? null
+                                              : () => goToNextPoll(context),
+                                          icon: const Icon(Icons.arrow_forward),
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                             ),
                           ),
-                          if (!showEveryPollsAnswered)
+                          if (!showEveryPollsAnswered &&
+                              !showHavingPollToAnswer)
                             Positioned(
                               top: 0,
                               right: 0,
@@ -404,7 +420,8 @@ class _PollGatewayState extends State<PollGateway> {
                                 context,
                                 state,
                                 currentPoll,
-                                widget.hasParentEditionRights || currentPoll.userId == state.userData?.id,
+                                widget.hasParentEditionRights ||
+                                    currentPoll.userId == state.userData?.id,
                               ),
                             ),
                         ],

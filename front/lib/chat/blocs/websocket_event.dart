@@ -1,3 +1,4 @@
+import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/models/poll.dart';
 
@@ -29,6 +30,14 @@ class PollDeletedEvent extends WebSocketEvent {
 
   PollDeletedEvent({
     required this.pollId,
+  });
+}
+
+class EventAttendChangedEvent extends WebSocketEvent {
+  final Attend attend;
+
+  EventAttendChangedEvent({
+    required this.attend,
   });
 }
 
