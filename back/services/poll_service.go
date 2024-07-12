@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 	"together/database"
 	"together/models"
 	"together/utils"
@@ -35,13 +36,37 @@ func (s *PollService) EditPoll(poll models.Poll) (*models.Poll, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	err = database.CurrentDatabase.Save(&poll).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return &poll, nil
+}
+
+func (s *PollService) EditPollChoices(poll models.Poll, choices []models.PollAnswerChoice) error {
+	choicesIds := make([]uint, len(choices))
+
+	for _, choice := range choices {
+		choicesIds = append(choicesIds, choice.ID)
+	}
+
+	// find poll choices that are not in the choices array and delete them
+	err := database.CurrentDatabase.
+		Where("poll_id = ? AND id NOT IN ?", poll.ID, choicesIds).
+		Delete(&models.PollAnswerChoice{}).Error
+	if err != nil {
+		return err
+	}
+
+	for _, choice := range choices {
+		err := database.CurrentDatabase.Save(&choice).Error
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *PollService) DeletePoll(id uint) error {
@@ -55,7 +80,11 @@ func (s *PollService) DeletePoll(id uint) error {
 
 func (s *PollService) GetPollByID(id uint) (*models.Poll, error) {
 	var poll models.Poll
-	err := database.CurrentDatabase.Preload("Choices").First(&poll, id).Error
+	err := database.CurrentDatabase.
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Order("ID").Preload("Users")
+		}).
+		First(&poll, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +147,8 @@ func (s *PollService) SelectPollChoice(user models.User, choice models.PollAnswe
 func (s *PollService) GetPollChoicesOfUser(pollID uint, userID uint) ([]models.PollAnswerChoice, error) {
 	var choices []models.PollAnswerChoice
 	err := database.CurrentDatabase.
-		Joins("JOIN poll_answer_choice_user ON poll_answer_choices.id = poll_answer_choice_user.poll_answer_choice_id").
-		Where("poll_answer_choices.poll_id = ? AND poll_answer_choice_user.user_id = ?", pollID, userID).
+		Joins("JOIN poll_answer_choice_users ON poll_answer_choices.id = poll_answer_choice_users.poll_answer_choice_id").
+		Where("poll_answer_choices.poll_id = ? AND poll_answer_choice_users.user_id = ?", pollID, userID).
 		Find(&choices).Error
 	if err != nil {
 		return nil, err
@@ -128,10 +157,16 @@ func (s *PollService) GetPollChoicesOfUser(pollID uint, userID uint) ([]models.P
 	return choices, nil
 }
 
-func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
+func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination, closed bool) (*utils.Pagination, error) {
 	var polls []models.Poll
 
-	query := database.CurrentDatabase.Where("group_id = ?", groupID).Preload("Choices")
+	query := database.CurrentDatabase.
+		Where("group_id = ?", groupID).
+		Where("event_id IS NULL").
+		Where("is_closed = ?", closed).
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Order("ID").Preload("Users")
+		})
 
 	err := query.Scopes(utils.Paginate(polls, &pagination, query)).Find(&polls).Error
 	if err != nil {
@@ -143,10 +178,14 @@ func (s *PollService) GetPollsForGroup(groupID uint, pagination utils.Pagination
 	return &pagination, nil
 }
 
-func (s *PollService) GetPollsForEvent(eventID uint, pagination utils.Pagination) (*utils.Pagination, error) {
+func (s *PollService) GetPollsForEvent(eventID uint, pagination utils.Pagination, closed bool) (*utils.Pagination, error) {
 	var polls []models.Poll
 
-	query := database.CurrentDatabase.Where("event_id = ?", eventID).Preload("Choices")
+	query := database.CurrentDatabase.Where("event_id = ?", eventID).
+		Where("is_closed = ?", closed).
+		Preload("Choices", func(db *gorm.DB) *gorm.DB {
+			return db.Order("ID").Preload("Users")
+		})
 
 	err := query.Scopes(utils.Paginate(polls, &pagination, query)).Find(&polls).Error
 	if err != nil {
@@ -156,4 +195,23 @@ func (s *PollService) GetPollsForEvent(eventID uint, pagination utils.Pagination
 	pagination.Rows = polls
 
 	return &pagination, nil
+}
+
+func (s *PollService) HasEditPermission(userId uint, pollId uint) bool {
+	if userId == 0 || pollId == 0 {
+		return false
+	}
+
+	var poll models.Poll
+	err := database.CurrentDatabase.
+		Preload("Group").
+		Preload("Event").
+		First(&poll, pollId).
+		Error
+	if err != nil {
+		return false
+	}
+
+	// if user is owner of the poll, group or event, he can edit the poll
+	return poll.UserID == userId || poll.Group.OwnerID == userId || poll.Event.OrganizerID == userId
 }

@@ -39,6 +39,7 @@ func (c *EventTypeController) CreateEventType(ctx echo.Context) error {
 
 	file, err := ctx.FormFile("image")
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusUnprocessableEntity)
 	}
 	if !utils.IsImage(*file) {

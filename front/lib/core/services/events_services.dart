@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/event.dart';

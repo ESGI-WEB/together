@@ -15,16 +15,18 @@ import (
 )
 
 type PollController struct {
-	pollService  *services.PollService
-	eventService *services.EventService
-	groupService *services.GroupService
+	pollService      *services.PollService
+	eventService     *services.EventService
+	groupService     *services.GroupService
+	websocketService *services.WebSocketService
 }
 
 func NewPollController() *PollController {
 	return &PollController{
-		pollService:  services.NewPollService(),
-		eventService: services.NewEventService(),
-		groupService: services.NewGroupService(),
+		pollService:      services.NewPollService(),
+		eventService:     services.NewEventService(),
+		groupService:     services.NewGroupService(),
+		websocketService: services.NewWebSocketService(),
 	}
 }
 
@@ -32,31 +34,32 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 	var jsonBody models.PollCreateOrEdit
 	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	user := ctx.Get("user").(models.User)
 
-	// check event access
+	// check event exists
 	if jsonBody.EventID != nil {
 		event, err := c.eventService.GetEventByID(*jsonBody.EventID)
-		if err != nil {
+		if err != nil || event == nil || event.ID == 0 {
+			ctx.Logger().Error(err)
 			return ctx.String(http.StatusNotFound, "Event not found")
 		}
-
-		if event.OrganizerID != user.ID {
-			return ctx.String(http.StatusForbidden, "You are not the organizer of this event")
-		}
+		jsonBody.GroupID = &event.GroupID
 	}
 
 	// check group access
 	inGroup, err := c.groupService.IsUserInGroup(user.ID, *jsonBody.GroupID)
 	if err != nil || !inGroup {
+		ctx.Logger().Error(err)
 		return ctx.String(http.StatusForbidden, "You do not have access to this group")
 	}
 
 	newPoll, err := c.pollService.CreatePoll(user.ID, jsonBody)
 	if err != nil {
+		ctx.Logger().Error(err)
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
@@ -65,6 +68,7 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(newPoll.ID)
 	return ctx.JSON(http.StatusCreated, newPoll)
 }
 
@@ -88,7 +92,8 @@ func (c *PollController) GetPollsByEventID(ctx echo.Context) error {
 	}
 
 	pagination := utils.PaginationFromContext(ctx)
-	polls, err := c.pollService.GetPollsForEvent(eventID, pagination)
+	closed := ctx.QueryParam("closed") == "true"
+	polls, err := c.pollService.GetPollsForEvent(eventID, pagination, closed)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
@@ -111,12 +116,38 @@ func (c *PollController) GetPollsByGroupID(ctx echo.Context) error {
 	}
 
 	pagination := utils.PaginationFromContext(ctx)
-	polls, err := c.pollService.GetPollsForGroup(groupID, pagination)
+	closed := ctx.QueryParam("closed") == "true"
+	polls, err := c.pollService.GetPollsForGroup(groupID, pagination, closed)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
 	return ctx.JSON(http.StatusOK, polls)
+}
+
+func (c *PollController) GetPoll(ctx echo.Context) error {
+	poll, err := c.basePollPreRequest(ctx)
+	if err != nil {
+		if errors.Is(err, coreErrors.ErrNotFound) {
+			return ctx.NoContent(http.StatusNotFound)
+		}
+		if errors.Is(err, coreErrors.ErrForbidden) {
+			return ctx.NoContent(http.StatusForbidden)
+		}
+		if errors.Is(err, coreErrors.ErrBadRequest) {
+			return ctx.NoContent(http.StatusBadRequest)
+		}
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	// user must be in the group to see the poll
+	user := ctx.Get("user").(models.User)
+	inGroup, err := c.groupService.IsUserInGroup(user.ID, poll.GroupID)
+	if err != nil || !inGroup {
+		return ctx.String(http.StatusForbidden, "You do not have access to this group")
+	}
+
+	return ctx.JSON(http.StatusOK, poll)
 }
 
 func (c *PollController) EditPoll(ctx echo.Context) error {
@@ -135,8 +166,8 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 	}
 
 	user := ctx.Get("user").(models.User)
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	var jsonBody models.PollCreateOrEdit
@@ -156,18 +187,37 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 		poll.IsMultiple = *jsonBody.IsMultiple
 	}
 
-	// used to add new choices, beware, it will not remove the old ones
-	// use the delete choice endpoint to remove choices instead
+	editedChoices := make([]models.PollAnswerChoice, 0)
 	if jsonBody.Choices != nil {
-		choices := *poll.Choices
-
+		// it's a PUT, so all choices must be sent
+		// if choice has an id, it is an existing choice that is being edited
+		// otherwise, it is a new choice to create
+		// if the choice is not in the json body, it is deleted
 		for _, choice := range *jsonBody.Choices {
 			choiceParsed := choice.ToPollAnswerChoice()
 			choiceParsed.PollID = poll.ID
-			choices = append(choices, choiceParsed)
-		}
 
-		poll.Choices = &choices
+			if choice.ID != nil {
+				// TODO check if the choice belongs to the poll
+				choiceTarget, err := c.pollService.GetPollChoiceByID(*choice.ID)
+				if err != nil {
+					return ctx.NoContent(http.StatusInternalServerError)
+				}
+				if choiceTarget.PollID != poll.ID {
+					return ctx.String(http.StatusForbidden, "Choice does not belong to the poll")
+				}
+				choiceParsed.ID = *choice.ID
+			}
+
+			editedChoices = append(editedChoices, choiceParsed)
+		}
+	}
+
+	if len(editedChoices) > 0 {
+		err = c.pollService.EditPollChoices(*poll, editedChoices)
+		if err != nil {
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
 	}
 
 	editedPoll, err := c.pollService.EditPoll(*poll)
@@ -180,6 +230,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(editedPoll.ID)
 	return ctx.JSON(http.StatusOK, editedPoll)
 }
 
@@ -199,8 +250,8 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 	}
 
 	user := ctx.Get("user").(models.User)
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	err = c.pollService.DeletePoll(poll.ID)
@@ -208,6 +259,7 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollDeleted(poll.ID, poll.GroupID)
 	return ctx.NoContent(http.StatusNoContent)
 
 }
@@ -250,6 +302,7 @@ func (c *PollController) AddChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.JSON(http.StatusCreated, choice)
 }
 
@@ -269,8 +322,8 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 	}
 
 	// to delete a choice, the user must be owner of the poll
-	if poll.UserID != user.ID {
-		return ctx.String(http.StatusForbidden, "You are not the owner of this poll")
+	if !c.pollService.HasEditPermission(user.ID, poll.ID) {
+		return ctx.String(http.StatusForbidden, "You do not have permission to edit this poll")
 	}
 
 	err = c.pollService.DeletePollChoice(choice.ID)
@@ -278,6 +331,7 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.NoContent(http.StatusNoContent)
 }
 
@@ -302,21 +356,24 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		return ctx.String(http.StatusForbidden, "You do not have access to this group")
 	}
 
+	// check if the choice is already selected by this user
+	selectedChoices, err := c.pollService.GetPollChoicesOfUser(poll.ID, user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	for _, selectedChoice := range selectedChoices {
+		if selectedChoice.ID == choice.ID {
+			return ctx.String(http.StatusConflict, "You have already selected this choice")
+		}
+	}
+
 	if !poll.IsMultiple {
-		// check if user has already selected a choice
-		selectedChoice, err := c.pollService.GetPollChoicesOfUser(poll.ID, user.ID)
-		if err != nil {
-			return ctx.NoContent(http.StatusInternalServerError)
-		}
-
-		if len(selectedChoice) > 0 {
-			return ctx.String(http.StatusConflict, "You have already selected a choice")
-		}
-
-		// check if the choice is already selected by this user
-		for _, selectedChoice := range selectedChoice {
-			if selectedChoice.ID == choice.ID {
-				return ctx.String(http.StatusConflict, "You have already selected this choice")
+		// deselect other choices if the poll is not multiple
+		for _, selectedChoice := range selectedChoices {
+			err = c.pollService.SelectPollChoice(*user, selectedChoice, false)
+			if err != nil {
+				return ctx.NoContent(http.StatusInternalServerError)
 			}
 		}
 	}
@@ -330,6 +387,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	c.notifyUsersOfPollChange(poll.ID)
 	return ctx.NoContent(http.StatusNoContent)
 }
 
@@ -358,6 +416,8 @@ func (c *PollController) DeselectChoice(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
+
+	c.notifyUsersOfPollChange(poll.ID)
 
 	return ctx.NoContent(http.StatusNoContent)
 }
@@ -401,4 +461,51 @@ func (c *PollController) basePollPreRequest(ctx echo.Context) (*models.Poll, err
 	}
 
 	return poll, nil
+}
+
+func (c *PollController) notifyUsersOfPollChange(pollID uint) {
+	poll, err := c.pollService.GetPollByID(pollID)
+	if err != nil {
+		return
+	}
+
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundPollUpdatedMessageType,
+		},
+		Content: poll,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		return
+	}
+
+	err = c.websocketService.BroadcastToGroup(bytes, poll.GroupID)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (c *PollController) notifyUsersOfPollDeleted(pollID uint, groupID uint) {
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundPollDeletedMessageType,
+		},
+		Content: pollID,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		return
+	}
+
+	err = c.websocketService.BroadcastToGroup(bytes, groupID)
+	if err != nil {
+		return
+	}
+
+	return
 }

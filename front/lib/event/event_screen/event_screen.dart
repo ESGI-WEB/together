@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/partials/error_occurred.dart';
+import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
+import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
-import 'package:front/event/event_screen/partials/event_joined_members.dart';
+import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
-import 'package:front/event/event_screen/partials/event_screen_poll.dart';
 import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatelessWidget {
@@ -40,8 +41,13 @@ class EventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          EventScreenBloc()..add(EventScreenLoaded(eventId: eventId)),
+      create: (context) => EventScreenBloc()
+        ..add(
+          EventScreenLoaded(
+            eventId: eventId,
+            groupId: groupId,
+          ),
+        ),
       child: BlocBuilder<EventScreenBloc, EventScreenState>(
         builder: (context, state) {
           if (state.status == EventScreenStatus.loading) {
@@ -50,9 +56,12 @@ class EventScreen extends StatelessWidget {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context
-                  .read<EventScreenBloc>()
-                  .add(EventScreenLoaded(eventId: eventId));
+              context.read<EventScreenBloc>().add(
+                    EventScreenLoaded(
+                      eventId: eventId,
+                      groupId: groupId,
+                    ),
+                  );
             },
             child: Builder(
               builder: (context) {
@@ -70,6 +79,9 @@ class EventScreen extends StatelessWidget {
                 }
 
                 final Address? address = event.address;
+                final bool hasParentEditionRights =
+                    state.event?.organizerId == state.userData?.id ||
+                        state.group?.ownerId == state.userData?.id;
 
                 return SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -101,9 +113,9 @@ class EventScreen extends StatelessWidget {
                                                 .titleSmall,
                                           ),
                                           const SizedBox(height: 8),
-                                          EventJoinedMembers(
-                                              firstParticipants:
-                                                  state.firstParticipants ?? []),
+                                          AvatarStack(
+                                              users: state.firstParticipants ??
+                                                  []),
                                         ],
                                       ),
                                     ),
@@ -117,7 +129,11 @@ class EventScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            const EventScreenPoll(),
+                            PollGateway(
+                              id: event.id,
+                              type: PollType.event,
+                              hasParentEditionRights: hasParentEditionRights,
+                            ),
                             const SizedBox(height: 16),
                             EventScreenAbout(event: event),
                           ],

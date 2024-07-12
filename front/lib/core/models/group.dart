@@ -9,6 +9,7 @@ class Group {
   final String? description;
   final String code;
   final List<User>? users;
+  final int ownerId;
 
   Group({
     required this.id,
@@ -19,6 +20,7 @@ class Group {
     this.description,
     required this.code,
     this.users,
+    required this.ownerId,
   });
 
   factory Group.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,7 @@ class Group {
       users: json['Users'] != null
           ? List<User>.from(json['Users'].map((user) => User.fromJson(user)))
           : null,
+      ownerId: json['owner_id'],
     );
   }
 

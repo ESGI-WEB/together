@@ -43,7 +43,8 @@ class AppTheme {
       scaffoldBackgroundColor: scheme.background,
       canvasColor: scheme.background,
       cardColor: scheme.background,
-      disabledColor: const Color(0xfff5f5f5),
+      highlightColor: scheme.background,
+      disabledColor: const Color(0xff7a7a7a),
       textTheme: TextTheme(
         displayLarge: TextStyle(
           color: scheme.primary,
@@ -145,11 +146,55 @@ class AppTheme {
         color: Colors.transparent,
         foregroundColor: scheme.primary,
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith(
+          (states) {
+            Color color = scheme.primary;
+
+            if (states.contains(MaterialState.selected)) {
+              color = scheme.background;
+            }
+
+            if (states.contains(MaterialState.disabled)) {
+              color = scheme.secondary.withOpacity(0.5);
+            }
+
+            return color;
+          },
+        ),
+        trackColor: MaterialStateProperty.resolveWith(
+          (states) {
+            Color color = scheme.onPrimary;
+
+            if (states.contains(MaterialState.selected)) {
+              color = scheme.primary;
+            }
+
+            if (states.contains(MaterialState.disabled)) {
+              color = scheme.onSecondary.withOpacity(0.5);
+            }
+
+            return color;
+          },
+        ),
+        trackOutlineColor: MaterialStateProperty.resolveWith(
+          (states) {
+            if (states.contains(MaterialState.disabled)) {
+              return scheme.primary.withOpacity(0.5);
+            }
+            return scheme.primary;
+          },
+        ),
+      ),
       cardTheme: CardTheme(
         elevation: 4,
         clipBehavior: Clip.antiAlias,
         color: Colors.white,
         shadowColor: scheme.background,
+        surfaceTintColor: scheme.background,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.background,
         surfaceTintColor: scheme.background,
       ),
     );

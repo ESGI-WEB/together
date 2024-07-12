@@ -14,6 +14,7 @@ type PollAnswerChoice struct {
 
 type PollAnswerChoiceCreateOrEdit struct {
 	Choice string `gorm:"not null" json:"choice" validate:"required,min=1,max=255"`
+	ID     *uint  `json:"id,omitempty" validate:"omitempty,number"`
 }
 
 func (p *PollAnswerChoiceCreateOrEdit) ToPollAnswerChoice() PollAnswerChoice {

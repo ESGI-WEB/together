@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:front/core/models/message.dart';
+import 'package:front/core/models/poll.dart';
 
 abstract class WebSocketEvent {}
 
@@ -9,12 +8,28 @@ class NewMessageReceivedEvent extends WebSocketEvent {
 
   NewMessageReceivedEvent._({required this.message});
 
-  factory NewMessageReceivedEvent.fromString(String message) {
+  factory NewMessageReceivedEvent.fromString(Map<String, dynamic> message) {
     final convertedMessage = ServerBoundSendChatMessage.fromJson(
-      jsonDecode(message),
+      message,
     );
     return NewMessageReceivedEvent._(message: convertedMessage);
   }
+}
+
+class PollUpdatedEvent extends WebSocketEvent {
+  final Poll poll;
+
+  PollUpdatedEvent({
+    required this.poll,
+  });
+}
+
+class PollDeletedEvent extends WebSocketEvent {
+  final int pollId;
+
+  PollDeletedEvent({
+    required this.pollId,
+  });
 }
 
 class WebSocketErrorEvent extends WebSocketEvent {

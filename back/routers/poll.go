@@ -15,6 +15,7 @@ func (r *PollRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("", pollController.CreatePoll, middlewares.AuthenticationMiddleware())
 	group.GET("/event/:eventId", pollController.GetPollsByEventID, middlewares.AuthenticationMiddleware())
 	group.GET("/group/:groupId", pollController.GetPollsByGroupID, middlewares.AuthenticationMiddleware())
+	group.GET("/:pollId", pollController.GetPoll, middlewares.AuthenticationMiddleware())
 	group.PUT("/:pollId", pollController.EditPoll, middlewares.AuthenticationMiddleware())
 	group.DELETE("/:pollId", pollController.DeletePoll, middlewares.AuthenticationMiddleware())
 	group.POST("/:pollId/choice", pollController.AddChoice, middlewares.AuthenticationMiddleware())
