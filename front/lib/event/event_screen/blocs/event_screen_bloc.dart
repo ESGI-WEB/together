@@ -53,7 +53,7 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
 
     on<EventScreenEventAttendeesRequested>((event, emit) async {
       emit(state.copyWith(
-        status: EventScreenStatus.attendLoading,
+        status: EventScreenStatus.attendsLoading,
       ));
 
       try {
@@ -64,12 +64,12 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
         );
 
         emit(state.copyWith(
-          status: EventScreenStatus.attendSuccess,
+          status: EventScreenStatus.attendsSuccess,
           participantsPage: page,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
-          status: EventScreenStatus.attendError,
+          status: EventScreenStatus.attendsError,
           errorMessage: error.message,
         ));
       }

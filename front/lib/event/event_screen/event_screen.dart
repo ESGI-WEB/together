@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/chat/blocs/websocket_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
+import 'package:front/event/event_screen/partials/event_attends_list.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
@@ -52,6 +54,20 @@ class EventScreen extends StatelessWidget {
         );
   }
 
+  void _openAttendsSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(32),
+          child: EventAttendsList(
+            eventId: eventId,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -83,17 +99,20 @@ class EventScreen extends StatelessWidget {
             },
             child: BlocListener<EventScreenBloc, EventScreenState>(
               listener: (context, state) {
-                if (state.status == EventScreenStatus.attendSuccess) {
+                if (state.status == EventScreenStatus.attendsSuccess) {
                   final page = state.participantsPage;
                   if (page != null) {
                     if (page.page == 1) {
                       participants.clear();
                     }
 
-                    participants.addAll(page.rows
-                        .where((e) => e.user != null)
-                        .map((e) => e.user!)
-                        .toList());
+                    participants.addAll(
+                      page.rows
+                          .where((e) => e.user != null)
+                          .where((e) => !participants.any((u) => u.id == e.user?.id))
+                          .map((e) => e.user!)
+                          .toList(),
+                    );
                   }
                 }
               },
@@ -165,8 +184,16 @@ class EventScreen extends StatelessWidget {
                                                         .titleSmall,
                                                   ),
                                                   const SizedBox(height: 8),
-                                                  AvatarStack(
-                                                      users: participants),
+                                                  GestureDetector(
+                                                    onTap: () =>
+                                                        _openAttendsSheet(
+                                                            context),
+                                                    child: AvatarStack(
+                                                      users: participants,
+                                                      total: state
+                                                          .participantsPage?.total,
+                                                    ),
+                                                  ),
                                                   const SizedBox(height: 8),
                                                   OutlinedButton(
                                                       onPressed: state.status ==
