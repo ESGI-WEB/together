@@ -22,12 +22,26 @@ func (s *MessageService) CreateChatMessage(message models.Message) (*models.Mess
 	return &message, nil
 }
 
-func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, error) {
+func (s *MessageService) GetAllChatMessagesByGroup(groupID uint) ([]models.Message, error) {
 	var messages []models.Message
 	if err := database.CurrentDatabase.Preload("User").Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
 		return nil, err
 	}
 	return messages, nil
+}
+
+func (s *MessageService) GetMessageReactions(messageID uint) ([]string, error) {
+	var reactions []models.Reaction
+	if err := database.CurrentDatabase.Where("message_id = ?", messageID).Find(&reactions).Error; err != nil {
+		return nil, err
+	}
+
+	reactionContents := make([]string, len(reactions))
+	for i, reaction := range reactions {
+		reactionContents[i] = reaction.Content
+	}
+
+	return reactionContents, nil
 }
 
 func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReacted models.User) (*models.Reaction, error) {

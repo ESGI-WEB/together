@@ -14,12 +14,14 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
   final User author;
   final int groupId;
   final int messageId;
+  final List<String> reactions;
 
   ServerBoundSendChatMessage({
     required this.content,
     required this.author,
     required this.groupId,
     required this.messageId,
+    required this.reactions,
   }) : super(type: 'send_chat_message');
 
   factory ServerBoundSendChatMessage.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
       author: User.fromJson(json['author']),
       groupId: json['group_id'],
       messageId: json['message_id'],
+      reactions: (json['reactions'] as List<dynamic>).cast<String>(),
     );
   }
 

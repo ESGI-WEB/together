@@ -6,12 +6,14 @@ class ChatMessage {
   final User author;
   final int groupId;
   final int messageId;
+  final List<String> reactions;
 
   ChatMessage({
     required this.content,
     required this.author,
     required this.groupId,
     required this.messageId,
+    required this.reactions,
   });
 
   factory ChatMessage.fromServerBoundChatMessage(
@@ -21,6 +23,7 @@ class ChatMessage {
       author: serverBoundSendChatMessage.author,
       groupId: serverBoundSendChatMessage.groupId,
       messageId: serverBoundSendChatMessage.messageId,
+      reactions: serverBoundSendChatMessage.reactions,
     );
   }
 }

@@ -54,9 +54,10 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 		TypeMessage: services.TypeMessage{
 			Type: services.ServerBoundSendChatMessageType,
 		},
-		Content: reaction.Message.Content,
-		Author:  &reaction.Message.User,
-		GroupId: reaction.Message.GroupID,
+		Content:   reaction.Message.Content,
+		Author:    &reaction.Message.User,
+		GroupId:   reaction.Message.GroupID,
+		Reactions: make([]string, 0),
 	}
 
 	bytes, err := json.Marshal(response)

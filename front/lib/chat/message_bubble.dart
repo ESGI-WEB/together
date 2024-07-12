@@ -70,6 +70,11 @@ class MessageBubbleState extends State<MessageBubble> {
                     });
                   },
                 ),
+              Row(
+                children: widget.message.reactions
+                    .map((string) => Text(string))
+                    .toList(),
+              )
             ],
           ),
         ),

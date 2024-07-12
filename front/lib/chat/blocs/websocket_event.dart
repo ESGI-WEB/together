@@ -17,6 +17,19 @@ class NewMessageReceivedEvent extends WebSocketEvent {
   }
 }
 
+class MessageUpdatedEvent extends WebSocketEvent {
+  final ServerBoundSendChatMessage message;
+
+  MessageUpdatedEvent._({required this.message});
+
+  factory MessageUpdatedEvent.fromString(String message) {
+    final convertedMessage = ServerBoundSendChatMessage.fromJson(
+      jsonDecode(message),
+    );
+    return MessageUpdatedEvent._(message: convertedMessage);
+  }
+}
+
 class WebSocketErrorEvent extends WebSocketEvent {
   WebSocketErrorEvent(error);
 }

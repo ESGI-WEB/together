@@ -162,12 +162,17 @@ func (s *WebSocketService) handleFetchChatMessage(msg []byte, ws *websocket.Conn
 		return err
 	}
 
-	groupMessages, err := s.messageService.GetChatMessageByGroup(receivedMessage.GroupId)
+	groupMessages, err := s.messageService.GetAllChatMessagesByGroup(receivedMessage.GroupId)
 	if err != nil {
 		return err
 	}
 
 	for _, groupMessage := range groupMessages {
+		reactions, err := s.messageService.GetMessageReactions(groupMessage.ID)
+		if err != nil {
+			return err
+		}
+
 		response := ServerBoundSendChatMessage{
 			TypeMessage: TypeMessage{
 				Type: ServerBoundSendChatMessageType,
@@ -176,6 +181,7 @@ func (s *WebSocketService) handleFetchChatMessage(msg []byte, ws *websocket.Conn
 			Author:    &groupMessage.User,
 			GroupId:   groupMessage.GroupID,
 			MessageId: groupMessage.ID,
+			Reactions: reactions,
 		}
 
 		bytes, err := json.Marshal(response)
@@ -204,6 +210,7 @@ type ServerBoundSendChatMessage struct {
 	Author    *models.User `json:"author" validate:"required"`
 	GroupId   uint         `json:"group_id" validate:"required"`
 	MessageId uint         `json:"message_id" validate:"required"`
+	Reactions []string     `json:"reactions"`
 }
 
 type ClientBoundFetchChatMessage struct {
