@@ -47,7 +47,7 @@ final goRouter = GoRouter(
   // TODO error screen
   // errorBuilder: (context, state) => ErrorScreen(state.error),
   debugLogDiagnostics: true,
-  initialLocation: kIsWeb ? '/groups' : '/admin',
+  initialLocation: !kIsWeb ? '/groups' : '/admin',
   redirect: (BuildContext context, GoRouterState state) async {
     if (await StorageService.isUserLogged()) {
       return null;
