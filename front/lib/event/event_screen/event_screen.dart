@@ -178,7 +178,7 @@ class EventScreen extends StatelessWidget {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    'Participants',
+                                                    '${state.participantsPage?.total} participants',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .titleSmall,
