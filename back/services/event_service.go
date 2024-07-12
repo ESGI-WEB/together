@@ -47,7 +47,8 @@ func (s *EventService) GetEventAttends(eventID uint, pagination utils.Pagination
 	var attends []models.Attend
 
 	query := database.CurrentDatabase.
-		Where("event_id = ?", eventID)
+		Where("event_id = ?", eventID).
+		Order("updated_at DESC") // get the latest attend first
 
 	if hasAttended != nil {
 		query = query.Where("has_attended = ?", *hasAttended)

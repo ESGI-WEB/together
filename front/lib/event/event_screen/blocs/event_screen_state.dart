@@ -18,7 +18,7 @@ class EventScreenState {
   final Event? event;
   final Group? group;
   final JwtData? userData;
-  final List<User>? firstParticipants;
+  final Paginated<Attend>? participantsPage;
   final String? errorMessage;
   final bool? isAttending;
 
@@ -27,7 +27,7 @@ class EventScreenState {
     this.event,
     this.group,
     this.userData,
-    this.firstParticipants,
+    this.participantsPage,
     this.errorMessage,
     this.isAttending,
   });
@@ -37,7 +37,7 @@ class EventScreenState {
     Event? event,
     Group? group,
     JwtData? userData,
-    List<User>? firstParticipants,
+    Paginated<Attend>? participantsPage,
     String? errorMessage,
     bool? isAttending,
   }) {
@@ -46,7 +46,7 @@ class EventScreenState {
       event: event ?? this.event,
       group: group ?? this.group,
       userData: userData ?? this.userData,
-      firstParticipants: firstParticipants ?? this.firstParticipants,
+      participantsPage: participantsPage ?? this.participantsPage,
       errorMessage: errorMessage ?? this.errorMessage,
       isAttending: isAttending ?? this.isAttending,
     );

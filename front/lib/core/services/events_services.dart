@@ -20,11 +20,12 @@ class EventsServices {
 
   static Future<Paginated<Attend>> getEventAttends({
     required int eventId,
+    int page = 1,
     bool? hasAttended,
   }) async {
-    String url = '/events/$eventId/attends';
+    String url = '/events/$eventId/attends?page=$page';
     if (hasAttended != null) {
-      url += '?has_attended=${hasAttended.toString()}';
+      url += '&has_attended=${hasAttended.toString()}';
     }
 
     final response = await ApiServices.get(url);

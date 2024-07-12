@@ -171,7 +171,7 @@ func (c *EventController) GetUserEventAttend(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNotFound)
 	}
 
-	attend := c.EventService.GetUserEventAttend(user.ID, uint(eventID))
+	attend := c.EventService.GetUserEventAttend(uint(eventID), user.ID)
 	return ctx.JSON(http.StatusOK, attend)
 }
 
@@ -213,7 +213,7 @@ func (c *EventController) ChangeAttend(ctx echo.Context) error {
 }
 
 func (c *EventController) notifyUsersOfAttendsChanged(userID uint, eventID uint) {
-	attend := c.EventService.GetUserEventAttend(userID, eventID, "User", "Event")
+	attend := c.EventService.GetUserEventAttend(eventID, userID, "User", "Event")
 	if attend == nil {
 		return
 	}
