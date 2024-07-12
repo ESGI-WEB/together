@@ -30,19 +30,21 @@ func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, 
 	return messages, nil
 }
 
-func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReactedID uint) (*models.Reaction, error) {
+func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReacted models.User) (*models.Reaction, error) {
 	var message models.Message
-	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+	if err := database.CurrentDatabase.Preload("User").First(&message, messageID).Error; err != nil {
 		return nil, err
 	}
 
 	reaction := models.Reaction{
 		Content:   reactionContent,
+		Message:   message,
+		User:      whoReacted,
 		MessageID: message.ID,
-		UserID:    whoReactedID,
+		UserID:    whoReacted.ID,
 	}
 
-	if err := database.CurrentDatabase.Create(reaction).Error; err != nil {
+	if err := database.CurrentDatabase.Create(&reaction).Error; err != nil {
 		return nil, err
 	}
 

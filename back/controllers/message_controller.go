@@ -41,7 +41,7 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	reaction, err := c.messageService.ReactToMessage(messageID, jsonBody.ReactionContent, user.ID)
+	reaction, err := c.messageService.ReactToMessage(messageID, jsonBody.ReactionContent, user)
 
 	if err != nil {
 		ctx.Logger().Error(err)

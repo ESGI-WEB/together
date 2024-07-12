@@ -5,11 +5,13 @@ import 'package:front/core/services/chat_service.dart';
 class ReactionRow extends StatelessWidget {
   final List<String> reactions;
   final int messageId;
+  final Function onPressed;
 
   const ReactionRow({
     super.key,
     required this.reactions,
     required this.messageId,
+    required this.onPressed,
   });
 
   @override
@@ -36,13 +38,14 @@ class ReactionRow extends StatelessWidget {
                 ),
                 onPressed: () {
                   // TODO: Handle reaction press
-                  print("Reaction clicked: ${reactions[index]}");
                   ChatService.createReaction(
                     Reaction(
                       content: reactions[index],
                       messageId: messageId,
                     ),
                   );
+
+                  onPressed();
                 },
               ),
             ),

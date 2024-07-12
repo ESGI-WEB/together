@@ -50,8 +50,10 @@ class MessageBubbleState extends State<MessageBubble> {
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 10,
+                  ),
                   child: Text(
                     widget.message.content,
                     style: const TextStyle(fontSize: 16),
@@ -62,6 +64,11 @@ class MessageBubbleState extends State<MessageBubble> {
                 ReactionRow(
                   reactions: const ["👍", "😂", "👏", "💕"],
                   messageId: widget.message.messageId,
+                  onPressed: () {
+                    setState(() {
+                      _showReactions = false;
+                    });
+                  },
                 ),
             ],
           ),
