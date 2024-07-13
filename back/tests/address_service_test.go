@@ -13,7 +13,7 @@ func TestAddAddress_Success(t *testing.T) {
 	service := services.NewAddressService()
 
 	addressCreate := models.AddressCreate{
-		//Street: "Test St",
+		Street: "Test St",
 		Number: "123 Bis",
 		City:   "Testville",
 		Zip:    "75001",
