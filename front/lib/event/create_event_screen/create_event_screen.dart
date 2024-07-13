@@ -183,6 +183,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           latitude: latitude,
           longitude: longitude,
         ),
+        recurrenceType: selectedRecurrenceType,
       );
 
       context.read<CreateEventBloc>().add(CreateEventSubmitted(event));
@@ -267,42 +268,41 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       },
                     ),
                     DropdownButtonFormField<RecurrenceType>(
-                        decoration: const InputDecoration(
-                          labelText: 'Evènement récurrent',
-                        ),
-                        value: selectedRecurrenceType,
-                        items: recurrenceTypes.map((RecurrenceType type) {
-                          return DropdownMenuItem<RecurrenceType>(
-                            value: type,
-                            child: Text(getRecurrenceLabel(type)),
-                          );
-                        }).toList(),
-                        onChanged: (RecurrenceType? newValue) {
-                          setState(() {
-                            selectedRecurrenceType = newValue;
-                          });
-                        },
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16), // Style de l'élément sélectionné
+                      decoration: const InputDecoration(
+                        labelText: 'Evènement récurrent',
                       ),
-                      DropdownButtonFormField<EventType>(
-                        decoration: const InputDecoration(
-                            labelText: "Type d'évènement"),
-                        items: eventTypes.map((EventType type) {
-                          return DropdownMenuItem<EventType>(
-                            value: type,
-                            child: Text(type.name),
-                          );
-                        }).toList(),
-                        onChanged: (EventType? value) {
-                          setState(() {
-                            selectedEventType = value;
-                            typeId = value?.id ?? 0;
-                          });
-                        },
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 16),
+                      value: selectedRecurrenceType,
+                      items: recurrenceTypes.map((RecurrenceType type) {
+                        return DropdownMenuItem<RecurrenceType>(
+                          value: type,
+                          child: Text(getRecurrenceLabel(type)),
+                        );
+                      }).toList(),
+                      onChanged: (RecurrenceType? newValue) {
+                        setState(() {
+                          selectedRecurrenceType = newValue;
+                        });
+                      },
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16), // Style de l'élément sélectionné
+                    ),
+                    DropdownButtonFormField<EventType>(
+                      decoration:
+                          const InputDecoration(labelText: "Type d'évènement"),
+                      items: eventTypes.map((EventType type) {
+                        return DropdownMenuItem<EventType>(
+                          value: type,
+                          child: Text(type.name),
+                        );
+                      }).toList(),
+                      onChanged: (EventType? value) {
+                        setState(() {
+                          selectedEventType = value;
+                          typeId = value?.id ?? 0;
+                        });
+                      },
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                       selectedItemBuilder: (BuildContext context) {
                         return eventTypes.map<Widget>((EventType type) {
                           return Text(

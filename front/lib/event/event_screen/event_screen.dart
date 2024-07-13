@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
+import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
-import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
@@ -128,8 +128,7 @@ class EventScreen extends StatelessWidget {
                                           const SizedBox(height: 8),
                                           AvatarStack(
                                               users: state.firstParticipants ??
-
-                                                      []),
+                                                  []),
                                         ],
                                       ),
                                     ),
@@ -170,7 +169,8 @@ class EventScreen extends StatelessWidget {
                                       );
                                 }
                               },
-                              child: const Text('Duplicate Events for Date'),
+                              child: const Text(
+                                  "Dupliquer l'évènement un autre jour"),
                             ),
                           ],
                         ),
