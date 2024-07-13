@@ -24,10 +24,10 @@ jobs:
         run: docker-compose up -d
 
       - name: Install dependencies
-        run: docker-compose exec app go mod download
+        run: docker-compose run --rm app go mod download
 
       - name: Tidy up dependencies
-        run: docker-compose exec app go mod tidy
+        run: docker-compose run --rm app go mod tidy
 
       - name: Run tests
-        run: docker-compose exec app go test -v ./...
+        run: docker-compose run --rm app go test -v ./...
