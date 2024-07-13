@@ -22,11 +22,12 @@ class EventsServices {
 
   static Future<Paginated<Attend>> getEventAttends({
     required int eventId,
+    int page = 1,
     bool? hasAttended,
   }) async {
-    String url = '/events/$eventId/attends';
+    String url = '/events/$eventId/attends?page=$page';
     if (hasAttended != null) {
-      url += '?has_attended=${hasAttended.toString()}';
+      url += '&has_attended=${hasAttended.toString()}';
     }
 
     final response = await ApiServices.get(url);
@@ -71,5 +72,22 @@ class EventsServices {
     } on ApiException catch (error) {
       throw Exception(error);
     }
+  }
+
+  static Future<Attend> changeEventAttend({
+    required int eventId,
+    required bool isAttending,
+  }) async {
+    final response = await ApiServices.post(
+      '/events/$eventId/user-event-attend',
+      {'is_attending': isAttending},
+    );
+    return Attend.fromJson(ApiServices.decodeResponse(response));
+  }
+
+  static Future<Attend?> getUserAttendEvent(int eventId) async {
+    final response = await ApiServices.get('/events/$eventId/user-event-attend');
+    final decodedResponse = ApiServices.decodeResponse(response);
+    return decodedResponse == null ? null : Attend.fromJson(decodedResponse);
   }
 }

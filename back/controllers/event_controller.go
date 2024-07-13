@@ -14,15 +14,18 @@ import (
 )
 
 type EventController struct {
-	GroupService   *services.GroupService
-	EventService   *services.EventService
-	AddressService *services.AddressService
+	GroupService     *services.GroupService
+	EventService     *services.EventService
+	AddressService   *services.AddressService
+	WebsocketService *services.WebSocketService
 }
 
 func NewEventController() *EventController {
 	return &EventController{
-		EventService:   services.NewEventService(),
-		AddressService: services.NewAddressService(),
+		EventService:     services.NewEventService(),
+		AddressService:   services.NewAddressService(),
+		GroupService:     services.NewGroupService(),
+		WebsocketService: services.NewWebSocketService(),
 	}
 }
 
@@ -242,4 +245,89 @@ func (c *EventController) DuplicateEventsForTomorrow(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 	return ctx.NoContent(http.StatusCreated)
+}
+
+func (c *EventController) GetUserEventAttend(ctx echo.Context) error {
+	user := ctx.Get("user").(models.User)
+
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil || event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	attend := c.EventService.GetUserEventAttend(uint(eventID), user.ID)
+	return ctx.JSON(http.StatusOK, attend)
+}
+
+func (c *EventController) ChangeAttend(ctx echo.Context) error {
+	user := ctx.Get("user").(models.User)
+
+	eventIDParam := ctx.Param("id")
+	eventIDInt, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+	eventID := uint(eventIDInt)
+
+	event, err := c.EventService.GetEventByID(eventID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+	if event == nil || event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	body := struct {
+		IsAttending bool `json:"is_attending"`
+	}{}
+	err = json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+	isAttending := body.IsAttending
+
+	attend, err := c.EventService.ChangeUserEventAttend(isAttending, eventID, user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	c.notifyUsersOfAttendsChanged(user.ID, eventID)
+
+	return ctx.JSON(http.StatusOK, attend)
+}
+
+func (c *EventController) notifyUsersOfAttendsChanged(userID uint, eventID uint) {
+	attend := c.EventService.GetUserEventAttend(eventID, userID, "User", "Event")
+	if attend == nil {
+		return
+	}
+
+	pollWsMessage := services.ServerBoundGroupBroadcast{
+		TypeMessage: services.TypeMessage{
+			Type: services.ServerBoundEventAttendChangedMessageType,
+		},
+		Content: attend,
+	}
+
+	bytes, err := json.Marshal(pollWsMessage)
+	if err != nil {
+		return
+	}
+
+	err = c.WebsocketService.BroadcastToGroup(bytes, attend.Event.GroupID)
+	if err != nil {
+		return
+	}
+
+	return
 }
