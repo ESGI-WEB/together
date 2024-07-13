@@ -215,11 +215,12 @@ type ServerBoundGroupBroadcast struct {
 }
 
 const (
-	ClientBoundSendChatMessageType    string = "send_chat_message"
-	ClientBoundFetchChatMessageType          = "fetch_chat_messages"
-	ServerBoundSendChatMessageType           = "send_chat_message"
-	ServerBoundPollUpdatedMessageType        = "poll_updated"
-	ServerBoundPollDeletedMessageType        = "poll_deleted"
+	ClientBoundSendChatMessageType           string = "send_chat_message"
+	ClientBoundFetchChatMessageType                 = "fetch_chat_messages"
+	ServerBoundSendChatMessageType                  = "send_chat_message"
+	ServerBoundPollUpdatedMessageType               = "poll_updated"
+	ServerBoundPollDeletedMessageType               = "poll_deleted"
+	ServerBoundEventAttendChangedMessageType        = "event_attend_changed"
 )
 
 type TypeMessage struct {

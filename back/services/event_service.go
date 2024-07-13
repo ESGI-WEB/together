@@ -47,7 +47,8 @@ func (s *EventService) GetEventAttends(eventID uint, pagination utils.Pagination
 	var attends []models.Attend
 
 	query := database.CurrentDatabase.
-		Where("event_id = ?", eventID)
+		Where("event_id = ?", eventID).
+		Order("updated_at DESC") // get the latest attend first
 
 	if hasAttended != nil {
 		query = query.Where("has_attended = ?", *hasAttended)
@@ -80,6 +81,51 @@ func (s *EventService) GetEvents(pagination utils.Pagination, filters ...EventFi
 	pagination.Rows = events
 
 	return &pagination, nil
+}
+
+func (s *EventService) GetUserEventAttend(eventID uint, userID uint, preloads ...string) *models.Attend {
+	var attend models.Attend
+	query := database.CurrentDatabase.Where("event_id = ? AND user_id = ?", eventID, userID)
+
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			query = query.Preload(preload)
+		}
+	}
+
+	query.First(&attend)
+
+	if attend.UserID == 0 {
+		return nil
+	}
+
+	return &attend
+}
+
+func (s *EventService) ChangeUserEventAttend(isAttending bool, eventID uint, userID uint) (*models.Attend, error) {
+	// check if a user event attend already exists to update
+	// if not, create a new one
+	attend := s.GetUserEventAttend(eventID, userID)
+	if attend == nil {
+		attend = &models.Attend{
+			EventID:     eventID,
+			UserID:      userID,
+			HasAttended: isAttending,
+		}
+
+		err := database.CurrentDatabase.Create(&attend).Error
+		if err != nil {
+			return nil, err
+		}
+		return attend, nil
+	} else {
+		attend.HasAttended = isAttending
+		err := database.CurrentDatabase.Save(&attend).Error
+		if err != nil {
+			return nil, err
+		}
+		return attend, nil
+	}
 }
 
 type EventFilter struct {

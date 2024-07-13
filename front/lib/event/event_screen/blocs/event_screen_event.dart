@@ -12,3 +12,23 @@ class EventScreenLoaded extends EventScreenEvent {
     required this.groupId,
   });
 }
+
+class EventAttendChanged extends EventScreenEvent {
+  final int eventId;
+  final bool isAttending;
+
+  EventAttendChanged({
+    required this.eventId,
+    required this.isAttending,
+  });
+}
+
+class EventScreenEventAttendeesRequested extends EventScreenEvent {
+  final int eventId;
+  final int page;
+
+  EventScreenEventAttendeesRequested({
+    required this.eventId,
+    this.page = 1,
+  });
+}
