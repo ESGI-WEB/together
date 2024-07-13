@@ -12,15 +12,15 @@ type WebSocketConnection struct {
 	user       *models.User
 }
 
+var connections = make([]*WebSocketConnection, 0)
+
 type WebSocketService struct {
-	connections    []*WebSocketConnection
 	messageService *MessageService
 	groupService   *GroupService
 }
 
 func NewWebSocketService() *WebSocketService {
 	return &WebSocketService{
-		connections:    make([]*WebSocketConnection, 0),
 		messageService: NewMessageService(),
 		groupService:   NewGroupService(),
 	}
@@ -31,15 +31,15 @@ func (s *WebSocketService) AcceptNewWebSocketConnection(ws *websocket.Conn, user
 		connection: ws,
 		user:       user,
 	}
-	s.connections = append(s.connections, &wsConnection)
+	connections = append(connections, &wsConnection)
 
 	return func(ws *websocket.Conn) {
 		_ = ws.Close()
 
 		// Remove the closed web socket from the connection list
-		for index, connection := range s.connections {
+		for index, connection := range connections {
 			if connection.connection == ws {
-				s.connections = append(s.connections[:index], s.connections[index+1:]...)
+				connections = append(connections[:index], connections[index+1:]...)
 				break
 			}
 		}
@@ -74,7 +74,7 @@ func (s *WebSocketService) sendWebSocketMessage(data []byte, v *websocket.Conn) 
 }
 
 func (s *WebSocketService) Broadcast(data []byte) error {
-	for _, connection := range s.connections {
+	for _, connection := range connections {
 		err := s.sendWebSocketMessage(data, connection.connection)
 		if err != nil {
 			return err
@@ -85,7 +85,7 @@ func (s *WebSocketService) Broadcast(data []byte) error {
 }
 
 func (s *WebSocketService) BroadcastToGroup(data []byte, groupId uint) error {
-	for _, connection := range s.connections {
+	for _, connection := range connections {
 		isInGroup, err := s.groupService.IsUserInGroup(connection.user.ID, groupId)
 		if err != nil || !isInGroup {
 			continue
@@ -208,10 +208,18 @@ type ClientBoundFetchChatMessage struct {
 	GroupId uint `json:"group_id" validate:"required"`
 }
 
+type ServerBoundGroupBroadcast struct {
+	TypeMessage
+	Content interface{} `json:"content" validate:"required"`
+	GroupId uint        `json:"group_id" validate:"required"`
+}
+
 const (
-	ClientBoundSendChatMessageType  string = "send_chat_message"
-	ClientBoundFetchChatMessageType        = "fetch_chat_messages"
-	ServerBoundSendChatMessageType         = "send_chat_message"
+	ClientBoundSendChatMessageType    string = "send_chat_message"
+	ClientBoundFetchChatMessageType          = "fetch_chat_messages"
+	ServerBoundSendChatMessageType           = "send_chat_message"
+	ServerBoundPollUpdatedMessageType        = "poll_updated"
+	ServerBoundPollDeletedMessageType        = "poll_deleted"
 )
 
 type TypeMessage struct {

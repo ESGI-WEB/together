@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/models/event.dart';
+import 'package:front/core/models/group.dart';
+import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/services/events_services.dart';
+import 'package:front/core/services/group_services.dart';
+import 'package:front/core/services/storage_service.dart';
 
 part 'event_screen_event.dart';
 part 'event_screen_state.dart';
@@ -16,12 +20,14 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
       ));
 
       try {
-        final (nextEvent, acceptedParticipants) = await (
+        final (nextEvent, acceptedParticipants, group, userData) = await (
           EventsServices.getEventById(event.eventId),
           EventsServices.getEventAttends(
             eventId: event.eventId,
             hasAttended: true,
           ),
+          GroupServices.getGroupById(event.groupId),
+          StorageService.readJwtDataFromToken(),
         ).wait;
 
         emit(state.copyWith(
@@ -31,6 +37,8 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
               .where((element) => element.user != null)
               .map((e) => e.user as User)
               .toList(),
+          group: group,
+          userData: userData,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(

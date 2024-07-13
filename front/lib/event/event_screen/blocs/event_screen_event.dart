@@ -5,8 +5,12 @@ sealed class EventScreenEvent {}
 
 class EventScreenLoaded extends EventScreenEvent {
   final int eventId;
+  final int groupId;
 
-  EventScreenLoaded({required this.eventId});
+  EventScreenLoaded({
+    required this.eventId,
+    required this.groupId,
+  });
 }
 
 class DuplicateEvents extends EventScreenEvent {
