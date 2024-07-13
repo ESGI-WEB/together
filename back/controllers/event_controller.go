@@ -241,5 +241,5 @@ func (c *EventController) DuplicateEventsForTomorrow(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	return ctx.NoContent(http.StatusOK)
+	return ctx.NoContent(http.StatusCreated)
 }

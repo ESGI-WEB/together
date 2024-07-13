@@ -118,6 +118,21 @@ type EventFilter struct {
 	Column string `json:"column" validate:"required,oneof=organizer_id created_at date time type_id address_id group_id"`
 }
 
+func (s *EventService) getNextDate(currentDate time.Time, recurrenceType string) time.Time {
+	switch recurrenceType {
+	case string(models.EachDays):
+		return currentDate.AddDate(0, 0, 1)
+	case string(models.EachWeeks):
+		return currentDate.AddDate(0, 0, 7)
+	case string(models.EachMonths):
+		return currentDate.AddDate(0, 1, 0)
+	case string(models.EachYears):
+		return currentDate.AddDate(1, 0, 0)
+	default:
+		return currentDate
+	}
+}
+
 func (s *EventService) DuplicateEventForYear(eventID uint, userID uint) ([]models.Event, error) {
 	originalEvent, err := s.GetEventByID(eventID)
 	if err != nil {
@@ -132,16 +147,7 @@ func (s *EventService) DuplicateEventForYear(eventID uint, userID uint) ([]model
 	currentDate, _ := time.Parse(models.DateFormat, originalEvent.Date)
 	endDate := currentDate.AddDate(1, 0, 0)
 
-	switch *originalEvent.RecurrenceType {
-	case models.EachDays:
-		currentDate = currentDate.AddDate(0, 0, 1)
-	case models.EachWeeks:
-		currentDate = currentDate.AddDate(0, 0, 7)
-	case models.EachMonths:
-		currentDate = currentDate.AddDate(0, 1, 0)
-	case models.EachYears:
-		currentDate = currentDate.AddDate(1, 0, 0)
-	}
+	currentDate = s.getNextDate(currentDate, string(*originalEvent.RecurrenceType))
 
 	for currentDate.Before(endDate) {
 		duplicatedEvent := *originalEvent
@@ -156,16 +162,8 @@ func (s *EventService) DuplicateEventForYear(eventID uint, userID uint) ([]model
 
 		duplicatedEvents = append(duplicatedEvents, duplicatedEvent)
 
-		switch *originalEvent.RecurrenceType {
-		case models.EachDays:
-			currentDate = currentDate.AddDate(0, 0, 1)
-		case models.EachWeeks:
-			currentDate = currentDate.AddDate(0, 0, 7)
-		case models.EachMonths:
-			currentDate = currentDate.AddDate(0, 1, 0)
-		case models.EachYears:
-			currentDate = currentDate.AddDate(1, 0, 0)
-		}
+		currentDate = s.getNextDate(currentDate, string(*originalEvent.RecurrenceType))
+
 	}
 
 	return duplicatedEvents, nil
@@ -175,21 +173,22 @@ func (s *EventService) DuplicateEventsForTomorrow() error {
 	tomorrow := time.Now().AddDate(0, 0, 1).Format(models.DateFormat)
 
 	var events []models.Event
-	result := database.CurrentDatabase.Where("date = ?", tomorrow).Find(&events)
+	result := database.CurrentDatabase.
+		Where("date = ?", tomorrow).
+		Where("recurrence_type IS NOT NULL").
+		Find(&events)
 	if result.Error != nil {
 		return result.Error
 	}
 
 	for _, event := range events {
-		if event.RecurrenceType != nil {
-			newEvent := event
-			newEvent.ID = 0
-			newEvent.Date = time.Now().AddDate(1, 0, 1).Format(models.DateFormat)
+		newEvent := event
+		newEvent.ID = 0
+		newEvent.Date = time.Now().AddDate(1, 0, 1).Format(models.DateFormat)
 
-			create := database.CurrentDatabase.Create(&newEvent)
-			if create.Error != nil {
-				return create.Error
-			}
+		create := database.CurrentDatabase.Create(&newEvent)
+		if create.Error != nil {
+			return create.Error
 		}
 	}
 
