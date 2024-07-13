@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
-import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/event/event_screen/blocs/event_screen_bloc.dart';
 import 'package:front/event/event_screen/partials/event_joined_members.dart';
 import 'package:front/event/event_screen/partials/event_screen_about.dart';
@@ -10,6 +9,8 @@ import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
 import 'package:front/event/event_screen/partials/event_screen_poll.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../core/partials/error_occurred.dart';
 
 class EventScreen extends StatelessWidget {
   static const String routeName = '/event-view';
@@ -42,7 +43,20 @@ class EventScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) =>
           EventScreenBloc()..add(EventScreenLoaded(eventId: eventId)),
-      child: BlocBuilder<EventScreenBloc, EventScreenState>(
+      child: BlocConsumer<EventScreenBloc, EventScreenState>(
+        listener: (context, state) {
+          if (state.status == EventScreenStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(state.errorMessage ?? 'An error occurred')),
+            );
+          } else if (state.status == EventScreenStatus.success &&
+              state.event == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Events duplicated successfully!')),
+            );
+          }
+        },
         builder: (context, state) {
           if (state.status == EventScreenStatus.loading) {
             return const Center(child: CircularProgressIndicator());
@@ -103,7 +117,8 @@ class EventScreen extends StatelessWidget {
                                           const SizedBox(height: 8),
                                           EventJoinedMembers(
                                               firstParticipants:
-                                                  state.firstParticipants ?? []),
+                                                  state.firstParticipants ??
+                                                      []),
                                         ],
                                       ),
                                     ),
@@ -120,6 +135,28 @@ class EventScreen extends StatelessWidget {
                             const EventScreenPoll(),
                             const SizedBox(height: 16),
                             EventScreenAbout(event: event),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                DateTime? selectedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now()
+                                      .add(const Duration(days: 1)),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2101),
+                                );
+
+                                if (selectedDate != null) {
+                                  context.read<EventScreenBloc>().add(
+                                        DuplicateEvents(
+                                          eventId: eventId,
+                                          date: selectedDate,
+                                        ),
+                                      );
+                                }
+                              },
+                              child: const Text('Duplicate Events for Date'),
+                            ),
                           ],
                         ),
                       ),

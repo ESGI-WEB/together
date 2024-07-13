@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/filter.dart';
 import 'package:front/core/models/paginated.dart';
+import 'package:intl/intl.dart';
 
+import '../exceptions/api_exception.dart';
 import 'api_services.dart';
 
 class EventsServices {
@@ -57,5 +58,18 @@ class EventsServices {
       ApiServices.decodeResponse(response),
       Event.fromJson,
     );
+  }
+
+  static Future<void> duplicateEventsForDate(int eventId, DateTime date) async {
+    final url = '/events/$eventId/duplicate';
+    final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+    try {
+      await ApiServices.post(
+        url,
+        {'new_date': formattedDate},
+      );
+    } on ApiException catch (error) {
+      throw Exception(error);
+    }
   }
 }

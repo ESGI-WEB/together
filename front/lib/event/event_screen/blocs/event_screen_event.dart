@@ -8,3 +8,10 @@ class EventScreenLoaded extends EventScreenEvent {
 
   EventScreenLoaded({required this.eventId});
 }
+
+class DuplicateEvents extends EventScreenEvent {
+  final DateTime date;
+  final int eventId;
+
+  DuplicateEvents({required this.date, required this.eventId});
+}

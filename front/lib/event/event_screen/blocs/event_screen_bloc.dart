@@ -39,5 +39,19 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
         ));
       }
     });
+
+    on<DuplicateEvents>((event, emit) async {
+      try {
+        await EventsServices.duplicateEventsForDate(event.eventId, event.date);
+        emit(state.copyWith(
+          status: EventScreenStatus.success,
+        ));
+      } catch (error) {
+        emit(state.copyWith(
+          status: EventScreenStatus.error,
+          errorMessage: error.toString(),
+        ));
+      }
+    });
   }
 }
