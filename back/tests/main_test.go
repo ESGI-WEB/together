@@ -16,6 +16,11 @@ func TestMain(m *testing.M) {
 func testMain(m *testing.M) int {
 	setupTestDB()
 	defer tearDownTestDB()
+
+	tx := database.CurrentDatabase.Begin()
+	database.CurrentDatabase = tx
+	defer database.CurrentDatabase.Rollback()
+
 	return m.Run()
 }
 
