@@ -19,7 +19,7 @@ func testMain(m *testing.M) int {
 
 	tx := database.CurrentDatabase.Begin()
 	database.CurrentDatabase = tx
-	defer database.CurrentDatabase.Rollback()
+	defer tx.Rollback()
 
 	return m.Run()
 }

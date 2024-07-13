@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"strconv"
 	"together/models"
 	"together/utils"
 )
@@ -18,7 +17,7 @@ type Filter struct {
 
 type Config struct {
 	Host     string
-	Port     int
+	Port     string
 	User     string
 	Password string
 	Name     string
@@ -45,7 +44,7 @@ var allModels = []interface{}{
 }
 
 func (db *DB) Connect() error {
-	dbConnectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+	dbConnectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		db.Config.Host, db.Config.Port, db.Config.User, db.Config.Password, db.Config.Name, db.Config.SSLMode)
 
 	var err error
@@ -126,23 +125,18 @@ func (db *DB) CloseDB() {
 	}
 }
 
+var DefaultConfig = Config{
+	Host:     utils.GetEnv("DB_HOST", "localhost"),
+	User:     utils.GetEnv("DB_USER", "postgres"),
+	Password: utils.GetEnv("DB_PASSWORD", "postgres"),
+	Name:     utils.GetEnv("DB_NAME", "app"),
+	SSLMode:  utils.GetEnv("DB_SSL_MODE", "disable"),
+	Port:     utils.GetEnv("DB_PORT", "5432"),
+}
+
 func InitDB() (*DB, error) {
-	port, err := strconv.Atoi(utils.GetEnv("DB_PORT", "5432"))
-	if err != nil {
-		return nil, err
-	}
-
-	dbConfig := Config{
-		Host:     utils.GetEnv("DB_HOST", "localhost"),
-		Port:     port,
-		User:     utils.GetEnv("DB_USER", "postgres"),
-		Password: utils.GetEnv("DB_PASSWORD", "postgres"),
-		Name:     utils.GetEnv("DB_NAME", "app"),
-		SSLMode:  utils.GetEnv("DB_SSL_MODE", "disable"),
-	}
-
-	newDB := DB{Config: dbConfig}
-	err = newDB.Connect()
+	newDB := DB{Config: DefaultConfig}
+	err := newDB.Connect()
 	if err != nil {
 		return nil, err
 	}

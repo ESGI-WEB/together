@@ -6,13 +6,13 @@ import (
 	"together/services"
 )
 
-var password = "Azerty1*"
+var Password = "Azerty1*"
 
 func CreateUser(role models.Role) (*models.User, error) {
 	user := models.User{
 		Name:          "John",
 		Email:         "john.doe" + random.String(10) + "@email.com",
-		PlainPassword: &password,
+		PlainPassword: &Password,
 		Role:          role,
 	}
 
@@ -36,5 +36,5 @@ func GetTokenForNewUser(role models.Role) (*string, error) {
 		return nil, err
 	}
 
-	return GetUserToken(user.Email, password)
+	return GetUserToken(user.Email, Password)
 }

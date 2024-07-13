@@ -56,7 +56,7 @@ func TestGetEventByID_Success(t *testing.T) {
 func TestGetEventByID_NotFound(t *testing.T) {
 	service := services.NewEventService()
 
-	eventID := uint(9999) // Assume an event with this ID does not exist
+	eventID := uint(0) // Assume an event with this ID does not exist
 
 	event, err := service.GetEventByID(eventID)
 
