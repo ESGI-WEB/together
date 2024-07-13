@@ -59,6 +59,13 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
+	if newEvent.RecurrenceType != nil {
+		_, err := c.EventService.DuplicateEventForYear(newEvent.ID, user.ID)
+		if err != nil {
+			return ctx.NoContent(http.StatusInternalServerError)
+		}
+	}
+
 	return ctx.JSON(http.StatusCreated, newEvent)
 }
 
@@ -151,6 +158,93 @@ func (c *EventController) GetEvents(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, events)
+}
+
+func (c *EventController) DuplicateEvent(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user := ctx.Get("user").(models.User)
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if !user.IsAdmin() && event.OrganizerID != user.ID {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	var jsonBody services.DuplicateEventRequest
+	err = json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	duplicatedEvent, err := c.EventService.DuplicateEvent(uint(eventID), jsonBody.NewDate, user.ID)
+	if err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
+			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
+			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+		}
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusCreated, duplicatedEvent)
+}
+
+func (c *EventController) DuplicateEventForYear(ctx echo.Context) error {
+	eventIDParam := ctx.Param("id")
+	eventID, err := strconv.Atoi(eventIDParam)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	user := ctx.Get("user").(models.User)
+
+	event, err := c.EventService.GetEventByID(uint(eventID))
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	if event == nil {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if event.ID == 0 {
+		return ctx.NoContent(http.StatusNotFound)
+	}
+
+	if !user.IsAdmin() && event.OrganizerID != user.ID {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	duplicatedEvents, err := c.EventService.DuplicateEventForYear(uint(eventID), user.ID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusCreated, duplicatedEvents)
+}
+
+func (c *EventController) DuplicateEventsForTomorrow(ctx echo.Context) error {
+	err := c.EventService.DuplicateEventsForTomorrow()
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+	return ctx.NoContent(http.StatusCreated)
 }
 
 func (c *EventController) GetUserEventAttend(ctx echo.Context) error {

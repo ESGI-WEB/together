@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/chat/blocs/websocket_bloc.dart';
@@ -109,11 +108,25 @@ class EventScreen extends StatelessWidget {
                     participants.addAll(
                       page.rows
                           .where((e) => e.user != null)
-                          .where((e) => !participants.any((u) => u.id == e.user?.id))
+                          .where((e) =>
+                              !participants.any((u) => u.id == e.user?.id))
                           .map((e) => e.user!)
                           .toList(),
                     );
                   }
+                }
+                if (state.status == EventScreenStatus.duplicateSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Évènement dupliqué avec succès !')),
+                  );
+                }
+                if (state.status == EventScreenStatus.duplicateError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            state.errorMessage ?? 'Une erreur est survenue')),
+                  );
                 }
               },
               child: BlocBuilder<EventScreenBloc, EventScreenState>(
@@ -191,7 +204,8 @@ class EventScreen extends StatelessWidget {
                                                     child: AvatarStack(
                                                       users: participants,
                                                       total: state
-                                                          .participantsPage?.total,
+                                                          .participantsPage
+                                                          ?.total,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 8),
@@ -231,6 +245,30 @@ class EventScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 16),
                                     EventScreenAbout(event: event),
+                                    const SizedBox(height: 16),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        DateTime? selectedDate =
+                                            await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now()
+                                              .add(const Duration(days: 1)),
+                                          firstDate: DateTime.now(),
+                                          lastDate: DateTime(2101),
+                                        );
+
+                                        if (selectedDate != null) {
+                                          context.read<EventScreenBloc>().add(
+                                                DuplicateEvents(
+                                                  eventId: eventId,
+                                                  date: selectedDate,
+                                                ),
+                                              );
+                                        }
+                                      },
+                                      child: const Text(
+                                          "Dupliquer l'évènement un autre jour"),
+                                    ),
                                   ],
                                 ),
                               ),

@@ -32,3 +32,10 @@ class EventScreenEventAttendeesRequested extends EventScreenEvent {
     this.page = 1,
   });
 }
+
+class DuplicateEvents extends EventScreenEvent {
+  final DateTime date;
+  final int eventId;
+
+  DuplicateEvents({required this.date, required this.eventId});
+}

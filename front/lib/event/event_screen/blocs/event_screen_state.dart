@@ -11,6 +11,8 @@ enum EventScreenStatus {
   changeAttendanceLoading,
   changeAttendanceSuccess,
   changeAttendanceError,
+  duplicateSuccess,
+  duplicateError
 }
 
 class EventScreenState {
