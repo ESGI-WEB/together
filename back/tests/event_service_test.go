@@ -3,6 +3,7 @@ package tests
 import (
 	"testing"
 	"together/database"
+	"together/models"
 	"together/services"
 	"together/tests/tests_utils"
 	"together/utils"
@@ -44,13 +45,13 @@ func TestAddEvent_ValidationError(t *testing.T) {
 func TestGetEventByID_Success(t *testing.T) {
 	service := services.NewEventService()
 
-	eventID := uint(1) // Assume an event with ID 1 exists
+	event := tests_utils.CreateEvent()
 
-	event, err := service.GetEventByID(eventID)
+	newEvent, err := service.GetEventByID(event.ID)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, event)
-	assert.Equal(t, eventID, event.ID)
+	assert.Equal(t, event.ID, newEvent.ID)
 }
 
 func TestGetEventByID_NotFound(t *testing.T) {
@@ -67,11 +68,15 @@ func TestGetEventByID_NotFound(t *testing.T) {
 func TestGetEventAttends_Success(t *testing.T) {
 	service := services.NewEventService()
 
-	eventID := uint(1) // Assume an event with ID 1 exists
+	event := tests_utils.CreateEvent()
+	user, _ := tests_utils.CreateUser(models.UserRole)
+
+	database.CurrentDatabase.Create(&models.Attend{EventID: event.ID, UserID: user.ID, HasAttended: true})
+
 	pagination := utils.Pagination{Limit: 10, Page: 1}
 	hasAttended := true
 
-	paginatedAttends, err := service.GetEventAttends(eventID, pagination, &hasAttended)
+	paginatedAttends, err := service.GetEventAttends(event.ID, pagination, &hasAttended)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, paginatedAttends)
