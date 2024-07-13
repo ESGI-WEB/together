@@ -21,13 +21,13 @@ jobs:
         run: docker-compose up -d
 
       - name: Install dependencies
-        run: docker exec together-app go mod download
+        run: docker-compose exec app go mod download
 
       - name: Tidy up dependencies
-        run: docker exec together-app go mod tidy
+        run: docker-compose exec app go mod tidy
 
       - name: Run tests
-        run: docker exec together-app go test -v ./...
+        run: docker-compose exec app go test -v ./...
 
       - name: Check test results
         if: failure()
