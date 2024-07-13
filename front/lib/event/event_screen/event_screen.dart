@@ -118,14 +118,14 @@ class EventScreen extends StatelessWidget {
                 if (state.status == EventScreenStatus.duplicateSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text('Events duplicated successfully!')),
+                        content: Text('Évènement dupliqué avec succès !')),
                   );
                 }
                 if (state.status == EventScreenStatus.duplicateError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content:
-                            Text(state.errorMessage ?? 'An error occurred')),
+                        content: Text(
+                            state.errorMessage ?? 'Une erreur est survenue')),
                   );
                 }
               },
