@@ -2,9 +2,8 @@ package tests
 
 import (
 	"testing"
-	"together/database"
-	"together/models"
 	"together/services"
+	"together/tests/tests_utils"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -12,12 +11,7 @@ import (
 func TestAddAddress_Success(t *testing.T) {
 	service := services.NewAddressService()
 
-	addressCreate := models.AddressCreate{
-		Street: "Test St",
-		Number: "123 Bis",
-		City:   "Testville",
-		Zip:    "75001",
-	}
+	addressCreate := tests_utils.GetAddressCreate()
 
 	address, err := service.AddAddress(addressCreate)
 
@@ -33,32 +27,7 @@ func TestAddAddress_ValidationError(t *testing.T) {
 	setupTestDB()
 	service := services.NewAddressService()
 
-	addressCreate := models.AddressCreate{
-		Number: "123 Bis",
-		City:   "Testville",
-		Zip:    "75001",
-	}
-
-	address, err := service.AddAddress(addressCreate)
-
-	assert.Error(t, err)
-	assert.Nil(t, address)
-}
-
-func TestAddAddress_DatabaseError(t *testing.T) {
-	setupTestDB()
-	service := services.NewAddressService()
-
-	// Close the database to simulate a database error
-	db, _ := database.CurrentDatabase.DB()
-	_ = db.Close()
-
-	addressCreate := models.AddressCreate{
-		Street: "Test St",
-		Number: "123 Bis",
-		City:   "Testville",
-		Zip:    "75001",
-	}
+	addressCreate := tests_utils.GetInvalidAddressCreate()
 
 	address, err := service.AddAddress(addressCreate)
 

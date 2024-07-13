@@ -1,7 +1,7 @@
 package tests_utils
 
 import (
-	"math/rand"
+	"github.com/labstack/gommon/random"
 	"together/models"
 	"together/services"
 )
@@ -11,7 +11,7 @@ var password = "Azerty1*"
 func CreateUser(role models.Role) (*models.User, error) {
 	user := models.User{
 		Name:          "John",
-		Email:         "john.doe" + string(rune(rand.Intn(99999))) + "@email.com",
+		Email:         "john.doe" + random.String(10) + "@email.com",
 		PlainPassword: &password,
 		Role:          role,
 	}
