@@ -1,0 +1,34 @@
+name: Run tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run Docker container
+        run: docker-compose up -d
+
+      - name: Install dependencies
+        run: docker exec together-app go mod download
+
+      - name: Tidy up dependencies
+        run: docker exec together-app go mod tidy
+
+      - name: Run tests
+        run: docker exec together-app go test -v ./...
+
+      - name: Check test results
+        if: failure()
+        run: exit 1
