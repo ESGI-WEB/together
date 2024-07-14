@@ -44,15 +44,15 @@ func (s *MessageService) GetMessageReactions(messageID uint) ([]string, error) {
 	return reactionContents, nil
 }
 
-func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReacted models.User) (*models.Reaction, error) {
-	var message models.Message
-	if err := database.CurrentDatabase.Preload("User").First(&message, messageID).Error; err != nil {
+func (s *MessageService) ReactToMessage(messageID uint, reactionContent string, whoReacted models.User) (*models.Reaction, error) {
+	message, err := s.GetMessage(messageID)
+	if err != nil {
 		return nil, err
 	}
 
 	reaction := models.Reaction{
 		Content:   reactionContent,
-		Message:   message,
+		Message:   *message,
 		User:      whoReacted,
 		MessageID: message.ID,
 		UserID:    whoReacted.ID,
@@ -63,4 +63,12 @@ func (s *MessageService) ReactToMessage(messageID int, reactionContent string, w
 	}
 
 	return &reaction, nil
+}
+
+func (s *MessageService) GetMessage(messageID uint) (*models.Message, error) {
+	var message models.Message
+	if err := database.CurrentDatabase.Preload("User").First(&message, messageID).Error; err != nil {
+		return nil, err
+	}
+	return &message, nil
 }

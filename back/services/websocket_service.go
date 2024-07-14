@@ -130,24 +130,11 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		return err
 	}
 
-	response := ServerBoundSendChatMessage{
-		TypeMessage: TypeMessage{
-			Type: ServerBoundSendChatMessageType,
-		},
-		Content:   createdMessage.Content,
-		Author:    user,
-		GroupId:   createdMessage.GroupID,
-		MessageId: createdMessage.ID,
-	}
-
-	bytes, err := json.Marshal(response)
+	err = s.BroadcastMessageToGroupID(createdMessage.ID)
 	if err != nil {
 		return err
 	}
 
-	if err := s.BroadcastToGroup(bytes, receivedMessage.GroupId); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -168,31 +155,61 @@ func (s *WebSocketService) handleFetchChatMessage(msg []byte, ws *websocket.Conn
 	}
 
 	for _, groupMessage := range groupMessages {
-		reactions, err := s.messageService.GetMessageReactions(groupMessage.ID)
+		bytes, err := s.buildServerBoundSendChatMessage(&groupMessage)
 		if err != nil {
 			return err
 		}
 
-		response := ServerBoundSendChatMessage{
-			TypeMessage: TypeMessage{
-				Type: ServerBoundSendChatMessageType,
-			},
-			Content:   groupMessage.Content,
-			Author:    &groupMessage.User,
-			GroupId:   groupMessage.GroupID,
-			MessageId: groupMessage.ID,
-			Reactions: reactions,
-		}
-
-		bytes, err := json.Marshal(response)
-		if err != nil {
+		if err = s.sendWebSocketMessage(bytes, ws); err != nil {
 			return err
 		}
+	}
 
-		err = s.sendWebSocketMessage(bytes, ws)
-		if err != nil {
-			return err
-		}
+	return nil
+}
+
+func (s *WebSocketService) BroadcastMessageToGroupID(messageID uint) error {
+	message, err := s.messageService.GetMessage(messageID)
+	if err != nil {
+		return err
+	}
+
+	return s.broadcastMessageToGroup(message)
+}
+
+func (s *WebSocketService) buildServerBoundSendChatMessage(message *models.Message) ([]byte, error) {
+	reactions, err := s.messageService.GetMessageReactions(message.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	response := ServerBoundSendChatMessage{
+		TypeMessage: TypeMessage{
+			Type: ServerBoundSendChatMessageType,
+		},
+		Content:   message.Content,
+		Author:    &message.User,
+		GroupId:   message.GroupID,
+		Reactions: reactions,
+		MessageId: message.ID,
+	}
+
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes, nil
+}
+
+func (s *WebSocketService) broadcastMessageToGroup(message *models.Message) error {
+	bytes, err := s.buildServerBoundSendChatMessage(message)
+	if err != nil {
+		return err
+	}
+
+	if err := s.BroadcastToGroup(bytes, message.GroupID); err != nil {
+		return err
 	}
 
 	return nil

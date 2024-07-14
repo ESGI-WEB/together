@@ -35,7 +35,7 @@ class MessagesState extends WebSocketReady {
       newMessages.add(newMessage);
     } else {
       // The message is in the state, replace id
-      newMessages.replaceRange(index, index, [newMessage]);
+      newMessages.replaceRange(index, index + 1, [newMessage]);
     }
 
     // TODO: We should sort all the messages by date

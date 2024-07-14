@@ -41,34 +41,17 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	reaction, err := c.messageService.ReactToMessage(messageID, jsonBody.ReactionContent, user)
+	reaction, err := c.messageService.ReactToMessage(uint(messageID), jsonBody.ReactionContent, user)
 
 	if err != nil {
 		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	// TODO: Broadcast to every all the group's members
-	// TODO: Use correct websocket event type
-	response := services.ServerBoundSendChatMessage{
-		TypeMessage: services.TypeMessage{
-			Type: services.ServerBoundSendChatMessageType,
-		},
-		Content:   reaction.Message.Content,
-		Author:    &reaction.Message.User,
-		GroupId:   reaction.Message.GroupID,
-		Reactions: make([]string, 0),
-	}
-
-	bytes, err := json.Marshal(response)
+	err = c.webSocketService.BroadcastMessageToGroupID(uint(messageID))
 	if err != nil {
 		ctx.Logger().Error(err)
-		return err
-	}
-
-	if err := c.webSocketService.BroadcastToGroup(bytes, reaction.Message.GroupID); err != nil {
-		ctx.Logger().Error(err)
-		return err
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
 	return ctx.JSON(http.StatusOK, reaction)
