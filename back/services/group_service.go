@@ -87,7 +87,7 @@ func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, 
 
 type GroupUserRoles string
 
-func (s *GroupService) IsUserInGroup(userId, groupId uint) (bool, error) {
+func (s *GroupService) IsUserInGroup(userId uint, groupId uint) (bool, error) {
 	var group models.Group
 
 	err := database.CurrentDatabase.Joins(

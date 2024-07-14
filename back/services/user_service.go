@@ -65,9 +65,13 @@ func (s *UserService) GetUsers(pagination utils.Pagination, search *string) (*ut
 				Or("LOWER(email) LIKE LOWER(?)", "%"+*search+"%"))
 	}
 
-	query.Scopes(utils.Paginate(users, &pagination, query)).
+	err := query.Scopes(utils.Paginate(users, &pagination, query)).
 		Order("ID asc").
-		Find(&users)
+		Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
 	pagination.Rows = users
 
 	return &pagination, nil

@@ -35,6 +35,7 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
+	jsonBody.OwnerID = user.ID
 	newGroup, err := c.GroupService.CreateGroup(jsonBody)
 	if err != nil {
 		var validationErrs validator.ValidationErrors

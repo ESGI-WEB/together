@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/message.dart';
+import 'package:front/core/models/poll.dart';
 import 'package:front/core/models/websocket.dart';
 import 'package:front/core/services/websocket_service.dart';
 import 'package:web_socket_channel/io.dart';
@@ -21,6 +23,18 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
 
     on<NewMessageReceivedEvent>((event, emit) async {
       emit(_buildMessageState(event.message.toChatMessage()));
+    });
+
+    on<PollUpdatedEvent>((event, emit) async {
+      emit(PollUpdatedState(event.poll));
+    });
+
+    on<PollDeletedEvent>((event, emit) async {
+      emit(PollDeletedState(event.pollId));
+    });
+
+    on<EventAttendChangedEvent>((event, emit) async {
+      emit(EventAttendChangedState(event.attend));
     });
 
     on<SendMessageEvent>((event, emit) async {
@@ -58,7 +72,30 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     }
 
     _webSocketChannel?.stream.listen((dynamic message) {
-      add(NewMessageReceivedEvent.fromString(message));
+      message = json.decode(message);
+      switch (message['type']) {
+        case 'poll_updated':
+          add(PollUpdatedEvent(
+            poll: Poll.fromJson(message['content']),
+          ));
+          break;
+        case 'poll_deleted':
+          add(PollDeletedEvent(
+            pollId: message['content'] as int,
+          ));
+          break;
+        case 'event_attend_changed':
+          add(EventAttendChangedEvent(
+            attend: Attend.fromJson(message['content']),
+          ));
+          break;
+        case "send_chat_message":
+        case "fetch_chat_messages":
+          add(NewMessageReceivedEvent.fromString(message));
+          break;
+        default:
+          break;
+      }
     }, onDone: () {
       _webSocketChannel = null;
       Timer(const Duration(seconds: 2), () => _initWebSocket(emit));

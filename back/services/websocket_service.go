@@ -218,10 +218,19 @@ type ClientBoundFetchChatMessage struct {
 	GroupId uint `json:"group_id" validate:"required"`
 }
 
+type ServerBoundGroupBroadcast struct {
+	TypeMessage
+	Content interface{} `json:"content" validate:"required"`
+	GroupId uint        `json:"group_id" validate:"required"`
+}
+
 const (
-	ClientBoundSendChatMessageType  string = "send_chat_message"
-	ClientBoundFetchChatMessageType        = "fetch_chat_messages"
-	ServerBoundSendChatMessageType         = "send_chat_message"
+	ClientBoundSendChatMessageType           string = "send_chat_message"
+	ClientBoundFetchChatMessageType                 = "fetch_chat_messages"
+	ServerBoundSendChatMessageType                  = "send_chat_message"
+	ServerBoundPollUpdatedMessageType               = "poll_updated"
+	ServerBoundPollDeletedMessageType               = "poll_deleted"
+	ServerBoundEventAttendChangedMessageType        = "event_attend_changed"
 )
 
 type TypeMessage struct {
