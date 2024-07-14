@@ -20,7 +20,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
-      emit(_buildMessageState(event.message));
+      emit(_buildMessageState(event.message.toChatMessage()));
     });
 
     on<SendMessageEvent>((event, emit) async {
@@ -73,19 +73,21 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     _webSocketChannel?.sink.close();
   }
 
-  MessagesState _buildMessageState(ServerBoundSendChatMessage newMessage) {
+  MessagesState _buildMessageState(ChatMessage newMessage) {
     final lastFetchedGroup = state is WebSocketReady
         ? (state as WebSocketReady).lastFetchedGroup
         : null;
 
-    final List<ChatMessage> messages =
-        state is MessagesState ? (state as MessagesState).messages : [];
-    messages.add(newMessage.toChatMessage());
-
-    return MessagesState(
-      messages: messages,
-      lastFetchedGroup: lastFetchedGroup,
-    );
+    if (state is MessagesState) {
+      // We must keep the previous messages and append the new one
+      return (state as MessagesState).add(newMessage, lastFetchedGroup);
+    } else {
+      // We don't have to keep the previous messages since it was not a message state
+      return MessagesState(
+        messages: [newMessage],
+        lastFetchedGroup: lastFetchedGroup,
+      );
+    }
   }
 
   void _sendWebSocketMessage(Map messageObject) {
