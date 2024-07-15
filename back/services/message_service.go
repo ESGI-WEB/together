@@ -110,6 +110,10 @@ func (s *MessageService) CreatePublication(message models.MessageCreate) (*model
 		return nil, err
 	}
 
+	if err := database.CurrentDatabase.Preload("User").First(&newMessage, newMessage.ID).Error; err != nil {
+		return nil, err
+	}
+
 	return newMessage, nil
 }
 
@@ -159,7 +163,7 @@ func (s *MessageService) GetPublicationsByEventAndGroup(eventID, groupID uint, p
 
 func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.Pagination) (*utils.Pagination, error) {
 	var messages []models.Message
-	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Order("is_pinned DESC").Find(&messages)
+	query := database.CurrentDatabase.Where("group_id = ? AND type = ?", groupID, models.PubMessageType).Order("is_pinned DESC").Find(&messages).Preload("User")
 
 	query.Scopes(utils.Paginate(messages, &pagination, query)).Find(&messages)
 

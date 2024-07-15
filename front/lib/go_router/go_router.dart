@@ -18,7 +18,6 @@ import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:front/login/login_screen.dart';
-import 'package:front/publication/create_publication_screen/create_publication_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -105,34 +104,20 @@ final goRouter = GoRouter(
                   path: ':groupId',
                   builder: (context, state) {
                     return GroupScreen(
-                        id: int.parse(state.pathParameters['groupId']!),);
+                      id: int.parse(state.pathParameters['groupId']!),
+                    );
                   },
                   routes: [
                     GoRoute(
-                        name: EventScreen.routeName,
-                        path: 'event/:eventId',
-                        builder: (context, state) {
-                          return EventScreen(
-                            groupId:
-                                int.parse(state.pathParameters['groupId']!),
-                            eventId:
-                                int.parse(state.pathParameters['eventId']!),
-                          );
-                        },
-                        routes: [
-                          GoRoute(
-                            name: CreatePublicationScreen.routeNameForEvent,
-                            path: 'publication',
-                            builder: (context, state) {
-                              return CreatePublicationScreen(
-                                groupId:
-                                    int.parse(state.pathParameters['groupId']!),
-                                eventId:
-                                    int.parse(state.pathParameters['eventId']!),
-                              );
-                            },
-                          )
-                        ]),
+                      name: EventScreen.routeName,
+                      path: 'event/:eventId',
+                      builder: (context, state) {
+                        return EventScreen(
+                          groupId: int.parse(state.pathParameters['groupId']!),
+                          eventId: int.parse(state.pathParameters['eventId']!),
+                        );
+                      },
+                    ),
                     GoRoute(
                       name: CreateEventScreen.routeName,
                       path: 'create_event',
@@ -151,15 +136,6 @@ final goRouter = GoRouter(
                         );
                       },
                     ),
-                    GoRoute(
-                      name: CreatePublicationScreen.routeName,
-                      path: 'publication',
-                      builder: (context, state) {
-                        return CreatePublicationScreen(
-                          groupId: int.parse(state.pathParameters['groupId']!),
-                        );
-                      },
-                    )
                   ],
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/publication/create_publication_screen/blocs/create_publication_bloc.dart';
 import 'package:front/publication/create_publication_screen/blocs/create_publication_event.dart';
 import 'package:front/publication/create_publication_screen/blocs/create_publication_state.dart';
+import 'package:front/publications/blocs/publications_bloc.dart';
 
 class GroupCreatePublicationBottomSheet extends StatelessWidget {
   final int groupId;
@@ -19,9 +20,13 @@ class GroupCreatePublicationBottomSheet extends StatelessWidget {
           listener: (context, state) {
             if (state.status == CreatePublicationStatus.success) {
               Navigator.pop(context);
+              context
+                  .read<PublicationsBloc>()
+                  .add(PublicationAdded(state.newPublication!));
             } else if (state.status == CreatePublicationStatus.error) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage ?? 'Erreur inconnue')),
+                SnackBar(
+                    content: Text(state.errorMessage ?? 'Erreur inconnue')),
               );
             }
           },

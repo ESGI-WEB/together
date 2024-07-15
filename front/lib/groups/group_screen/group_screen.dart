@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 
 import 'blocs/group_bloc.dart';
 
-class GroupScreen extends StatefulWidget {
+class GroupScreen extends StatelessWidget {
   static const String routeName = 'group';
 
   final int id;
@@ -26,98 +26,100 @@ class GroupScreen extends StatefulWidget {
     );
   }
 
-  @override
-  _GroupScreenState createState() => _GroupScreenState();
-}
-
-class _GroupScreenState extends State<GroupScreen> {
-  User? _authenticatedUser;
-
-  @override
-  void initState() {
-    super.initState();
-    _getAuthenticatedUser();
-  }
-
-  Future<void> _getAuthenticatedUser() async {
+  Future<User?> _getAuthenticatedUser() async {
     var jwtData = await StorageService.readJwtDataFromToken();
     if (jwtData != null) {
-      var user = await UserServices.findById(jwtData.id);
-      setState(() {
-        _authenticatedUser = user;
-      });
+      return await UserServices.findById(jwtData.id);
     }
+    return null;
   }
 
-  void _showBottomSheet(BuildContext context) {
+  void _showBottomSheet(BuildContext context, PublicationsBloc publicationsBloc) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return GroupCreatePublicationBottomSheet(groupId: widget.id);
+        return BlocProvider.value(
+          value: publicationsBloc,
+          child: GroupCreatePublicationBottomSheet(
+            groupId: id,
+          ),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => GroupBloc()..add(LoadGroup(groupId: widget.id)),
-        ),
-        BlocProvider(
-          create: (context) =>
-          PublicationsBloc()..add(LoadPublications(groupId: widget.id)),
-        ),
-      ],
-      child: Scaffold(
-        backgroundColor: Colors.grey[300],
-        body: Column(
-          children: [
-            InkWell(
-              onTap: () => _showBottomSheet(context),
-              child: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(16),
-                child: Row(
+    return FutureBuilder<User?>(
+      future: _getAuthenticatedUser(),
+      builder: (context, snapshot) {
+        final authenticatedUser = snapshot.data;
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => GroupBloc()..add(LoadGroup(groupId: id)),
+            ),
+            BlocProvider(
+              create: (context) => PublicationsBloc()..add(LoadPublications(groupId: id)),
+            ),
+          ],
+          child: Builder(
+            builder: (context) {
+              final publicationsBloc = BlocProvider.of<PublicationsBloc>(context);
+              return Scaffold(
+                backgroundColor: Colors.grey[300],
+                body: Column(
                   children: [
-                    if (_authenticatedUser != null) Avatar(user: _authenticatedUser!),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Text(
-                        "Quoi de neuf ?",
-                        style: Theme.of(context).textTheme.bodyLarge,
+                    InkWell(
+                      onTap: () => _showBottomSheet(context, publicationsBloc),
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            if (authenticatedUser != null)
+                              Avatar(user: authenticatedUser),
+                            const SizedBox(width: 10),
+                            Flexible(
+                              child: Text(
+                                "Quoi de neuf ?",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
+                    NextEventOfGroup(groupId: id),
+                    BlocBuilder<GroupBloc, GroupState>(
+                      builder: (context, state) {
+                        if (state.status == GroupStatus.loading) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+
+                        if (state.status == GroupStatus.error) {
+                          return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
+                        }
+
+                        final group = state.group;
+                        if (group == null) {
+                          return const Center(child: Text('Groupe introuvable'));
+                        }
+
+                        return PublicationsList(
+                          groupId: id,
+                          authenticatedUser: authenticatedUser,
+                        );
+                      },
                     ),
                   ],
                 ),
-              ),
-            ),
-            NextEventOfGroup(groupId: widget.id),
-            BlocBuilder<GroupBloc, GroupState>(
-              builder: (context, state) {
-                if (state.status == GroupStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (state.status == GroupStatus.error) {
-                  return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
-                }
-
-                final group = state.group;
-                if (group == null) {
-                  return const Center(child: Text('Groupe introuvable'));
-                }
-
-                return PublicationsList(
-                  groupId: widget.id,
-                  authenticatedUser: _authenticatedUser,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
