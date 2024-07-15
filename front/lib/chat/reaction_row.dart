@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:front/core/models/message.dart';
+import 'package:front/core/services/chat_service.dart';
 
 class ReactionRow extends StatelessWidget {
   final List<String> reactions;
+  final int messageId;
+  final Function onPressed;
 
-  const ReactionRow({super.key, required this.reactions});
+  const ReactionRow({
+    super.key,
+    required this.reactions,
+    required this.messageId,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: -50,
+      top: -10,
       left: 0,
       right: 0,
       child: Container(
@@ -29,6 +38,14 @@ class ReactionRow extends StatelessWidget {
                 ),
                 onPressed: () {
                   // TODO: Handle reaction press
+                  ChatService.createReaction(
+                    Reaction(
+                      content: reactions[index],
+                      messageId: messageId,
+                    ),
+                  );
+
+                  onPressed();
                 },
               ),
             ),

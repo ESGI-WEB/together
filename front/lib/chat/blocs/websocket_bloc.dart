@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/models/poll.dart';
-import 'package:front/core/services/chat_service.dart';
+import 'package:front/core/models/websocket.dart';
+import 'package:front/core/services/websocket_service.dart';
 import 'package:web_socket_channel/io.dart';
 
 import 'websocket_event.dart';
@@ -21,7 +22,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
-      emit(_buildMessageState(event.message));
+      emit(_buildMessageState(event.message.toChatMessage()));
     });
 
     on<PollUpdatedEvent>((event, emit) async {
@@ -64,7 +65,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
   }
 
   Future<void> _initWebSocket(Emitter<WebSocketState> emit) async {
-    _webSocketChannel = await ChatService.getChannel();
+    _webSocketChannel = await WebSocketService.getChannel();
     if (_webSocketChannel == null) {
       Timer(const Duration(seconds: 2), () => _initWebSocket(emit));
       return;
@@ -93,6 +94,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
           add(NewMessageReceivedEvent.fromString(message));
           break;
         default:
+          print("WebSocket event type not handled: ${message['type']}");
           break;
       }
     }, onDone: () {
@@ -109,19 +111,21 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     _webSocketChannel?.sink.close();
   }
 
-  MessagesState _buildMessageState(ServerBoundSendChatMessage newMessage) {
+  MessagesState _buildMessageState(ChatMessage newMessage) {
     final lastFetchedGroup = state is WebSocketReady
         ? (state as WebSocketReady).lastFetchedGroup
         : null;
 
-    final List<ChatMessage> messages =
-        state is MessagesState ? (state as MessagesState).messages : [];
-    messages.add(newMessage.toChatMessage());
-
-    return MessagesState(
-      messages: messages,
-      lastFetchedGroup: lastFetchedGroup,
-    );
+    if (state is MessagesState) {
+      // We must keep the previous messages and append the new one
+      return (state as MessagesState).add(newMessage, lastFetchedGroup);
+    } else {
+      // We don't have to keep the previous messages since it was not a message state
+      return MessagesState(
+        messages: [newMessage],
+        lastFetchedGroup: lastFetchedGroup,
+      );
+    }
   }
 
   void _sendWebSocketMessage(Map messageObject) {

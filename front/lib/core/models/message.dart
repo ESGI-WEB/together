@@ -1,88 +1,52 @@
 import 'package:front/core/models/user.dart';
+import 'package:front/core/models/websocket.dart';
 
 class ChatMessage {
   final String content;
   final User author;
   final int groupId;
+  final int messageId;
+  final List<String> reactions;
 
   ChatMessage({
     required this.content,
     required this.author,
     required this.groupId,
+    required this.messageId,
+    required this.reactions,
   });
 
   factory ChatMessage.fromServerBoundChatMessage(
-    ServerBoundSendChatMessage serverBoundSendChatMessage,
-  ) {
+      ServerBoundSendChatMessage serverBoundSendChatMessage) {
     return ChatMessage(
       content: serverBoundSendChatMessage.content,
       author: serverBoundSendChatMessage.author,
       groupId: serverBoundSendChatMessage.groupId,
+      messageId: serverBoundSendChatMessage.messageId,
+      reactions: serverBoundSendChatMessage.reactions,
     );
   }
 }
 
-class WebSocketMessage {
-  final String type;
+class Reaction {
+  final String content;
+  final int messageId;
 
-  WebSocketMessage({
-    required this.type,
+  Reaction({
+    required this.content,
+    required this.messageId,
   });
-}
 
-class ServerBoundSendChatMessage extends WebSocketMessage {
-  final String content;
-  final User author;
-  final int groupId;
-
-  ServerBoundSendChatMessage({
-    required this.content,
-    required this.author,
-    required this.groupId,
-  }) : super(type: 'send_chat_message');
-
-  factory ServerBoundSendChatMessage.fromJson(Map<String, dynamic> json) {
-    return ServerBoundSendChatMessage(
-      content: json['content'],
-      author: User.fromJson(json['author']),
-      groupId: json['group_id'],
+  factory Reaction.fromJson(Map<String, dynamic> json) {
+    return Reaction(
+      content: json['reaction_content'],
+      messageId: json['messageId'],
     );
   }
 
-  ChatMessage toChatMessage() {
-    return ChatMessage.fromServerBoundChatMessage(this);
-  }
-}
-
-class ClientBoundSendChatMessage extends WebSocketMessage {
-  final String content;
-  final int groupId;
-
-  ClientBoundSendChatMessage({
-    required this.content,
-    required this.groupId,
-  }) : super(type: 'send_chat_message');
-
   Map<String, dynamic> toJson() {
     return {
-      'type': type,
-      'content': content,
-      'group_id': groupId,
-    };
-  }
-}
-
-class ClientBoundFetchChatMessageType extends WebSocketMessage {
-  final int groupId;
-
-  ClientBoundFetchChatMessageType({
-    required this.groupId,
-  }) : super(type: 'fetch_chat_messages');
-
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'group_id': groupId,
+      'reaction_content': content,
     };
   }
 }
