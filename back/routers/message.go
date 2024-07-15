@@ -18,7 +18,7 @@ func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	})
 
 	group.POST("/publication", messageController.CreatePublication)
-	group.PUT("/:id", messageController.UpdateMessage)
+	group.PATCH("/:id", messageController.UpdateMessage)
 	group.DELETE("/:id", messageController.DeleteMessage)
 	group.POST("/:id/pin", messageController.PinMessage)
 	group.GET("/group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)

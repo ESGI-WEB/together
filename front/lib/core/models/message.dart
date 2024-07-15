@@ -112,6 +112,12 @@ class MessageUpdate {
       'content': content,
     };
   }
+
+  factory MessageUpdate.fromJson(Map<String, dynamic> json) {
+    return MessageUpdate(
+      content: json['content'],
+    );
+  }
 }
 
 class MessagePinned {

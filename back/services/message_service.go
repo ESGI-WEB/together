@@ -132,6 +132,10 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 		return nil, err
 	}
 
+	if err := database.CurrentDatabase.Preload("User").First(existingMessage, messageID).Error; err != nil {
+		return nil, err
+	}
+
 	return existingMessage, nil
 }
 

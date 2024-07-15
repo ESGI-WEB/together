@@ -5,7 +5,7 @@ import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/core/services/user_services.dart';
-import 'package:front/groups/group_screen/partials/group_create_publication_bottom_sheet.dart';
+import 'package:front/publication/partials/group_create_publication_bottom_sheet.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/publications/partials/PublicationsList.dart';
 import 'package:go_router/go_router.dart';
@@ -110,6 +110,7 @@ class GroupScreen extends StatelessWidget {
                         return PublicationsList(
                           groupId: id,
                           authenticatedUser: authenticatedUser,
+                          publicationsBloc: publicationsBloc,
                         );
                       },
                     ),

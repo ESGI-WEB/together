@@ -62,5 +62,27 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
         status: PublicationsStatus.success,
       ));
     });
+
+    on<UpdatePublication>((event, emit) async {
+      try {
+        final updatedMessage = await MessageServices.updateMessage(event.id, {
+          'content': event.publication.content,
+        });
+
+        final updatedPublications = state.publications!.map((publication) {
+          return publication.id == updatedMessage.id ? updatedMessage : publication;
+        }).toList();
+
+        emit(state.copyWith(
+          publications: updatedPublications,
+          status: PublicationsStatus.success,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PublicationsStatus.error,
+          errorMessage: error.message,
+        ));
+      }
+    });
   }
 }

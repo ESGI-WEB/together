@@ -20,3 +20,10 @@ class PublicationAdded extends PublicationsEvent {
 
   PublicationAdded(this.publication);
 }
+
+class UpdatePublication extends PublicationsEvent {
+  final int id;
+  final MessageUpdate publication;
+
+  UpdatePublication({required this.id, required this.publication});
+}

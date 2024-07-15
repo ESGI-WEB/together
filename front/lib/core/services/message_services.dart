@@ -48,7 +48,7 @@ class MessageServices {
 
   static Future<Message> updateMessage(int id, Map<String, dynamic> updatedMessage) async {
     try {
-      final response = await ApiServices.put('/messages/$id', updatedMessage);
+      final response = await ApiServices.patch('/messages/$id', updatedMessage);
       return Message.fromJson(ApiServices.decodeResponse(response));
     } on ApiException catch (e) {
       throw ApiException(

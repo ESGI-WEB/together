@@ -7,11 +7,13 @@ import 'package:front/publications/partials/PublicationsListItem.dart';
 class PublicationsList extends StatelessWidget {
   final int groupId;
   final User? authenticatedUser;
+  final PublicationsBloc publicationsBloc;
 
   const PublicationsList({
     super.key,
     required this.groupId,
     this.authenticatedUser,
+    required this.publicationsBloc,
   });
 
   @override
@@ -24,8 +26,7 @@ class PublicationsList extends StatelessWidget {
         }
 
         if (state.status == PublicationsStatus.error) {
-          return Center(
-              child: Text(state.errorMessage ?? 'Erreur inconnue'));
+          return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
         }
 
         final publications = state.publications;
@@ -37,7 +38,7 @@ class PublicationsList extends StatelessWidget {
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo.metrics.pixels ==
-                  scrollInfo.metrics.maxScrollExtent &&
+                      scrollInfo.metrics.maxScrollExtent &&
                   !state.hasReachedMax) {
                 context
                     .read<PublicationsBloc>()
@@ -57,6 +58,7 @@ class PublicationsList extends StatelessWidget {
                   return PublicationsListItem(
                     publication: publication,
                     authenticatedUser: authenticatedUser,
+                    publicationsBloc: context.read<PublicationsBloc>(),
                   );
                 }
               },

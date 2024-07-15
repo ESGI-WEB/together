@@ -39,7 +39,7 @@ func SetupMessageSwagger() *swag.API {
 
 	api.AddEndpoint(
 		endpoint.New(
-			http.MethodPut, "/messages/{id}",
+			http.MethodPatch, "/messages/{id}",
 			endpoint.Handler(messageController.UpdateMessage),
 			endpoint.Summary("Update a message"),
 			endpoint.Description("Updates an existing message with the provided information."),
