@@ -5,6 +5,7 @@ import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatelessWidget {
   static const String routeName = 'login';
@@ -62,7 +63,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Se connecter',
+                          AppLocalizations.of(context)!.helloWorld,
                           style: Theme.of(context).textTheme.displayMedium,
                         ),
                         const SizedBox(height: 10),
