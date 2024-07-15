@@ -14,5 +14,23 @@ func CreateGroup() models.Group {
 		OwnerID: owner.ID,
 	}
 	database.CurrentDatabase.Create(&group)
+	_ = database.CurrentDatabase.
+		Table("group_users").
+		Create(map[string]interface{}{"group_id": group.ID, "user_id": owner.ID})
 	return group
+}
+
+func GetValidGroup() models.Group {
+	owner, _ := CreateUser(models.UserRole)
+	return models.Group{
+		Name:    "Test Group",
+		Code:    random.String(10),
+		OwnerID: owner.ID,
+	}
+}
+
+func GetInvalidGroup() models.Group {
+	return models.Group{
+		Code: random.String(10),
+	}
 }
