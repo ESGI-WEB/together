@@ -9,15 +9,17 @@ import (
 var Password = "Azerty1*"
 
 func CreateUser(role models.Role) (*models.User, error) {
-	user := models.User{
+	userService := services.NewUserService()
+	return userService.AddUser(GetValidUser(role))
+}
+
+func GetValidUser(role models.Role) models.User {
+	return models.User{
 		Name:          "John",
 		Email:         "john.doe" + random.String(10) + "@email.com",
 		PlainPassword: &Password,
 		Role:          role,
 	}
-
-	userService := services.NewUserService()
-	return userService.AddUser(user)
 }
 
 func GetUserToken(email string, password string) (*string, error) {
