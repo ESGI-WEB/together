@@ -22,7 +22,7 @@ func (s *MessageService) CreateChatMessage(message models.Message) (*models.Mess
 	return &message, nil
 }
 
-func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, error) {
+func (s *MessageService) GetAllChatMessagesByGroup(groupID uint) ([]models.Message, error) {
 	var messages []models.Message
 	if err := database.CurrentDatabase.Preload("User").Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
 		return nil, err
@@ -30,18 +30,45 @@ func (s *MessageService) GetChatMessageByGroup(groupID uint) ([]models.Message, 
 	return messages, nil
 }
 
-func (s *MessageService) ReactToMessage(messageID int, reactionContent string, whoReactedID uint) (*models.Reaction, error) {
-	var message models.Message
-	if err := database.CurrentDatabase.First(&message, messageID).Error; err != nil {
+func (s *MessageService) GetMessageReactions(messageID uint) ([]string, error) {
+	var reactions []models.Reaction
+	if err := database.CurrentDatabase.Where("message_id = ?", messageID).Find(&reactions).Error; err != nil {
+		return nil, err
+	}
+
+	reactionContents := make([]string, len(reactions))
+	for i, reaction := range reactions {
+		reactionContents[i] = reaction.Content
+	}
+
+	return reactionContents, nil
+}
+
+func (s *MessageService) ReactToMessage(messageID uint, reactionContent string, whoReacted models.User) (*models.Reaction, error) {
+	message, err := s.GetMessage(messageID)
+	if err != nil {
 		return nil, err
 	}
 
 	reaction := models.Reaction{
 		Content:   reactionContent,
+		Message:   *message,
+		User:      whoReacted,
 		MessageID: message.ID,
-		UserID:    whoReactedID,
+		UserID:    whoReacted.ID,
 	}
-	database.CurrentDatabase.Create(reaction)
+
+	if err := database.CurrentDatabase.Create(&reaction).Error; err != nil {
+		return nil, err
+	}
 
 	return &reaction, nil
+}
+
+func (s *MessageService) GetMessage(messageID uint) (*models.Message, error) {
+	var message models.Message
+	if err := database.CurrentDatabase.Preload("User").First(&message, messageID).Error; err != nil {
+		return nil, err
+	}
+	return &message, nil
 }
