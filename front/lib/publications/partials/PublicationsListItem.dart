@@ -6,6 +6,7 @@ import 'package:front/core/partials/avatar.dart';
 import 'package:front/local.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PublicationsListItem extends StatelessWidget {
   final Message publication;
@@ -23,7 +24,7 @@ class PublicationsListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -54,11 +55,17 @@ class PublicationsListItem extends StatelessWidget {
                   ],
                 ),
               ),
-              if (authenticatedUser != null &&
-                  authenticatedUser!.id == publication.user.id)
+              if (publication.isPinned || publication.user.id == authenticatedUser?.id)
                 IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => _showEditDialog(context),
+                  icon: Icon(
+                    publication.isPinned
+                        ? Icons.push_pin
+                        : Icons.push_pin_outlined,
+                    color: publication.isPinned
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey,
+                  ),
+                  onPressed: null,
                 ),
             ],
           ),
@@ -73,24 +80,56 @@ class PublicationsListItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.thumb_up_alt_outlined),
-                    onPressed: () {},
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onBackground,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
                   ),
-                  const Text('Like'),
-                ],
+                ),
+                child: Row(
+                    children: [
+                      const Icon(Icons.thumb_up_alt_outlined),
+                      const SizedBox(width: 8.0),
+                      Text(AppLocalizations.of(context)!.like),
+                    ]
+                ),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.comment_outlined),
-                    onPressed: () {},
+              TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onBackground,
+                  textStyle: const TextStyle(
+                    fontSize: 12,
                   ),
-                  const Text('Comment'),
-                ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.comment_outlined),
+                    const SizedBox(width: 8.0),
+                    Text(AppLocalizations.of(context)!.comment),
+                  ]
+                ),
               ),
+              if (authenticatedUser != null &&
+                  authenticatedUser!.id == publication.user.id)
+                TextButton(
+                  onPressed: () => _showEditDialog(context),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onBackground,
+                    textStyle: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                  child: Row(
+                      children: [
+                        const Icon(Icons.edit),
+                        const SizedBox(width: 8.0),
+                        Text(AppLocalizations.of(context)!.edit),
+                      ]
+                  ),
+                ),
             ],
           ),
         ],
@@ -116,7 +155,7 @@ class PublicationsListItem extends StatelessWidget {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.enterContent;
               } else if (value.length < 10 || value.length > 300) {
-                return AppLocalizations.of(context)!.invalidMessage(10, 300);
+                return AppLocalizations.of(context)!.invalidMessage(300, 10);
               }
               return null;
             },

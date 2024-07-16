@@ -59,15 +59,6 @@ class NextEventOfGroup extends StatelessWidget {
                     );
                   },
                 ),
-                TextButton(
-                  onPressed: () {
-                    CreateEventScreen.navigateTo(
-                      context,
-                      groupId: groupId,
-                    );
-                  },
-                  child: Text(AppLocalizations.of(context)!.createAnotherEvent),
-                ),
               ],
             );
           }

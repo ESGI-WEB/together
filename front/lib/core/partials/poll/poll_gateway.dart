@@ -333,12 +333,6 @@ class _PollGatewayState extends State<PollGateway> {
 
                   return Column(
                     children: [
-                      Text(
-                        widget.type == PollType.group
-                            ? AppLocalizations.of(context)!.groupPoll
-                            : AppLocalizations.of(context)!.eventPoll,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
                       Stack(
                         children: [
                           Card(
@@ -383,7 +377,6 @@ class _PollGatewayState extends State<PollGateway> {
                                         );
                                       },
                                     ),
-                                  const SizedBox(height: 16),
                                   if (!showHavingPollToAnswer)
                                     Row(
                                       mainAxisAlignment:

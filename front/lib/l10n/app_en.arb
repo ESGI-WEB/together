@@ -103,5 +103,10 @@
   "noPublication": "There are no publications.",
   "editPublication": "Edit the publication",
   "publicationContent": "Publication content",
-  "news": "What's up?"
+  "news": "What's up?",
+  "nextEvent": "Next event",
+  "publications": "Publications",
+  "edit": "Edit",
+  "comment": "Comment",
+  "like": "Like"
 }

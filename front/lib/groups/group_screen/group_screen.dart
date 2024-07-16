@@ -6,6 +6,7 @@ import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart
 import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/core/services/user_services.dart';
+import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/publication/partials/group_create_publication_bottom_sheet.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/publications/partials/PublicationsList.dart';
@@ -72,82 +73,111 @@ class GroupScreen extends StatelessWidget {
             builder: (context) {
               final publicationsBloc =
                   BlocProvider.of<PublicationsBloc>(context);
-              return Scaffold(
-                backgroundColor: Colors.grey[100],
-                body: Column(
-                  children: [
-                    InkWell(
-                      onTap: () => _showBottomSheet(context, publicationsBloc),
-                      child: Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            if (authenticatedUser != null)
-                              Avatar(user: authenticatedUser),
-                            const SizedBox(width: 10),
-                            Flexible(
-                              child: Text(
-                                AppLocalizations.of(context)!.news,
-                                style: Theme.of(context).textTheme.bodyLarge,
+              return SingleChildScrollView(
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () =>
+                            _showBottomSheet(context, publicationsBloc),
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              if (authenticatedUser != null)
+                                Avatar(user: authenticatedUser),
+                              const SizedBox(width: 10),
+                              Flexible(
+                                child: Text(
+                                  AppLocalizations.of(context)!.news,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: BlocBuilder<GroupBloc, GroupState>(
-                        builder: (context, state) {
-                          if (state.status == GroupStatus.loading) {
-                            return const Center(
-                                child: CircularProgressIndicator());
-                          }
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BlocBuilder<GroupBloc, GroupState>(
+                          builder: (context, state) {
+                            if (state.status == GroupStatus.loading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
 
-                          if (state.status == GroupStatus.error) {
-                            return Center(
-                              child: Text(state.errorMessage ??
-                                  AppLocalizations.of(context)!.errorOccurred),
-                            );
-                          }
+                            if (state.status == GroupStatus.error) {
+                              return Center(
+                                child: Text(state.errorMessage ??
+                                    AppLocalizations.of(context)!
+                                        .errorOccurred),
+                              );
+                            }
 
-                          final group = state.group;
-                          if (group == null) {
-                            return Center(
-                              child: Text(
-                                  AppLocalizations.of(context)!.groupNotFound),
-                            );
-                          }
+                            final group = state.group;
+                            if (group == null) {
+                              return Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .groupNotFound),
+                              );
+                            }
 
-                          final isGroupOwner =
-                              state.group?.ownerId == state.userData?.id;
+                            final isGroupOwner =
+                                state.group?.ownerId == state.userData?.id;
 
-                          return SingleChildScrollView(
-                            child: Column(
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 10),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!.nextEvent,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      ),
+                                      const Spacer(),
+                                      IconButton(
+                                        onPressed: () {
+                                          CreateEventScreen.navigateTo(
+                                            context,
+                                            groupId: id,
+                                          );
+                                        },
+                                        color: Theme.of(context).primaryColor,
+                                        icon: const Icon(Icons.add),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                NextEventOfGroup(
+                                  groupId: id,
+                                ),
                                 PollGateway(
                                   id: id,
                                   hasParentEditionRights: isGroupOwner,
                                 ),
-                                const SizedBox(height: 10),
-                                NextEventOfGroup(
-                                  groupId: id,
-                                ),
-                                const SizedBox(height: 10),
+                                const SizedBox(height: 20),
                                 PublicationsList(
                                   groupId: id,
                                   authenticatedUser: authenticatedUser,
                                   publicationsBloc: publicationsBloc,
+                                  onAddPublication: () =>
+                                      _showBottomSheet(context, publicationsBloc),
                                 ),
                               ],
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

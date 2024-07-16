@@ -57,82 +57,84 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.addPublication,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              IconButton(
-                icon: Icon(
-                  _isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                  color: _isPinned
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.grey,
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.addPublication,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-                onPressed: () {
-                  setState(() {
-                    _isPinned = !_isPinned;
-                  });
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          TextFormField(
-            controller: _contentController,
-            decoration: InputDecoration(
-              labelText: AppLocalizations.of(context)!.messageContent,
-              alignLabelWithHint: true,
-              fillColor: Colors.white,
-              filled: true,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                IconButton(
+                  icon: Icon(
+                    _isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                    color: _isPinned
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isPinned = !_isPinned;
+                    });
+                  },
+                ),
+              ],
             ),
-            maxLines: 5,
-            minLines: 3,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return AppLocalizations.of(context)!.enterContent;
-              } else if (value.length < 10 || value.length > 300) {
-                return AppLocalizations.of(context)!.invalidMessage(10, 300);
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState?.validate() == true) {
-                final newPublication = {
-                  "content": _contentController.text,
-                  "event_id": null,
-                  "group_id": widget.groupId,
-                  "is_pinned": _isPinned,
-                };
-                context
-                    .read<CreatePublicationBloc>()
-                    .add(CreatePublicationSubmitted(newPublication));
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _contentController,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.messageContent,
+                alignLabelWithHint: true,
+                fillColor: Colors.white,
+                filled: true,
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               ),
+              maxLines: 5,
+              minLines: 3,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)!.enterContent;
+                } else if (value.length < 10 || value.length > 300) {
+                  return AppLocalizations.of(context)!.invalidMessage(300, 10);
+                }
+                return null;
+              },
             ),
-            child: Text(AppLocalizations.of(context)!.publish),
-          ),
-        ],
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState?.validate() == true) {
+                  final newPublication = {
+                    "content": _contentController.text,
+                    "event_id": null,
+                    "group_id": widget.groupId,
+                    "is_pinned": _isPinned,
+                  };
+                  context
+                      .read<CreatePublicationBloc>()
+                      .add(CreatePublicationSubmitted(newPublication));
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(AppLocalizations.of(context)!.publish),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/go-playground/validator/v10"
+	"time"
 	"together/database"
 	"together/models"
 	"together/utils"
@@ -109,8 +110,13 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedFields).Error; err != nil {
 		return nil, err
 	}
-
 	if err := database.CurrentDatabase.Preload("User").First(existingMessage, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	// force update the message's updated_at field
+	// wierd gorm bug for this table
+	if err := database.CurrentDatabase.Model(existingMessage).Update("updated_at", time.Now()).Error; err != nil {
 		return nil, err
 	}
 

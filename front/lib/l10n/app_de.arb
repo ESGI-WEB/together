@@ -103,5 +103,10 @@
   "noPublication": "Es gibt keine Veröffentlichungen.",
   "editPublication": "Veröffentlichung bearbeiten",
   "publicationContent": "Veröffentlichungsinhalt",
-  "news": "Was gibt es Neues?"
+  "news": "Was gibt es Neues?",
+  "nextEvent": "Nächstes Ereignis",
+  "publications": "Veröffentlichungen",
+  "edit": "Bearbeiten",
+  "comment": "Kommentar",
+  "like": "Gefällt mir"
 }

@@ -74,7 +74,7 @@
   "allowMultipleAnswers": "Autoriser plusieurs réponses",
   "cancel": "Annuler",
   "save": "Enregistrer",
-  "currentPolls": "{count, plural, =0{Aucun sondage en cours} =1{1 sondage en cours} other{{count} sondage en cours}}",
+  "currentPolls": "{count, plural, =0{Aucun sondage en cours} =1{1 sondage en cours} other{{count} sondages en cours}}",
   "groupMembersNeedYourOpinion": "Les membres de votre groupe ont besoin de votre avis !",
   "letsGo": "C'est parti !",
   "seeClosedPolls": "Voir les sondages clos",
@@ -103,5 +103,10 @@
   "noPublication": "Il n'y a pas de publications.",
   "editPublication": "Modifier la publication",
   "publicationContent": "Contenu de la publication",
-  "news": "Quoi de neuf ?"
+  "news": "Quoi de neuf ?",
+  "nextEvent": "Prochain évènement",
+  "publications": "Publications",
+  "edit": "Modifier",
+  "comment": "Commenter",
+  "like": "J'aime"
 }

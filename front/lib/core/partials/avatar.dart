@@ -10,10 +10,10 @@ class Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final firstLetter = user.name.isNotEmpty ? user.name[0].toUpperCase() : "U";
     return CircleAvatar(
-      radius: 20,
+      radius: 15,
       backgroundColor: user.color,
       foregroundColor: user.textColor,
-      child: Text(firstLetter),
+      child: Text(firstLetter, style: const TextStyle(fontSize: 14)),
     );
   }
 }
