@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart';
+part of 'create_publication_bloc.dart';
 
 @immutable
 abstract class CreatePublicationEvent {}

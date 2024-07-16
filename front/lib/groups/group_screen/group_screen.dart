@@ -9,7 +9,7 @@ import 'package:front/core/services/user_services.dart';
 import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/publication/partials/group_create_publication_bottom_sheet.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
-import 'package:front/publications/partials/PublicationsList.dart';
+import 'package:front/publications/partials/publications_list.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

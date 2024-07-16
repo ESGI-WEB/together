@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/models/message.dart';
 import 'package:front/core/services/message_services.dart';
-import 'create_publication_event.dart';
-import 'create_publication_state.dart';
+part 'create_publication_event.dart';
+part 'create_publication_state.dart';
 
 class CreatePublicationBloc extends Bloc<CreatePublicationEvent, CreatePublicationState> {
   CreatePublicationBloc() : super(CreatePublicationState()) {

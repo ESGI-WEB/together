@@ -69,7 +69,7 @@ class Event {
       groupId: json['group_id'],
       recurrenceType: json['recurrence_type'] != null
           ? RecurrenceType.values.firstWhere((e) =>
-              e.toString() == 'RecurrenceType.' + json['recurrence_type'])
+              e.toString() == 'RecurrenceType.${json['recurrence_type']}')
           : null,
     );
   }

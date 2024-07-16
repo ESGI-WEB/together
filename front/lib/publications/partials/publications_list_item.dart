@@ -6,7 +6,6 @@ import 'package:front/core/partials/avatar.dart';
 import 'package:front/local.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PublicationsListItem extends StatelessWidget {
   final Message publication;

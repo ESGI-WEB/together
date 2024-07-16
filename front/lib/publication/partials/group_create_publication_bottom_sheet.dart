@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/publication/create_publication_screen/blocs/create_publication_bloc.dart';
-import 'package:front/publication/create_publication_screen/blocs/create_publication_event.dart';
-import 'package:front/publication/create_publication_screen/blocs/create_publication_state.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -47,7 +45,7 @@ class CreatePublicationForm extends StatefulWidget {
   const CreatePublicationForm({required this.groupId, super.key});
 
   @override
-  _CreatePublicationFormState createState() => _CreatePublicationFormState();
+  State<CreatePublicationForm> createState() => _CreatePublicationFormState();
 }
 
 class _CreatePublicationFormState extends State<CreatePublicationForm> {
@@ -68,7 +66,7 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
               children: [
                 Text(
                   AppLocalizations.of(context)!.addPublication,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 IconButton(
                   icon: Icon(

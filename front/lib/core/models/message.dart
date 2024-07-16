@@ -88,7 +88,6 @@ class Message {
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
-    print('json["type"]: ${json['type']}');
     return Message(
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),

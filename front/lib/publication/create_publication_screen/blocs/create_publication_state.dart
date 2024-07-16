@@ -1,4 +1,4 @@
-import 'package:front/core/models/message.dart';
+part of 'create_publication_bloc.dart';
 
 enum CreatePublicationStatus {
   initial,
