@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddEventCard extends StatelessWidget {
   final void Function()? onTap;
@@ -25,7 +26,7 @@ class AddEventCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Créer un évènement',
+                    AppLocalizations.of(context)!.createAnEvent,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),
@@ -39,7 +40,7 @@ class AddEventCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text('Ajouter'),
+                    child: Text(AppLocalizations.of(context)!.add),
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
@@ -53,20 +54,22 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
   }
 
   BottomNavigationBar _buildAppBar(
-      BuildContext context, JwtData? authenticatedData) {
+    BuildContext context,
+    JwtData? authenticatedData,
+  ) {
     return BottomNavigationBar(
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.event),
-          label: 'Événements',
+          icon: const Icon(Icons.event),
+          label: AppLocalizations.of(context)!.events,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.message),
-          label: 'Messagerie',
+          icon: const Icon(Icons.message),
+          label: AppLocalizations.of(context)!.inbox,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profil',
+          icon: const Icon(Icons.person),
+          label: AppLocalizations.of(context)!.profile,
         ),
       ],
       currentIndex: _selectedIndex,

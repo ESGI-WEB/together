@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
 import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/group_screen_bloc.dart';
 
@@ -28,12 +29,17 @@ class GroupScreen extends StatelessWidget {
           }
 
           if (state.status == GroupScreenStatus.error) {
-            return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
+            return Center(
+              child: Text(state.errorMessage ??
+                  AppLocalizations.of(context)!.errorOccurred),
+            );
           }
 
           final group = state.group;
           if (group == null) {
-            return const Center(child: Text('Groupe introuvable'));
+            return Center(
+              child: Text(AppLocalizations.of(context)!.groupNotFound),
+            );
           }
 
           final isGroupOwner = state.group?.ownerId == state.userData?.id;

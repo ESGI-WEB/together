@@ -15,6 +15,7 @@ import 'package:front/event/event_screen/partials/event_screen_about.dart';
 import 'package:front/event/event_screen/partials/event_screen_header.dart';
 import 'package:front/event/event_screen/partials/event_screen_location.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EventScreen extends StatelessWidget {
   static const String routeName = '/event-view';
@@ -117,15 +118,18 @@ class EventScreen extends StatelessWidget {
                 }
                 if (state.status == EventScreenStatus.duplicateSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Évènement dupliqué avec succès !')),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!
+                          .eventSuccessFullyDuplicated),
+                    ),
                   );
                 }
                 if (state.status == EventScreenStatus.duplicateError) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(
-                            state.errorMessage ?? 'Une erreur est survenue')),
+                      content: Text(state.errorMessage ??
+                          AppLocalizations.of(context)!.errorOccurred),
+                    ),
                   );
                 }
               },
@@ -149,14 +153,15 @@ class EventScreen extends StatelessWidget {
                         final Event? event = state.event;
                         if (state.status == EventScreenStatus.error ||
                             event == null) {
-                          return const ErrorOccurred(
-                            image: Image(
+                          return ErrorOccurred(
+                            image: const Image(
                               width: 150,
                               image: AssetImage('assets/images/event.gif'),
                             ),
-                            alertMessage: "Oups ! Une erreur est survenue",
+                            alertMessage: AppLocalizations.of(context)!
+                                .oopsAnErrorOccurred,
                             bodyMessage:
-                                "Nous n'avons pas pu récuperer votre évènement",
+                                AppLocalizations.of(context)!.eventNotQueried,
                           );
                         }
 
@@ -221,8 +226,13 @@ class EventScreen extends StatelessWidget {
                                                       child: Text(
                                                         state.isAttending ==
                                                                 true
-                                                            ? "Ne plus participer"
-                                                            : "Participer",
+                                                            ? AppLocalizations
+                                                                    .of(
+                                                                        context)!
+                                                                .notParticipate
+                                                            : AppLocalizations
+                                                                    .of(context)!
+                                                                .participate,
                                                       ))
                                                 ],
                                               ),
@@ -266,8 +276,8 @@ class EventScreen extends StatelessWidget {
                                               );
                                         }
                                       },
-                                      child: const Text(
-                                          "Dupliquer l'évènement un autre jour"),
+                                      child: Text(AppLocalizations.of(context)!
+                                          .duplicateAnotherDay),
                                     ),
                                   ],
                                 ),

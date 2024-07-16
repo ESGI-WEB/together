@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum PollMenuItems {
   addPoll,
@@ -69,35 +70,35 @@ class PollOwnerMenu extends StatelessWidget {
           _buildMenuItem(
             value: PollMenuItems.addPoll,
             onTap: onAddPoll,
-            text: 'Ajouter un sondage',
+            text: AppLocalizations.of(context)!.createAPoll,
             isLoading: isOnAddPollLoading,
           ),
         if (onEditPoll != null)
           _buildMenuItem(
             value: PollMenuItems.editPoll,
             onTap: onEditPoll,
-            text: 'Modifier le sondage',
+            text: AppLocalizations.of(context)!.editPoll,
             isLoading: isOnEditPollLoading,
           ),
         if (onDeletePoll != null)
           _buildMenuItem(
             value: PollMenuItems.deletePoll,
             onTap: onDeletePoll,
-            text: 'Supprimer le sondage',
+            text: AppLocalizations.of(context)!.deletePoll,
             isLoading: isOnDeletePollLoading,
           ),
         if (onClosePoll != null)
           _buildMenuItem(
             value: PollMenuItems.closePoll,
             onTap: onClosePoll,
-            text: 'Clôturer le sondage',
+            text: AppLocalizations.of(context)!.closePoll,
             isLoading: isOnClosePollLoading,
           ),
         if (onSeeClosedPolls != null)
           _buildMenuItem(
             value: PollMenuItems.seeClosedPolls,
             onTap: onSeeClosedPolls,
-            text: 'Voir les sondages clôturés',
+            text: AppLocalizations.of(context)!.seeClosedPolls,
             isLoading: isOnSeeClosedPollsLoading,
           ),
       ],

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/join_group_bloc.dart';
 
@@ -37,8 +38,10 @@ class JoinGroupScreen extends StatelessWidget {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.errorMessage ??
-                          'Impossible de rejoindre le groupe.'),
+                      content: Text(
+                        state.errorMessage ??
+                            AppLocalizations.of(context)!.unableToJoinGroup,
+                      ),
                     ),
                   );
                 });
@@ -77,21 +80,21 @@ class JoinGroupFormState extends State<JoinGroupForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Rejoindre un groupe',
+            AppLocalizations.of(context)!.joinAGroup,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 20),
           TextFormField(
             controller: _codeController,
             decoration: InputDecoration(
-              labelText: 'Code du groupe',
+              labelText: AppLocalizations.of(context)!.groupCode,
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               prefixIcon: const Icon(Icons.vpn_key),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un code';
+                return AppLocalizations.of(context)!.codeRequired;
               }
               return null;
             },
@@ -106,12 +109,13 @@ class JoinGroupFormState extends State<JoinGroupForm> {
               }
             },
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), backgroundColor: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('Rejoindre'),
+            child: Text(AppLocalizations.of(context)!.join),
           ),
         ],
       ),

@@ -37,7 +37,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       } catch (error) {
         emit(RegisterError(
           errorMessage:
-              error is ApiException ? error.message : 'Une erreur est survenue',
+              error is ApiException ? error.message : 'An error occured',
           email: state.email,
           password: state.password,
           name: state.name,
@@ -70,7 +70,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       } catch (error) {
         emit(RegisterError(
           errorMessage:
-              error is ApiException ? error.message : 'Une erreur est survenue',
+              error is ApiException ? error.message : 'An error occured',
           email: state.email,
           password: state.password,
           name: state.name,

@@ -8,6 +8,7 @@ import 'package:front/core/partials/date_tile.dart';
 import 'package:front/core/services/api_services.dart';
 import 'package:front/local.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EventScreenHeader extends StatelessWidget {
   final Event event;
@@ -61,7 +62,10 @@ class EventScreenHeader extends StatelessWidget {
                         ),
                         if (organizer != null)
                           Text(
-                            "Par ${organizer.name}, le ${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}",
+                            AppLocalizations.of(context)!.fromNameTheDay(
+                                organizer.name,
+                                "${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}"
+                            ),
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
