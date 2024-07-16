@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:front/app_theme.dart';
-import 'package:front/login/login_screen.dart';
-import 'app_routes.dart';
+import 'package:front/go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return MaterialApp.router(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      routerConfig: goRouter,
       title: '2gether',
       theme: AppTheme.theme,
-      home: LoginScreen(),
-      onGenerateRoute: AppRoutes.generateRoute,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

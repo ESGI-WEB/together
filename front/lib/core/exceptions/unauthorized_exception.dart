@@ -1,5 +1,5 @@
-class UnauthorizedException extends Error {
-  final String message;
+import 'api_exception.dart';
 
-  UnauthorizedException({this.message = 'Accès non autorisé'});
+class UnauthorizedException extends ApiException {
+  UnauthorizedException({super.message = 'Accès non autorisé'});
 }

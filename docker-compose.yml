@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: together-app
     working_dir: /src/app/back
     depends_on:
       - postgres
@@ -20,6 +21,8 @@ services:
       DB_SSL_MODE: ${DB_SSL_MODE:-disable}
       JWT_KEY: ${JWT_KEY:-secret}
       FLUTTER_BUILD_PATH: ${FLUTTER_BUILD_PATH:-../front/build}
+    env_file:
+      - .env
     volumes:
       - "./:/src/app"
 

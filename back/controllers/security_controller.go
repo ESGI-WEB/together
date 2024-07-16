@@ -24,7 +24,7 @@ func NewSecurityController() *SecurityController {
 func (c *SecurityController) Login(ctx echo.Context) error {
 	var jsonBody struct {
 		Email    string `json:"email" validate:"required,email"`
-		Password string `json:"password" validate:"required,min=8"`
+		Password string `json:"password" validate:"required,min=8,max=72"`
 	}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody)
 	if err != nil {
@@ -43,6 +43,7 @@ func (c *SecurityController) Login(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrInvalidCredentials) {
 			return ctx.NoContent(http.StatusUnauthorized)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

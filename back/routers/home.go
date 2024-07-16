@@ -12,5 +12,5 @@ func (r *HelloRouter) SetupRoutes(e *echo.Echo) {
 	helloController := controllers.NewHelloController()
 
 	e.GET("/", helloController.Hello)
-	e.GET("/admin/ping", helloController.HelloAdmin, middlewares.AuthenticationMiddleware)
+	e.GET("/admin/ping", helloController.HelloAdmin, middlewares.AuthenticationMiddleware())
 }

@@ -1,5 +1,9 @@
-class ConflictException extends Error {
-  final String message;
+import 'api_exception.dart';
 
-  ConflictException({this.message = 'Conflit'});
+class ConflictException extends ApiException {
+  ConflictException({
+    super.message = 'Conflit, cet élément existe déjà.',
+    super.statusCode = 409,
+    super.response,
+  });
 }

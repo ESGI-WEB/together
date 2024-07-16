@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:front/core/services/users_services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:front/core/partials/error_occurred.dart';
+import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/register_bloc.dart';
 
 class RegisterScreen extends StatelessWidget {
-  static const String routeName = '/register';
+  static const String routeName = 'register';
 
-  static Future<void> navigateTo(BuildContext context,
-      {bool removeHistory = false}) {
-    return Navigator.of(context)
-        .pushNamedAndRemoveUntil(routeName, (route) => !removeHistory);
+  static void navigateTo(BuildContext context) {
+    context.goNamed(routeName);
   }
 
   RegisterScreen({super.key});
@@ -21,142 +23,163 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => RegisterBloc(),
+      create: (context) => RegisterBloc()..add(RegisterAvailabilityChecked()),
       child: Scaffold(
         body: BlocListener<RegisterBloc, RegisterState>(
           listener: (context, state) {
             if (state is RegisterSuccess) {
-              LoginScreen.navigateTo(context,
-                  removeHistory: true, email: state.user.email);
+              LoginScreen.navigateTo(context, email: state.user.email);
             }
           },
           child: BlocBuilder<RegisterBloc, RegisterState>(
               builder: (context, state) {
+            if (state is RegisterFeatureDisabled) {
+              return ErrorOccurred(
+                image: SvgPicture.asset(
+                  'assets/images/503.svg',
+                  height: 200,
+                ),
+              );
+            }
+
             return Form(
               key: _formKey,
               child: Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("S'inscrire",
-                          style: Theme.of(context).textTheme.displayLarge),
-                      const SizedBox(height: 10),
-                      if (state is RegisterError)
-                        Text(
-                          state.errorMessage,
-                          style: const TextStyle(color: Colors.red),
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.all(50),
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/talks.svg',
+                          width: 150,
                         ),
-                      TextFormField(
-                        enabled: state is! RegisterLoading,
-                        decoration: const InputDecoration(
-                          hintText: 'Nom',
+                        const SizedBox(height: 10),
+                        Text(AppLocalizations.of(context)!.register,
+                            style: Theme.of(context).textTheme.displayLarge),
+                        const SizedBox(height: 10),
+                        if (state is RegisterError)
+                          Text(
+                            state.errorMessage,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        TextFormField(
+                          enabled: state is! RegisterLoading,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.name,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!.nameRequired;
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            BlocProvider.of<RegisterBloc>(context).add(
+                                RegisterFormChanged(
+                                    name: value,
+                                    email: state.email,
+                                    password: state.password,
+                                ));
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un nom';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          BlocProvider.of<RegisterBloc>(context).add(
-                              RegisterFormChanged(
-                                  name: value,
-                                  email: state.email,
-                                  password: state.password));
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        enabled: state is! RegisterLoading,
-                        decoration: const InputDecoration(
-                          hintText: 'Email',
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          enabled: state is! RegisterLoading,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.email,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!.emailRequired;
+                            }
+                            if (!UserServices.emailRegex.hasMatch(value)) {
+                              return AppLocalizations.of(context)!.emailInvalid;
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            BlocProvider.of<RegisterBloc>(context).add(
+                                RegisterFormChanged(
+                                    email: value,
+                                    name: state.name,
+                                    password: state.password));
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un email';
-                          }
-                          if (!UsersServices.emailRegex.hasMatch(value)) {
-                            return 'Veuillez saisir un email valide';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          BlocProvider.of<RegisterBloc>(context).add(
-                              RegisterFormChanged(
-                                  email: value,
-                                  name: state.name,
-                                  password: state.password));
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        enabled: state is! RegisterLoading,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Mot de passe',
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          enabled: state is! RegisterLoading,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.password,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)!.passwordRequired;
+                            }
+
+                            if (value.length < 8) {
+                              return AppLocalizations.of(context)!.passwordTooShort(8);
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            BlocProvider.of<RegisterBloc>(context).add(
+                                RegisterFormChanged(
+                                    password: value,
+                                    name: state.name,
+                                    email: state.email));
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un mot de passe';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          BlocProvider.of<RegisterBloc>(context).add(
-                              RegisterFormChanged(
-                                  password: value,
-                                  name: state.name,
-                                  email: state.email));
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        enabled: state is! RegisterLoading,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Confirmer le mot de passe',
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          enabled: state is! RegisterLoading,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.confirmPassword,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return  AppLocalizations.of(context)!.passwordRequired;
+                            }
+
+                            if (value != state.password) {
+                              return  AppLocalizations.of(context)!.passwordsDoNotMatch;
+                            }
+
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un mot de passe';
+                        const SizedBox(height: 50),
+                        Builder(builder: (context) {
+                          if (state is RegisterLoading) {
+                            return const CircularProgressIndicator();
                           }
 
-                          if (value != state.password) {
-                            return 'Les mots de passe ne correspondent pas';
-                          }
-
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Builder(builder: (context) {
-                        if (state is RegisterLoading) {
-                          return const CircularProgressIndicator();
-                        }
-
-                        return Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  BlocProvider.of<RegisterBloc>(context)
-                                      .add(RegisterFormSubmitted());
-                                }
-                              },
-                              child: const Text('Inscription'),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {
-                                LoginScreen.navigateTo(context);
-                              },
-                              child: const Text('Se connecter'),
-                            ),
-                          ],
-                        );
-                      }),
-                    ],
+                          return Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    BlocProvider.of<RegisterBloc>(context)
+                                        .add(RegisterFormSubmitted());
+                                  }
+                                },
+                                child: Text(AppLocalizations.of(context)!.register),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  LoginScreen.navigateTo(context);
+                                },
+                                child: Text(AppLocalizations.of(context)!.login),
+                              ),
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                 ),
               ),

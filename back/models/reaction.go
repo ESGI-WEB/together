@@ -6,9 +6,9 @@ import (
 
 type Reaction struct {
 	gorm.Model
-	Content   string
-	MessageID uint
-	Message   Message
-	UserID    uint
-	User      User
+	Content   string  `json:"content" validate:"required"`
+	MessageID uint    `json:"messageID" validate:"required"`
+	Message   Message `gorm:"foreignkey:MessageID"`
+	UserID    uint    `json:"userID" validate:"required"`
+	User      User    `gorm:"foreignkey:UserID"`
 }

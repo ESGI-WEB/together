@@ -86,6 +86,17 @@ docker compose up -d
 
 - Se rendre sur http://localhost:8080 pour acceder à l'API une fois que le serveur go est lancé (peut prendre quelques secondes)
 
+## Swagger
+Toutes les routes sont documentées sur swagger, pour y accéder, rendez-vous sur
+http://localhost:8080/swagger/ui
+
+- Authentification
+    - Pour accéder à certaines routes, il faut être authentifié
+    - Pour cela, il faut se rendre sur la route /auth/register pour créer un compte
+    - Puis sur la route /auth/login pour se connecter
+    - Une fois connecté, vous recevrez un token JWT à mettre dans le header Authorization pour accéder aux routes protégées
+    - Dans swagger, cliquez sur Authorize en haut à droite, et mettez le token dans le champ Value prefixé par Bearer, par exemple : `Bearer eyJhb...`
+
 ## Flutter
 - Aller dans le dossier /front
 ```bash
@@ -104,3 +115,20 @@ Quelque chose comme 192.123.123.123:8080
 flutter run -d chrome
 ```
 Attention ! Faut pour ca bien mettre l'ip de votre pc dans le fichier .env et non le localhost de l'emulateur (pas 10.0.2.2:8080)
+
+### Traductions
+
+Fichiers de traductions dans /front/lib/l10n
+
+Lancer cette commande pour regenerer les fichiers de traductions
+```bash
+flutter gen-l10n
+```
+Si vous utilisez le hot reload, tout se fera automatiquement
+
+## Testing
+
+- Lancer les tests du back :
+```bash
+docker exec together-app go test -v ./...
+```
