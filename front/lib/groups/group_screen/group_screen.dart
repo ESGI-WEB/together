@@ -10,6 +10,7 @@ import 'package:front/publication/partials/group_create_publication_bottom_sheet
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/publications/partials/PublicationsList.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/group_bloc.dart';
 
@@ -35,7 +36,8 @@ class GroupScreen extends StatelessWidget {
     return null;
   }
 
-  void _showBottomSheet(BuildContext context, PublicationsBloc publicationsBloc) {
+  void _showBottomSheet(
+      BuildContext context, PublicationsBloc publicationsBloc) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -62,15 +64,17 @@ class GroupScreen extends StatelessWidget {
               create: (context) => GroupBloc()..add(LoadGroup(groupId: id)),
             ),
             BlocProvider(
-              create: (context) => PublicationsBloc()..add(LoadPublications(groupId: id)),
+              create: (context) =>
+                  PublicationsBloc()..add(LoadPublications(groupId: id)),
             ),
           ],
           child: Builder(
             builder: (context) {
-              final publicationsBloc = BlocProvider.of<PublicationsBloc>(context);
-              return Container(
-                color: Colors.grey[100],
-                child: Column(
+              final publicationsBloc =
+                  BlocProvider.of<PublicationsBloc>(context);
+              return Scaffold(
+                backgroundColor: Colors.grey[100],
+                body: Column(
                   children: [
                     InkWell(
                       onTap: () => _showBottomSheet(context, publicationsBloc),
@@ -84,7 +88,7 @@ class GroupScreen extends StatelessWidget {
                             const SizedBox(width: 10),
                             Flexible(
                               child: Text(
-                                "Quoi de neuf ?",
+                                AppLocalizations.of(context)!.news,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ),
@@ -97,19 +101,27 @@ class GroupScreen extends StatelessWidget {
                       child: BlocBuilder<GroupBloc, GroupState>(
                         builder: (context, state) {
                           if (state.status == GroupStatus.loading) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
                           if (state.status == GroupStatus.error) {
-                            return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
+                            return Center(
+                              child: Text(state.errorMessage ??
+                                  AppLocalizations.of(context)!.errorOccurred),
+                            );
                           }
 
                           final group = state.group;
                           if (group == null) {
-                            return const Center(child: Text('Groupe introuvable'));
+                            return Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.groupNotFound),
+                            );
                           }
 
-                          final isGroupOwner = state.group?.ownerId == state.userData?.id;
+                          final isGroupOwner =
+                              state.group?.ownerId == state.userData?.id;
 
                           return SingleChildScrollView(
                             child: Column(

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/create_group_bloc.dart';
 
@@ -34,15 +35,13 @@ class CreateGroupScreen extends StatelessWidget {
                 if (state.status == CreateGroupStatus.success &&
                     state.newGroup?.id != null) {
                   GroupScreen.navigateTo(context, id: state.newGroup!.id);
-                  context
-                      .read<GroupsBloc>()
-                      .add(GroupJoined(state.newGroup!));
+                  context.read<GroupsBloc>().add(GroupJoined(state.newGroup!));
                 } else if (state.status == CreateGroupStatus.error) {
                   SchedulerBinding.instance.addPostFrameCallback((_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(
-                              state.errorMessage ?? 'Erreur inconnue')),
+                          content: Text(state.errorMessage ??
+                              AppLocalizations.of(context)!.errorOccurred)),
                     );
                   });
                 }
@@ -73,7 +72,8 @@ class CreateGroupFormState extends State<CreateGroupForm> {
     const length = 10;
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final rand = Random();
-    return List.generate(length, (index) => chars[rand.nextInt(chars.length)]).join();
+    return List.generate(length, (index) => chars[rand.nextInt(chars.length)])
+        .join();
   }
 
   @override
@@ -84,20 +84,21 @@ class CreateGroupFormState extends State<CreateGroupForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Créer un nouveau groupe',
+            AppLocalizations.of(context)!.createNewGroup,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 20),
           TextFormField(
             controller: _nameController,
             decoration: InputDecoration(
-              labelText: 'Nom',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelText: AppLocalizations.of(context)!.name,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               prefixIcon: const Icon(Icons.group),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un nom';
+                return AppLocalizations.of(context)!.nameRequired;
               }
               return null;
             },
@@ -106,8 +107,9 @@ class CreateGroupFormState extends State<CreateGroupForm> {
           TextFormField(
             controller: _descriptionController,
             decoration: InputDecoration(
-              labelText: 'Description',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelText: AppLocalizations.of(context)!.description,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               prefixIcon: const Icon(Icons.description),
             ),
           ),
@@ -115,8 +117,9 @@ class CreateGroupFormState extends State<CreateGroupForm> {
           TextFormField(
             controller: _codeController,
             decoration: InputDecoration(
-              labelText: 'Code',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              labelText: AppLocalizations.of(context)!.code,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               prefixIcon: const Icon(Icons.vpn_key),
               suffixIcon: IconButton(
                 icon: const Icon(Icons.refresh),
@@ -127,9 +130,9 @@ class CreateGroupFormState extends State<CreateGroupForm> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer un code';
+                return AppLocalizations.of(context)!.codeRequired;
               } else if (value.length < 5 || value.length > 20) {
-                return 'Le code doit contenir entre 5 et 20 caractères';
+                return AppLocalizations.of(context)!.codeInvalid(5, 20);
               }
               return null;
             },
@@ -143,16 +146,21 @@ class CreateGroupFormState extends State<CreateGroupForm> {
                   "description": _descriptionController.text,
                   "code": _codeController.text,
                 };
-                BlocProvider.of<CreateGroupBloc>(context).add(CreateGroupSubmitted(newGroup));
+                BlocProvider.of<CreateGroupBloc>(context)
+                    .add(CreateGroupSubmitted(newGroup));
               }
             },
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10), backgroundColor: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 10,
+              ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('Créer'),
+            child: Text(AppLocalizations.of(context)!.create),
           ),
         ],
       ),

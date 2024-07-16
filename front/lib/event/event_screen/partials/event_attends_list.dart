@@ -3,6 +3,7 @@ import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/services/events_services.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:front/core/models/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EventAttendsList extends StatefulWidget {
   final int eventId;
@@ -32,7 +33,6 @@ class _EventAttendsListState extends State<EventAttendsList> {
 
   Future<void> _fetchPage(int pageKey) async {
     try {
-      // Simulate API call here. Replace with your API call logic.
       final newItems = await fetchAttendees(widget.eventId, pageKey);
       final isLastPage = _currentPage >= _totalPages;
       if (isLastPage) {
@@ -79,8 +79,8 @@ class _EventAttendsListState extends State<EventAttendsList> {
           ),
           title: Text(user.name),
         ),
-        noItemsFoundIndicatorBuilder: (context) => const Center(
-          child: Text("Aucun participants à l'évènement"),
+        noItemsFoundIndicatorBuilder: (context) => Center(
+          child: Text(AppLocalizations.of(context)!.noParticipants),
         ),
       ),
     );

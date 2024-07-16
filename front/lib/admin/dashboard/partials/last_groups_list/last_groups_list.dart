@@ -52,7 +52,10 @@ class LastGroupsList extends StatelessWidget {
                   itemCount: groups.length,
                   itemBuilder: (BuildContext context, int index) {
                     final Group group = groups[index];
-                    return GroupsListItem(group: group);
+                    return GroupsListItem(
+                      group: group,
+                      showNavigation: false,
+                    );
                   },
                 ),
               );

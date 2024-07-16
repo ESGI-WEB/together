@@ -13,6 +13,7 @@ import 'package:front/core/partials/poll/poll_field.dart';
 import 'package:front/core/partials/poll/poll_owner_menu.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:front/core/models/poll.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/poll_bloc.dart';
 import 'closed_polls/closed_polls.dart';
@@ -277,17 +278,17 @@ class _PollGatewayState extends State<PollGateway> {
                 if (state.status == PollStatus.pollCreated) {
                   closeDialog();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Le sondage a été enregistré avec succès'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.pollSaved),
                     ),
                   );
                 }
 
                 if (state.status == PollStatus.createPollError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                          'Une erreur est survenue lors de la sauvegarde du sondage'),
+                    SnackBar(
+                      content:
+                          Text(AppLocalizations.of(context)!.errorOccurred),
                     ),
                   );
                 }
@@ -308,8 +309,9 @@ class _PollGatewayState extends State<PollGateway> {
 
                   if (state.status == PollStatus.error) {
                     return Center(
-                        child: Text(
-                            state.errorMessage ?? 'Une erreur est survenue'));
+                      child: Text(state.errorMessage ??
+                          AppLocalizations.of(context)!.errorOccurred),
+                    );
                   }
 
                   final pollPage = state.pollPage;
@@ -333,8 +335,8 @@ class _PollGatewayState extends State<PollGateway> {
                     children: [
                       Text(
                         widget.type == PollType.group
-                            ? 'Sondage de groupe'
-                            : "Sondage d'évènement",
+                            ? AppLocalizations.of(context)!.groupPoll
+                            : AppLocalizations.of(context)!.eventPoll,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Stack(

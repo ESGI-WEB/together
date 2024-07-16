@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/publications/partials/PublicationsListItem.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PublicationsList extends StatelessWidget {
   final int groupId;
@@ -26,7 +27,7 @@ class PublicationsList extends StatelessWidget {
         }
 
         if (state.status == PublicationsStatus.error) {
-          return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
+          return Center(child: Text(state.errorMessage ?? AppLocalizations.of(context)!.errorOccurred));
         }
 
         final publications = state.publications;

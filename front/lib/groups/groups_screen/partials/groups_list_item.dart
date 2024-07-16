@@ -4,8 +4,13 @@ import 'package:front/groups/group_screen/group_screen.dart';
 
 class GroupsListItem extends StatelessWidget {
   final Group group;
+  final bool showNavigation;
 
-  const GroupsListItem({required this.group, super.key});
+  const GroupsListItem({
+    required this.group,
+    super.key,
+    this.showNavigation = true,
+  });
 
   String _getImageUrl(int id) {
     return 'https://picsum.photos/seed/$id/201';
@@ -20,7 +25,7 @@ class GroupsListItem extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          GroupScreen.navigateTo(context, id: group.id);  // Pass the bloc to navigateTo
+          GroupScreen.navigateTo(context, id: group.id);
         },
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
@@ -29,7 +34,8 @@ class GroupsListItem extends StatelessWidget {
             width: 50,
             height: 50,
             fit: BoxFit.cover,
-            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+            errorBuilder: (BuildContext context, Object exception,
+                StackTrace? stackTrace) {
               return Container(
                 width: 50,
                 height: 50,
@@ -71,8 +77,12 @@ class GroupsListItem extends StatelessWidget {
             ),
           ],
         ),
-        trailing: Icon(Icons.arrow_forward,
-            color: Theme.of(context).colorScheme.primary),
+        trailing: showNavigation
+            ? Icon(
+                Icons.arrow_forward,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            : null,
       ),
     );
   }
