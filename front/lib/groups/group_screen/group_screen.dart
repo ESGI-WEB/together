@@ -92,42 +92,44 @@ class GroupScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    BlocBuilder<GroupBloc, GroupState>(
-                      builder: (context, state) {
-                        if (state.status == GroupStatus.loading) {
-                          return const Center(child: CircularProgressIndicator());
-                        }
+                    Expanded(
+                      child: BlocBuilder<GroupBloc, GroupState>(
+                        builder: (context, state) {
+                          if (state.status == GroupStatus.loading) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
 
-                        if (state.status == GroupStatus.error) {
-                          return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
-                        }
+                          if (state.status == GroupStatus.error) {
+                            return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
+                          }
 
-                        final group = state.group;
-                        if (group == null) {
-                          return const Center(child: Text('Groupe introuvable'));
-                        }
+                          final group = state.group;
+                          if (group == null) {
+                            return const Center(child: Text('Groupe introuvable'));
+                          }
 
-                        final isGroupOwner = state.group?.ownerId == state.userData?.id;
+                          final isGroupOwner = state.group?.ownerId == state.userData?.id;
 
-                        return SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              PublicationsList(
-                                groupId: id,
-                                authenticatedUser: authenticatedUser,
-                                publicationsBloc: publicationsBloc,
-                              ),
-                              PollGateway(
-                                id: id,
-                                hasParentEditionRights: isGroupOwner,
-                              ),
-                              NextEventOfGroup(
-                                groupId: id,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                PollGateway(
+                                  id: id,
+                                  hasParentEditionRights: isGroupOwner,
+                                ),
+                                NextEventOfGroup(
+                                  groupId: id,
+                                ),
+                                PublicationsList(
+                                  groupId: id,
+                                  authenticatedUser: authenticatedUser,
+                                  publicationsBloc: publicationsBloc,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

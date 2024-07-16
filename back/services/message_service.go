@@ -1,10 +1,10 @@
 package services
 
 import (
-	"encoding/json"
 	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/websocket"
+	"together/database"
 	"together/models"
+	"together/utils"
 )
 
 type MessageService struct {
@@ -125,14 +125,4 @@ func (s *MessageService) GetPublicationsByGroup(groupID uint, pagination utils.P
 	pagination.Rows = messages
 
 	return &pagination, nil
-}
-
-const (
-	ClientBoundSendChatMessageType  string = "send_chat_message"
-	ClientBoundFetchChatMessageType        = "fetch_chat_messages"
-	ServerBoundSendChatMessageType         = "send_chat_message"
-)
-
-type TypeMessage struct {
-	Type string `json:"type" validate:"required"`
 }

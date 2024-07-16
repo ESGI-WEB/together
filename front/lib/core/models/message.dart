@@ -89,21 +89,6 @@ class ClientBoundFetchChatMessageType extends WebSocketMessage {
   }
 }
 
-class MessagePinned {
-  final bool isPinned;
-
-  MessagePinned({
-    required this.isPinned,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'is_pinned': isPinned,
-    };
-  }
-}
-
-
 enum MessageType {
   chat,
   publication,
@@ -139,6 +124,7 @@ class Message {
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
+    print('json["type"]: ${json['type']}');
     return Message(
       id: json['ID'],
       createdAt: DateTime.parse(json['CreatedAt']),
@@ -219,5 +205,19 @@ class MessageUpdate {
     return MessageUpdate(
       content: json['content'],
     );
+  }
+}
+
+class MessagePinned {
+  final bool isPinned;
+
+  MessagePinned({
+    required this.isPinned,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'is_pinned': isPinned,
+    };
   }
 }

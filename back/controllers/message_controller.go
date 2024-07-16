@@ -2,15 +2,19 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
+	"together/database"
 	"together/models"
 	"together/services"
+	"together/utils"
 )
 
 type MessageController struct {
-	messageService   *services.MessageService
 	webSocketService *services.WebSocketService
 	messageService *services.MessageService
 	groupService   *services.GroupService

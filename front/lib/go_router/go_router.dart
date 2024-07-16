@@ -49,7 +49,9 @@ final goRouter = GoRouter(
   debugLogDiagnostics: true,
   initialLocation: !kIsWeb ? '/groups' : '/admin',
   redirect: (BuildContext context, GoRouterState state) async {
-    if (await StorageService.isUserLogged()) {
+    if (state.uri.toString() == '/register') {
+      return '/register';
+    } else if (await StorageService.isUserLogged()){
       return null;
     } else {
       return '/login';

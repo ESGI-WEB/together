@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'blocs/event_types_bloc.dart';
 
 class EventTypesScreen extends StatefulWidget {
-  static const String routeName = '/event-types';
+  static const String routeName = 'event-types';
 
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);

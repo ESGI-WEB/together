@@ -17,7 +17,7 @@ import 'package:front/event/event_screen/partials/event_screen_location.dart';
 import 'package:go_router/go_router.dart';
 
 class EventScreen extends StatelessWidget {
-  static const String routeName = '/event-view';
+  static const String routeName = 'event-view';
 
   static void navigateTo(
     BuildContext context, {
