@@ -43,9 +43,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: ListView.builder(
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
+                    final msg = state.messages[index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: MessageBubble(message: state.messages[index]),
+                      child: MessageBubble(
+                        message: msg,
+                        reverse:
+                            msg.author.id == 1, // TODO: Get logged-in user's ID
+                      ),
                     );
                   },
                 ),
