@@ -6,6 +6,7 @@ import 'package:front/core/models/attend.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/models/poll.dart';
 import 'package:front/core/models/websocket.dart';
+import 'package:front/core/services/storage_service.dart';
 import 'package:front/core/services/websocket_service.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -22,7 +23,8 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
-      emit(_buildMessageState(event.message.toChatMessage()));
+      final userData = await StorageService.readJwtDataFromToken();
+      emit(_buildMessageState(event.message.toChatMessage(userData?.id)));
     });
 
     on<PollUpdatedEvent>((event, emit) async {

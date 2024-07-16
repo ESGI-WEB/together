@@ -35,8 +35,15 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
     );
   }
 
-  ChatMessage toChatMessage() {
-    return ChatMessage.fromServerBoundChatMessage(this);
+  ChatMessage toChatMessage(int? id) {
+    return ChatMessage(
+      content: content,
+      author: author,
+      groupId: groupId,
+      messageId: messageId,
+      reactions: reactions,
+      isOwnMessage: author.id == id,
+    );
   }
 }
 
