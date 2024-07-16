@@ -124,6 +124,7 @@ Lancer cette commande pour regenerer les fichiers de traductions
 ```bash
 flutter gen-l10n
 ```
+Si vous utilisez le hot reload, tout se fera automatiquement
 
 ## Testing
 
