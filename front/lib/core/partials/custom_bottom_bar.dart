@@ -70,7 +70,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         ),
       ],
       currentIndex: _selectedIndex,
-      selectedItemColor: Colors.blue,
+      selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: Colors.grey,
       onTap: _onItemTapped,
     );
