@@ -71,7 +71,6 @@ class GroupServices {
         response: e.response,
       );
     }
-    return null;
   }
 
   static Future<Paginated<Group>> getAllGroups({
