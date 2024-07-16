@@ -68,9 +68,9 @@ class GroupScreen extends StatelessWidget {
           child: Builder(
             builder: (context) {
               final publicationsBloc = BlocProvider.of<PublicationsBloc>(context);
-              return Scaffold(
-                backgroundColor: Colors.grey[300],
-                body: Column(
+              return Container(
+                color: Colors.grey[100],
+                child: Column(
                   children: [
                     InkWell(
                       onTap: () => _showBottomSheet(context, publicationsBloc),
@@ -92,7 +92,8 @@ class GroupScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: BlocBuilder<GroupBloc, GroupState>(
                         builder: (context, state) {
                           if (state.status == GroupStatus.loading) {
@@ -113,13 +114,16 @@ class GroupScreen extends StatelessWidget {
                           return SingleChildScrollView(
                             child: Column(
                               children: [
+                                const SizedBox(height: 10),
                                 PollGateway(
                                   id: id,
                                   hasParentEditionRights: isGroupOwner,
                                 ),
+                                const SizedBox(height: 10),
                                 NextEventOfGroup(
                                   groupId: id,
                                 ),
+                                const SizedBox(height: 10),
                                 PublicationsList(
                                   groupId: id,
                                   authenticatedUser: authenticatedUser,

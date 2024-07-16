@@ -31,7 +31,7 @@ class PublicationsList extends StatelessWidget {
 
         final publications = state.publications;
         if (publications == null || publications.isEmpty) {
-          return const Center(child: Text('Aucune publication disponible'));
+          return const SizedBox();
         }
 
         return NotificationListener<ScrollNotification>(
