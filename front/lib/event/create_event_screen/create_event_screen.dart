@@ -10,6 +10,7 @@ import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/create_event_bloc.dart';
 
@@ -18,7 +19,10 @@ class CreateEventScreen extends StatefulWidget {
 
   final int groupId;
 
-  const CreateEventScreen({required this.groupId, super.key});
+  const CreateEventScreen({
+    required this.groupId,
+    super.key,
+  });
 
   static void navigateTo(
     BuildContext context, {
@@ -31,16 +35,16 @@ class CreateEventScreen extends StatefulWidget {
   State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-String getRecurrenceLabel(RecurrenceType type) {
+String getRecurrenceLabel(RecurrenceType type, BuildContext context) {
   switch (type) {
     case RecurrenceType.eachDays:
-      return 'Tous les jours';
+      return AppLocalizations.of(context)!.eachDays;
     case RecurrenceType.eachWeeks:
-      return 'Toutes les semaines';
+      return AppLocalizations.of(context)!.eachWeeks;
     case RecurrenceType.eachMonths:
-      return 'Tous les mois';
+      return AppLocalizations.of(context)!.eachMonths;
     case RecurrenceType.eachYears:
-      return 'Tous les ans';
+      return AppLocalizations.of(context)!.eachYears;
     default:
       return '';
   }
@@ -89,8 +93,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                "Nous n'avons pas réussi à charger les types d'évènements $e")),
+          content: Text(AppLocalizations.of(context)!.eventTypesNotLoaded),
+        ),
       );
     }
   }
@@ -156,11 +160,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           }).toList();
         });
       } else {
-        throw Exception('Erreur au chargement des addresses');
+        throw Exception(AppLocalizations.of(context)!.addressNotLoaded);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur au chargement des addresses: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.addressNotLoaded)),
       );
     }
   }
@@ -207,8 +211,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               } else if (state.status == CreateEventStatus.error) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(
-                          "Erreur sur la création d'évènement: ${state.errorMessage}")),
+                    content: Text(state.errorMessage ?? AppLocalizations.of(context)!.errorOccurred),
+                  ),
                 );
               }
             },
@@ -219,10 +223,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 child: ListView(
                   children: [
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Nom'),
+                      decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.name),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer un nom';
+                          return AppLocalizations.of(context)!.nameRequired;
                         }
                         return null;
                       },
@@ -231,11 +236,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       },
                     ),
                     TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Description'),
+                      decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.description),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer une description';
+                          return AppLocalizations.of(context)!
+                              .descriptionRequired;
                         }
                         return null;
                       },
@@ -244,38 +250,40 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       },
                     ),
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Date'),
+                      decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.date),
                       readOnly: true,
                       onTap: () => _selectDate(context),
                       controller: TextEditingController(text: date),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Veuillez sélectionner une date';
+                          return AppLocalizations.of(context)!.dateRequired;
                         }
                         return null;
                       },
                     ),
                     TextFormField(
-                      decoration: const InputDecoration(labelText: 'Heure'),
+                      decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.time),
                       readOnly: true,
                       onTap: () => _selectTime(context),
                       controller: TextEditingController(text: time),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Veuillez sélectionner une heure';
+                          return AppLocalizations.of(context)!.timeRequired;
                         }
                         return null;
                       },
                     ),
                     DropdownButtonFormField<RecurrenceType>(
-                      decoration: const InputDecoration(
-                        labelText: 'Evènement récurrent',
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.eventRecurrent,
                       ),
                       value: selectedRecurrenceType,
                       items: recurrenceTypes.map((RecurrenceType type) {
                         return DropdownMenuItem<RecurrenceType>(
                           value: type,
-                          child: Text(getRecurrenceLabel(type)),
+                          child: Text(getRecurrenceLabel(type, context)),
                         );
                       }).toList(),
                       onChanged: (RecurrenceType? newValue) {
@@ -288,8 +296,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           fontSize: 16), // Style de l'élément sélectionné
                     ),
                     DropdownButtonFormField<EventType>(
-                      decoration:
-                          const InputDecoration(labelText: "Type d'évènement"),
+                      decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.eventType),
                       items: eventTypes.map((EventType type) {
                         return DropdownMenuItem<EventType>(
                           value: type,
@@ -316,7 +324,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       },
                       validator: (value) {
                         if (value == null) {
-                          return "Veuillez sélectionner un type d'événement";
+                          return AppLocalizations.of(context)!
+                              .eventTypeRequired;
                         }
                         return null;
                       },
@@ -335,11 +344,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         return TextFormField(
                           controller: controller,
                           focusNode: focusNode,
-                          decoration:
-                              const InputDecoration(labelText: 'Adresse'),
+                          decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.address),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer une adresse';
+                              return AppLocalizations.of(context)!
+                                  .addressRequired;
                             }
                             return null;
                           },
@@ -359,7 +369,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () => _submitForm(context),
-                      child: const Text("Créer l'évènement"),
+                      child: Text(AppLocalizations.of(context)!.createEvent),
                     ),
                     BlocBuilder<CreateEventBloc, CreateEventState>(
                       builder: (context, state) {

@@ -63,7 +63,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          AppLocalizations.of(context)!.helloWorld,
+                          AppLocalizations.of(context)!.login,
                           style: Theme.of(context).textTheme.displayMedium,
                         ),
                         const SizedBox(height: 10),
@@ -75,8 +75,8 @@ class LoginScreen extends StatelessWidget {
                         TextFormField(
                           enabled: state is! LoginLoading,
                           controller: _emailController,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.email,
                           ),
                           onChanged: (value) {
                             BlocProvider.of<LoginBloc>(context)
@@ -84,11 +84,11 @@ class LoginScreen extends StatelessWidget {
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez saisir un email';
+                              return AppLocalizations.of(context)!.emailRequired;
                             }
 
                             if (!UserServices.emailRegex.hasMatch(value)) {
-                              return 'Veuillez saisir un email valide';
+                              return AppLocalizations.of(context)!.emailInvalid;
                             }
 
                             return null;
@@ -97,8 +97,8 @@ class LoginScreen extends StatelessWidget {
                         const SizedBox(height: 10),
                         TextFormField(
                           enabled: state is! LoginLoading,
-                          decoration: const InputDecoration(
-                            hintText: 'Mot de passe',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.password,
                           ),
                           onChanged: (value) {
                             BlocProvider.of<LoginBloc>(context)
@@ -107,11 +107,11 @@ class LoginScreen extends StatelessWidget {
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez saisir un mot de passe';
+                              return AppLocalizations.of(context)!.passwordRequired;
                             }
 
                             if (value.length < 8) {
-                              return 'Ajouter au moins 8 caractères';
+                              return AppLocalizations.of(context)!.passwordTooShort(8);
                             }
 
                             return null;
@@ -139,13 +139,13 @@ class LoginScreen extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                                child: const Text('Connexion'),
+                                child: Text(AppLocalizations.of(context)!.login),
                               ),
                               TextButton(
                                 onPressed: () {
                                   RegisterScreen.navigateTo(context);
                                 },
-                                child: const Text('Inscription'),
+                                child: Text(AppLocalizations.of(context)!.register),
                               ),
                             ],
                           );
