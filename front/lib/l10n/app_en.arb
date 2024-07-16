@@ -102,5 +102,6 @@
   "publish": "Publish",
   "noPublication": "There are no publications.",
   "editPublication": "Edit the publication",
-  "publicationContent": "Publication content"
+  "publicationContent": "Publication content",
+  "news": "What's up?"
 }

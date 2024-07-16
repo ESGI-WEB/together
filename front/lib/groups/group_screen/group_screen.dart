@@ -88,7 +88,7 @@ class GroupScreen extends StatelessWidget {
                             const SizedBox(width: 10),
                             Flexible(
                               child: Text(
-                                "Quoi de neuf ?",
+                                AppLocalizations.of(context)!.news,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                             ),
