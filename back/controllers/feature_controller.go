@@ -56,6 +56,7 @@ func (c *FeatureController) Edit(ctx echo.Context) error {
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
 
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
