@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front/chat/reaction_row.dart';
+import 'package:front/chat/send_reaction_row.dart';
+import 'package:front/chat/view_reactions.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/partials/avatar.dart';
 
@@ -33,9 +34,25 @@ class MessageBubbleState extends State<MessageBubble> {
         Expanded(
           child: Stack(
             clipBehavior: Clip.none,
-            children: [
+            children: <Widget>[
               GestureDetector(
                 onLongPress: () {
+                  showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SizedBox(
+                          height: 200,
+                          child: SendReactionRow(
+                            reactions: const ["👍", "😂", "👏", "💕"],
+                            messageId: widget.message.messageId,
+                            onPressed: () {
+                              setState(() {
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        );
+                      });
                   setState(() {
                     _showReactions = !_showReactions;
                   });
@@ -60,20 +77,12 @@ class MessageBubbleState extends State<MessageBubble> {
                   ),
                 ),
               ),
-              if (_showReactions)
-                ReactionRow(
-                  reactions: const ["👍", "😂", "👏", "💕"],
-                  messageId: widget.message.messageId,
-                  onPressed: () {
-                    setState(() {
-                      _showReactions = false;
-                    });
-                  },
+              Positioned(
+                bottom: -16,
+                left: 0,
+                child: ViewReactionRow(
+                  reactions: widget.message.reactions,
                 ),
-              Row(
-                children: widget.message.reactions.entries
-                    .map((entry) => Text("${entry.value} ${entry.key}"))
-                    .toList(),
               )
             ],
           ),
