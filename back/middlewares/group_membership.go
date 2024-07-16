@@ -25,7 +25,7 @@ func GroupMembershipMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, "internal server error")
 		}
 
-		if !isUserInGroup {
+		if !isUserInGroup && !user.IsAdmin() {
 			return c.JSON(http.StatusUnauthorized, "user does not belong to this group")
 		}
 

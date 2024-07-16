@@ -2,6 +2,108 @@ import 'package:front/core/models/group.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/models/event.dart';
 
+class ChatMessage {
+  final String content;
+  final User author;
+  final int groupId;
+
+  ChatMessage({
+    required this.content,
+    required this.author,
+    required this.groupId,
+  });
+
+  factory ChatMessage.fromServerBoundChatMessage(
+    ServerBoundSendChatMessage serverBoundSendChatMessage,
+  ) {
+    return ChatMessage(
+      content: serverBoundSendChatMessage.content,
+      author: serverBoundSendChatMessage.author,
+      groupId: serverBoundSendChatMessage.groupId,
+    );
+  }
+}
+
+class WebSocketMessage {
+  final String type;
+
+  WebSocketMessage({
+    required this.type,
+  });
+}
+
+class ServerBoundSendChatMessage extends WebSocketMessage {
+  final String content;
+  final User author;
+  final int groupId;
+
+  ServerBoundSendChatMessage({
+    required this.content,
+    required this.author,
+    required this.groupId,
+  }) : super(type: 'send_chat_message');
+
+  factory ServerBoundSendChatMessage.fromJson(Map<String, dynamic> json) {
+    return ServerBoundSendChatMessage(
+      content: json['content'],
+      author: User.fromJson(json['author']),
+      groupId: json['group_id'],
+    );
+  }
+
+  ChatMessage toChatMessage() {
+    return ChatMessage.fromServerBoundChatMessage(this);
+  }
+}
+
+class ClientBoundSendChatMessage extends WebSocketMessage {
+  final String content;
+  final int groupId;
+
+  ClientBoundSendChatMessage({
+    required this.content,
+    required this.groupId,
+  }) : super(type: 'send_chat_message');
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'content': content,
+      'group_id': groupId,
+    };
+  }
+}
+
+class ClientBoundFetchChatMessageType extends WebSocketMessage {
+  final int groupId;
+
+  ClientBoundFetchChatMessageType({
+    required this.groupId,
+  }) : super(type: 'fetch_chat_messages');
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'group_id': groupId,
+    };
+  }
+}
+
+class MessagePinned {
+  final bool isPinned;
+
+  MessagePinned({
+    required this.isPinned,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'is_pinned': isPinned,
+    };
+  }
+}
+
+
 enum MessageType {
   chat,
   publication,
@@ -117,19 +219,5 @@ class MessageUpdate {
     return MessageUpdate(
       content: json['content'],
     );
-  }
-}
-
-class MessagePinned {
-  final bool isPinned;
-
-  MessagePinned({
-    required this.isPinned,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'is_pinned': isPinned,
-    };
   }
 }

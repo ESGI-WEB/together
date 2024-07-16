@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
 import 'package:front/admin/users/users_screen.dart';
-import 'package:front/groups/groups_screen/groups_screen.dart';
 
 class AdminDrawer extends StatelessWidget {
   const AdminDrawer({super.key});
@@ -30,6 +30,15 @@ class AdminDrawer extends StatelessWidget {
             ),
           )),
           ListTile(
+            leading: const Icon(Icons.dashboard_rounded),
+            title: const Text('Dashboard'),
+            onTap: () {
+              // close drawer
+              Navigator.pop(context);
+              DashboardScreen.navigateTo(context);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.lock_open),
             title: const Text('Fonctionnalités'),
             onTap: () {
@@ -52,14 +61,6 @@ class AdminDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               EventTypesScreen.navigateTo(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text("Retour aux groupes"),
-            onTap: () {
-              Navigator.pop(context);
-              GroupsScreen.navigateTo(context);
             },
           ),
         ],

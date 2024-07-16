@@ -13,9 +13,5 @@ func (r *AddressRouter) SetupRoutes(e *echo.Echo) {
 
 	group := e.Group("/addresses")
 
-	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware()(next)
-	})
-
-	group.POST("", addressController.CreateAddress)
+	group.POST("", addressController.CreateAddress, middlewares.AuthenticationMiddleware())
 }

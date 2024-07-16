@@ -5,32 +5,52 @@ enum EventScreenStatus {
   loading,
   success,
   error,
+  attendsLoading,
+  attendsSuccess,
+  attendsError,
+  changeAttendanceLoading,
+  changeAttendanceSuccess,
+  changeAttendanceError,
+  duplicateSuccess,
+  duplicateError
 }
 
 class EventScreenState {
   final EventScreenStatus status;
   final Event? event;
-  final List<User>? firstParticipants;
+  final Group? group;
+  final JwtData? userData;
+  final Paginated<Attend>? participantsPage;
   final String? errorMessage;
+  final bool? isAttending;
 
   EventScreenState({
     this.status = EventScreenStatus.initial,
     this.event,
-    this.firstParticipants,
+    this.group,
+    this.userData,
+    this.participantsPage,
     this.errorMessage,
+    this.isAttending,
   });
 
   EventScreenState copyWith({
     EventScreenStatus? status,
     Event? event,
-    List<User>? firstParticipants,
+    Group? group,
+    JwtData? userData,
+    Paginated<Attend>? participantsPage,
     String? errorMessage,
+    bool? isAttending,
   }) {
     return EventScreenState(
       status: status ?? this.status,
       event: event ?? this.event,
-      firstParticipants: firstParticipants ?? this.firstParticipants,
+      group: group ?? this.group,
+      userData: userData ?? this.userData,
+      participantsPage: participantsPage ?? this.participantsPage,
       errorMessage: errorMessage ?? this.errorMessage,
+      isAttending: isAttending ?? this.isAttending,
     );
   }
 }

@@ -4,6 +4,8 @@ class ErrorOccurred extends StatelessWidget {
   final Widget image;
   final String alertMessage;
   final String bodyMessage;
+  final void Function()? onBackButtonPressed;
+  final void Function()? onHomeButtonPressed;
 
   const ErrorOccurred({
     super.key,
@@ -12,6 +14,8 @@ class ErrorOccurred extends StatelessWidget {
         "Oups ! Il n'est pas possible de faire ça pour le moment.",
     this.bodyMessage =
         "Veuillez revenir plus tard. Cette fonctionnalité n'est pas disponible actuellement.",
+    this.onBackButtonPressed,
+    this.onHomeButtonPressed,
   });
 
   @override
@@ -44,14 +48,14 @@ class ErrorOccurred extends StatelessWidget {
             ),
             const SizedBox(height: 40),
             ElevatedButton(
-              onPressed: () {
+              onPressed: onBackButtonPressed ?? () {
                 Navigator.of(context).pop();
               },
               child: const Text('Retour'),
             ),
             const SizedBox(height: 20),
             TextButton(
-              onPressed: () {
+              onPressed: onHomeButtonPressed ?? () {
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
               child: const Text("Retour à l'accueil"),

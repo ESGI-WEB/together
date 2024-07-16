@@ -61,7 +61,7 @@ class GroupsListItem extends StatelessWidget {
                 const Icon(Icons.group, size: 16),
                 const SizedBox(width: 4),
                 Text(
-                  '${group.users?.length}',
+                  '${group.users?.length ?? 0}',
                   style: TextStyle(
                     fontSize: 12,
                     color: Theme.of(context).colorScheme.primary,

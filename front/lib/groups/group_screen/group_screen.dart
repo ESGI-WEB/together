@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
+import 'package:front/core/partials/poll/poll_gateway.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/publication/partials/group_create_publication_bottom_sheet.dart';
@@ -91,7 +92,6 @@ class GroupScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    NextEventOfGroup(groupId: id),
                     BlocBuilder<GroupBloc, GroupState>(
                       builder: (context, state) {
                         if (state.status == GroupStatus.loading) {
@@ -107,10 +107,25 @@ class GroupScreen extends StatelessWidget {
                           return const Center(child: Text('Groupe introuvable'));
                         }
 
-                        return PublicationsList(
-                          groupId: id,
-                          authenticatedUser: authenticatedUser,
-                          publicationsBloc: publicationsBloc,
+                        final isGroupOwner = state.group?.ownerId == state.userData?.id;
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              PublicationsList(
+                                groupId: id,
+                                authenticatedUser: authenticatedUser,
+                                publicationsBloc: publicationsBloc,
+                              ),
+                              PollGateway(
+                                id: id,
+                                hasParentEditionRights: isGroupOwner,
+                              ),
+                              NextEventOfGroup(
+                                groupId: id,
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),

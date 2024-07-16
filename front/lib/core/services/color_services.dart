@@ -27,4 +27,24 @@ class ColorServices {
     int colorInt = int.parse(hex, radix: 16);
     return Color(colorInt);
   }
+
+  static bool isDistinct(Color color, List<Color> existingColors, {double threshold = 100.0}) {
+    for (Color existingColor in existingColors) {
+      if (getColorDistance(color, existingColor) < threshold) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static double getColorDistance(Color color1, Color color2) {
+    final int redDifference = color1.red - color2.red;
+    final int greenDifference = color1.green - color2.green;
+    final int blueDifference = color1.blue - color2.blue;
+    return sqrt(
+      redDifference * redDifference +
+          greenDifference * greenDifference +
+          blueDifference * blueDifference,
+    );
+  }
 }

@@ -62,9 +62,8 @@ class GroupServices {
   static Future<Event?> getGroupNextEvent(int groupId) async {
     try {
       final response = await ApiServices.get('/groups/$groupId/next-event');
-      if(response.body.isNotEmpty){
-        return Event.fromJson(ApiServices.decodeResponse(response));
-      }
+      final jsonData = ApiServices.decodeResponse(response);
+      return jsonData != null ? Event.fromJson(jsonData) : null;
     } on ApiException catch (e) {
       throw ApiException(
         message: e.message,
@@ -73,5 +72,23 @@ class GroupServices {
       );
     }
     return null;
+  }
+
+  static Future<Paginated<Group>> getAllGroups({
+    int page = 1,
+    String sort = 'id asc',
+    int? limit,
+  }) async {
+    String url = '/groups/all?page=$page&sort=$sort';
+
+    if (limit != null) {
+      url += '&limit=$limit';
+    }
+
+    final response = await ApiServices.get(url);
+    return Paginated.fromJson(
+      ApiServices.decodeResponse(response),
+      Group.fromJson,
+    );
   }
 }

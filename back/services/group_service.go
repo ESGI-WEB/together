@@ -87,7 +87,7 @@ func (s *GroupService) JoinGroup(code string, user models.User) (*models.Group, 
 
 type GroupUserRoles string
 
-func (s *GroupService) IsUserInGroup(userId, groupId uint) (bool, error) {
+func (s *GroupService) IsUserInGroup(userId uint, groupId uint) (bool, error) {
 	var group models.Group
 
 	err := database.CurrentDatabase.Joins(
@@ -125,4 +125,32 @@ func (s *GroupService) GetNextEvent(groupId uint) (*models.Event, error) {
 		return nil, err
 	}
 	return &event, nil
+}
+
+func (s *GroupService) GetAllGroups(pagination utils.Pagination, filters ...GroupFilter) (*utils.Pagination, error) {
+	var groups []models.Group
+
+	query := database.CurrentDatabase.Model(models.Group{})
+
+	if len(filters) > 0 {
+		for _, filter := range filters {
+			query = query.Where(filter.Column, filter.Operator, filter.Value)
+		}
+	}
+
+	err := query.Scopes(utils.Paginate(groups, &pagination, query)).
+		Find(&groups).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	pagination.Rows = groups
+
+	return &pagination, nil
+}
+
+type GroupFilter struct {
+	database.Filter
+	Column string `json:"column" validate:"required,oneof=name code"`
 }

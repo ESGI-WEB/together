@@ -3,6 +3,13 @@ import "package:front/core/models/user.dart";
 
 import "address.dart";
 
+enum RecurrenceType {
+  eachDays,
+  eachWeeks,
+  eachMonths,
+  eachYears,
+}
+
 class Event {
   final int id;
   final DateTime createdAt;
@@ -18,6 +25,8 @@ class Event {
   final int addressId;
   final Address? address;
   final User? organizer;
+  final int groupId;
+  final RecurrenceType? recurrenceType;
 
   Event({
     required this.id,
@@ -34,6 +43,8 @@ class Event {
     required this.addressId,
     this.address,
     this.organizer,
+    required this.groupId,
+    this.recurrenceType,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -55,6 +66,11 @@ class Event {
       organizer:
           json['organizer'] != null ? User.fromJson(json['organizer']) : null,
       type: json['type'] != null ? EventType.fromJson(json['type']) : null,
+      groupId: json['group_id'],
+      recurrenceType: json['recurrence_type'] != null
+          ? RecurrenceType.values.firstWhere((e) =>
+              e.toString() == 'RecurrenceType.' + json['recurrence_type'])
+          : null,
     );
   }
 
@@ -86,6 +102,7 @@ class EventCreate {
   int typeId;
   int groupId;
   AddressCreate address;
+  RecurrenceType? recurrenceType;
 
   EventCreate({
     required this.name,
@@ -95,6 +112,7 @@ class EventCreate {
     required this.typeId,
     required this.groupId,
     required this.address,
+    this.recurrenceType,
   });
 
   Map<String, dynamic> toJson() {
@@ -106,6 +124,7 @@ class EventCreate {
       'type_id': typeId,
       'group_id': groupId,
       'address': address.toJson(),
+      'recurrence_type': recurrenceType?.toString().split('.').last,
     };
   }
 }

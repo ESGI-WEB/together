@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"together/controllers"
 	"together/middlewares"
+	"together/models"
 )
 
 type EventRouter struct{}
@@ -13,11 +14,13 @@ func (r *EventRouter) SetupRoutes(e *echo.Echo) {
 
 	group := e.Group("/events")
 
-	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware()(next)
-	})
-
-	group.POST("", eventController.CreateEvent)
-	group.GET("/:id", eventController.GetEvent)
-	group.GET("/:id/attends", eventController.GetEventAttends)
+	group.GET("", eventController.GetEvents, middlewares.AuthenticationMiddleware())
+	group.POST("", eventController.CreateEvent, middlewares.AuthenticationMiddleware())
+	group.GET("/:id", eventController.GetEvent, middlewares.AuthenticationMiddleware())
+	group.GET("/:id/attends", eventController.GetEventAttends, middlewares.AuthenticationMiddleware())
+	group.POST("/:id/duplicate", eventController.DuplicateEvent, middlewares.AuthenticationMiddleware())
+	group.POST("/:id/duplicate/year", eventController.DuplicateEventForYear, middlewares.AuthenticationMiddleware())
+	group.POST("/duplicate-tomorrow", eventController.DuplicateEventsForTomorrow, middlewares.AuthenticationMiddleware(models.AdminRole))
+	group.GET("/:id/user-event-attend", eventController.GetUserEventAttend, middlewares.AuthenticationMiddleware())
+	group.POST("/:id/user-event-attend", eventController.ChangeAttend, middlewares.AuthenticationMiddleware())
 }

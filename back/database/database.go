@@ -11,6 +11,11 @@ import (
 
 var CurrentDatabase *gorm.DB
 
+type Filter struct {
+	Value    interface{} `json:"value" validate:"required"`
+	Operator string      `json:"operator" validate:"required,oneof= != > < >= <= ="`
+}
+
 type Config struct {
 	Host     string
 	Port     int
@@ -36,6 +41,7 @@ var allModels = []interface{}{
 	&models.Reaction{},
 	&models.User{},
 	&models.FeatureFlipping{},
+	&models.PollAnswerChoiceUser{},
 }
 
 func (db *DB) Connect() error {
@@ -142,6 +148,11 @@ func InitDB() (*DB, error) {
 	}
 
 	err = newDB.DB.SetupJoinTable(&models.Event{}, "Participants", &models.Attend{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = newDB.DB.SetupJoinTable(&models.PollAnswerChoice{}, "Users", &models.PollAnswerChoiceUser{})
 	if err != nil {
 		return nil, err
 	}

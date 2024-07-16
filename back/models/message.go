@@ -13,6 +13,19 @@ const (
 
 type Message struct {
 	gorm.Model
+	Type    MessageType `gorm:"default:tchat"`
+	Content string      `json:"content" validate:"required"`
+	IsPinned bool       `json:"isPinned" gorm:"default:false"`
+	GroupID uint        `json:"groupID" validate:"required"`
+	Group   Group       `gorm:"foreignkey:GroupID"`
+	UserID  uint        `json:"userID" validate:"required"`
+	User    User        `gorm:"foreignkey:UserID"`
+	EventID *uint       `json:"eventID"`
+	Event   *Event      `gorm:"foreignkey:EventID"`
+}
+
+type CreateMessageReaction struct {
+	ReactionContent string `json:"reaction"`
 	Type     MessageType `json:"type" gorm:"default:tchat"`
 	Content  string      `json:"content" validate:"required,min=10,max=300"`
 	IsPinned bool        `gorm:"default:false;not null" json:"is_pinned"`

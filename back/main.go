@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"together/services"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -10,6 +11,8 @@ import (
 	"together/swagger"
 	"together/utils"
 )
+
+var webSocketService = services.NewWebSocketService()
 
 var appRouters = []routers.Router{
 	&routers.HelloRouter{},
@@ -23,7 +26,9 @@ var appRouters = []routers.Router{
 	&routers.EventTypeRouter{},
 	&routers.AdminRouter{},
 	&routers.StorageRouter{},
+	&routers.PollRouter{},
 	&routers.MessageRouter{},
+	&routers.WebSocketRouter{},
 }
 
 func main() {

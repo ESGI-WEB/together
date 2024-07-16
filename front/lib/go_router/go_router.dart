@@ -1,16 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:front/admin/admin_drawer.dart';
-import 'package:front/admin/admin_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/admin/users/users_screen.dart';
 import 'package:front/chat/blocs/websocket_bloc.dart';
+import 'package:front/admin/users/users_screen.dart';
 import 'package:front/chat/chat_screen.dart';
+import 'package:front/core/models/jwt_data.dart';
+import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/custom_app_bar.dart';
 import 'package:front/core/partials/custom_bottom_bar.dart';
+import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/services/storage_service.dart';
-import 'package:front/event/create_event_screen.dart';
+import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
@@ -42,7 +47,7 @@ final goRouter = GoRouter(
   // TODO error screen
   // errorBuilder: (context, state) => ErrorScreen(state.error),
   debugLogDiagnostics: true,
-  initialLocation: '/groups',
+  initialLocation: !kIsWeb ? '/groups' : '/admin',
   redirect: (BuildContext context, GoRouterState state) async {
     if (await StorageService.isUserLogged()) {
       return null;
@@ -51,6 +56,36 @@ final goRouter = GoRouter(
     }
   },
   routes: [
+    GoRoute(
+        path: '/error',
+        builder: (context, state) {
+          void logout() {
+            StorageService.deleteToken()
+                .then((value) => LoginScreen.navigateTo(context));
+          }
+
+          return Scaffold(
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  color: Colors.black,
+                  onPressed: logout,
+                ),
+              ],
+            ),
+            body: Center(
+              child: ErrorOccurred(
+                onBackButtonPressed: logout,
+                onHomeButtonPressed: logout,
+                image: SvgPicture.asset(
+                  'assets/images/error.svg',
+                  height: 200,
+                ),
+              ),
+            ),
+          );
+        }),
     ShellRoute(
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return BlocProvider(
@@ -65,6 +100,18 @@ final goRouter = GoRouter(
             ),
           ),
         );
+      },
+      redirect: (BuildContext context, GoRouterState state) async {
+        if (kIsWeb) {
+          JwtData? jwtData = await StorageService.readJwtDataFromToken();
+          if (jwtData!.role == UserRole.admin.name) {
+            return '/admin';
+          } else {
+            return '/error';
+          }
+        } else {
+          return null;
+        }
       },
       routes: [
         GoRoute(
@@ -150,20 +197,28 @@ final goRouter = GoRouter(
           drawer: const AdminDrawer(),
           child: Center(
             child: Container(
-              constraints: const BoxConstraints(maxWidth: 1200),
+              constraints: const BoxConstraints(maxWidth: 1600),
               child: child,
             ),
           ),
         );
       },
+      redirect: (BuildContext context, GoRouterState state) async {
+        JwtData? jwtData = await StorageService.readJwtDataFromToken();
+        if (jwtData!.role == UserRole.admin.name) {
+          return null;
+        } else {
+          return '/login';
+        }
+      },
       routes: [
         GoRoute(
-          name: AdminScreen.routeName,
+          name: DashboardScreen.routeName,
           path: '/admin',
           pageBuilder: (context, state) => buildPageWithDefaultTransition(
             context: context,
             state: state,
-            child: const AdminScreen(),
+            child: const DashboardScreen(),
           ),
           routes: [
             GoRoute(

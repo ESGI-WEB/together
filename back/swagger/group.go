@@ -88,6 +88,20 @@ func SetupGroupSwagger() *swag.API {
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("Group"),
 		),
+		endpoint.New(
+			http.MethodGet, "/groups/all",
+			endpoint.Handler(groupController.GetAllGroups),
+			endpoint.Summary("Get all groups"),
+			endpoint.Description("Returns a list of all groups for admin."),
+			endpoint.Query("page", "integer", "Page number", false),
+			endpoint.Query("limit", "integer", "Number of items per page", false),
+			endpoint.Query("sort", "string", "Sort column and order like name asc", false),
+			endpoint.QueryDefault("filters", "object", "Array of filters applied to the query", "[]", false),
+			endpoint.Response(http.StatusOK, "Successfully retrieved groups", endpoint.SchemaResponseOption([]models.Group{})),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Group"),
+		),
 	)
 
 	return api

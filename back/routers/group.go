@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"together/controllers"
 	"together/middlewares"
+	"together/models"
 )
 
 type GroupRouter struct{}
@@ -13,13 +14,10 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 
 	group := e.Group("/groups")
 
-	group.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
-		return middlewares.AuthenticationMiddleware()(next)
-	})
-
-	group.GET("", groupController.GetAllMyGroups)
+	group.GET("", groupController.GetAllMyGroups, middlewares.AuthenticationMiddleware())
+	group.GET("/all", groupController.GetAllGroups, middlewares.AuthenticationMiddleware(models.AdminRole))
 	group.GET("/:groupId", groupController.GetGroupById, middlewares.GroupMembershipMiddleware)
-	group.POST("", groupController.CreateGroup)
-	group.POST("/join", groupController.JoinGroup)
+	group.POST("", groupController.CreateGroup, middlewares.AuthenticationMiddleware())
+	group.POST("/join", groupController.JoinGroup, middlewares.AuthenticationMiddleware())
 	group.GET("/:groupId/next-event", groupController.GetNextEvent, middlewares.GroupMembershipMiddleware)
 }

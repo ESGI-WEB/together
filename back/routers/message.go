@@ -6,7 +6,7 @@ import (
 	"together/middlewares"
 )
 
-type MessageRouter struct{}
+type MessageRouter struct {}
 
 func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	messageController := controllers.NewMessageController()
@@ -17,6 +17,7 @@ func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 		return middlewares.AuthenticationMiddleware()(next)
 	})
 
+	group.POST("/:id/reaction", messageController.CreateReaction)
 	group.POST("/publication", messageController.CreatePublication)
 	group.PATCH("/:id", messageController.UpdateMessage)
 	group.DELETE("/:id", messageController.DeleteMessage)

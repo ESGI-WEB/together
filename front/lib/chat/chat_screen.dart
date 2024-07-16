@@ -16,7 +16,7 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.groupId});
 
   static void navigateTo(BuildContext context, {required int id}) {
-    context.goNamed(routeName, pathParameters: {'groupId': id.toString()});
+    context.goNamed(routeName, pathParameters: {"groupId": id.toString()});
   }
 
   @override
@@ -30,6 +30,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<WebSocketBloc, WebSocketState>(
       builder: (context, state) {
+        if (state is WebSocketReady) {
+          context
+              .read<WebSocketBloc>()
+              .add(FetchMessagesEvent(groupId: widget.groupId));
+        }
+
         if (state is MessagesState) {
           return Column(
             children: [
@@ -39,9 +45,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: MessageBubble(
-                        message: state.messages[index],
-                      ),
+                      child: MessageBubble(message: state.messages[index]),
                     );
                   },
                 ),
@@ -54,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextFormField(
                         controller: _messageController,
                         decoration: const InputDecoration(
-                          hintText: 'Écrire un message',
+                          hintText: "Écrire un message",
                         ),
                       ),
                     ),
@@ -65,7 +69,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (message.isNotEmpty) {
                           context
                               .read<WebSocketBloc>()
-                              .add(SendMessageEvent(message: message));
+                              .add(SendMessageEvent.build(
+                                message: message,
+                                groupId: widget.groupId,
+                              ));
                           _messageController.clear();
                         }
                       },
@@ -79,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
         } else if (state is WebSocketErrorState) {
           return ErrorOccurred(
               image: SvgPicture.asset(
-            'assets/images/503.svg',
+            "assets/images/503.svg",
             height: 200,
           ));
         } else {

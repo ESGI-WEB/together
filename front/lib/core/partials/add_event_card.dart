@@ -25,7 +25,7 @@ class AddEventCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Créé un évènement',
+                    'Créer un évènement',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),
