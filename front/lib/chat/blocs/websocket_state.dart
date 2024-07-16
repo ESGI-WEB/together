@@ -24,6 +24,30 @@ class MessagesState extends WebSocketReady {
     super.lastFetchedGroup,
   });
 
+  MessagesState add(ChatMessage newMessage, int? lastFetchedGroup) {
+    List<ChatMessage> newMessages = List.of(messages);
+
+    // Check if the message is already in the state
+    final index = newMessages
+        .indexWhere((element) => element.messageId == newMessage.messageId);
+    if (index == -1) {
+      // The message is not in the state, append to the list
+      newMessages.add(newMessage);
+    } else {
+      // The message is in the state, replace id
+      newMessages.replaceRange(index, index + 1, [newMessage]);
+    }
+
+    // TODO: We should sort all the messages by date
+
+    // Create a new message state with the new messages
+    MessagesState clonedState = MessagesState(
+      messages: newMessages,
+      lastFetchedGroup: lastFetchedGroup,
+    );
+    return clonedState;
+  }
+
   @override
   MessagesState clone(int lastFetchedGroup) {
     return MessagesState(

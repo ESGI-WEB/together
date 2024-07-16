@@ -25,7 +25,7 @@ type Message struct {
 }
 
 type CreateMessageReaction struct {
-	ReactionContent string `json:"reaction"`
+	ReactionContent string `json:"reaction_content" validate:"required,min=1,max=1"`
 }
 
 type MessageCreate struct {

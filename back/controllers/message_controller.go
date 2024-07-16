@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -16,14 +15,15 @@ import (
 
 type MessageController struct {
 	webSocketService *services.WebSocketService
+	groupService     *services.GroupService
 	messageService *services.MessageService
-	groupService   *services.GroupService
 }
 
 func NewMessageController() *MessageController {
 	return &MessageController{
 		messageService:   services.NewMessageService(),
 		webSocketService: services.NewWebSocketService(),
+		groupService:     services.NewGroupService(),
 	}
 }
 
@@ -33,42 +33,55 @@ func (c *MessageController) CreateReaction(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
+	// Decode and validate the request's body
+	var jsonBody models.CreateMessageReaction
+	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(jsonBody)
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
 	id := ctx.Param("id")
 	messageID, err := strconv.Atoi(id)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	var jsonBody models.CreateMessageReaction
-
-	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
-		return ctx.NoContent(http.StatusBadRequest)
+	// Check if the user is actually in the message's group
+	message, err := c.messageService.GetMessage(uint(messageID))
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusInternalServerError) // This should maybe be a "not found"?
+	}
+	isUserInGroup, err := c.groupService.IsUserInGroup(user.ID, message.GroupID)
+	if err != nil {
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+	if !isUserInGroup {
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
-	reaction, err := c.messageService.ReactToMessage(messageID, jsonBody.ReactionContent, user.ID)
+	// Create the message's reaction
+	reaction, err := c.messageService.ReactToMessage(uint(messageID), jsonBody.ReactionContent, user)
 
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
-	// TODO: Broadcast to every all the group's members
-	// TODO: Use correct websocket event type
-	response := services.ServerBoundSendChatMessage{
-		TypeMessage: services.TypeMessage{
-			Type: services.ServerBoundSendChatMessageType,
-		},
-		Content: reaction.Message.Content,
-		Author:  &reaction.Message.User,
-		GroupId: reaction.Message.GroupID,
-	}
-
-	bytes, err := json.Marshal(response)
+	// Broadcast the updated message to all the connected clients
+	err = c.webSocketService.BroadcastMessageToGroupID(uint(messageID))
 	if err != nil {
-		return err
-	}
-
-	if err := c.webSocketService.BroadcastToGroup(bytes, reaction.Message.GroupID); err != nil {
-		return err
+		ctx.Logger().Error(err)
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
 	return ctx.JSON(http.StatusOK, reaction)
@@ -140,7 +153,6 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 	}
 
 	updatedMessage, err := c.messageService.UpdateContent(uint(messageID), jsonBody)
-	fmt.Println("erroe encore", err)
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}

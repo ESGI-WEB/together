@@ -125,28 +125,16 @@ func (s *WebSocketService) handleSendChatMessage(msg []byte, user *models.User) 
 		UserID:  user.ID,
 		EventID: nil,
 	}
-	_, err = s.messageService.CreateChatMessage(message)
+	createdMessage, err := s.messageService.CreateChatMessage(message)
 	if err != nil {
 		return err
 	}
 
-	response := ServerBoundSendChatMessage{
-		TypeMessage: TypeMessage{
-			Type: ServerBoundSendChatMessageType,
-		},
-		Content: receivedMessage.Content,
-		Author:  user,
-		GroupId: receivedMessage.GroupId,
-	}
-
-	bytes, err := json.Marshal(response)
+	err = s.BroadcastMessageToGroupID(createdMessage.ID)
 	if err != nil {
 		return err
 	}
 
-	if err := s.BroadcastToGroup(bytes, receivedMessage.GroupId); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -161,30 +149,67 @@ func (s *WebSocketService) handleFetchChatMessage(msg []byte, ws *websocket.Conn
 		return err
 	}
 
-	groupMessages, err := s.messageService.GetChatMessageByGroup(receivedMessage.GroupId)
+	groupMessages, err := s.messageService.GetAllChatMessagesByGroup(receivedMessage.GroupId)
 	if err != nil {
 		return err
 	}
 
 	for _, groupMessage := range groupMessages {
-		response := ServerBoundSendChatMessage{
-			TypeMessage: TypeMessage{
-				Type: ServerBoundSendChatMessageType,
-			},
-			Content: groupMessage.Content,
-			Author:  &groupMessage.User,
-			GroupId: groupMessage.GroupID,
-		}
-
-		bytes, err := json.Marshal(response)
+		bytes, err := s.buildServerBoundSendChatMessage(&groupMessage)
 		if err != nil {
 			return err
 		}
 
-		err = s.sendWebSocketMessage(bytes, ws)
-		if err != nil {
+		if err = s.sendWebSocketMessage(bytes, ws); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (s *WebSocketService) BroadcastMessageToGroupID(messageID uint) error {
+	message, err := s.messageService.GetMessage(messageID)
+	if err != nil {
+		return err
+	}
+
+	return s.broadcastMessageToGroup(message)
+}
+
+func (s *WebSocketService) buildServerBoundSendChatMessage(message *models.Message) ([]byte, error) {
+	reactions, err := s.messageService.GetMessageReactions(message.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	response := ServerBoundSendChatMessage{
+		TypeMessage: TypeMessage{
+			Type: ServerBoundSendChatMessageType,
+		},
+		Content:   message.Content,
+		Author:    &message.User,
+		GroupId:   message.GroupID,
+		Reactions: reactions,
+		MessageId: message.ID,
+	}
+
+	bytes, err := json.Marshal(response)
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes, nil
+}
+
+func (s *WebSocketService) broadcastMessageToGroup(message *models.Message) error {
+	bytes, err := s.buildServerBoundSendChatMessage(message)
+	if err != nil {
+		return err
+	}
+
+	if err := s.BroadcastToGroup(bytes, message.GroupID); err != nil {
+		return err
 	}
 
 	return nil
@@ -198,9 +223,11 @@ type ClientBoundSendChatMessage struct {
 
 type ServerBoundSendChatMessage struct {
 	TypeMessage
-	Content string       `json:"content" validate:"required"`
-	Author  *models.User `json:"author" validate:"required"`
-	GroupId uint         `json:"group_id" validate:"required"`
+	Content   string       `json:"content" validate:"required"`
+	Author    *models.User `json:"author" validate:"required"`
+	GroupId   uint         `json:"group_id" validate:"required"`
+	MessageId uint         `json:"message_id" validate:"required"`
+	Reactions []string     `json:"reactions"`
 }
 
 type ClientBoundFetchChatMessage struct {

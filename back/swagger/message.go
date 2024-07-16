@@ -22,6 +22,23 @@ func SetupMessageSwagger() *swag.API {
 
 	api.AddEndpoint(
 		endpoint.New(
+			http.MethodPost, "/messages/{id}/reaction",
+			endpoint.Handler(messageController.CreateReaction),
+			endpoint.Summary("Create a reaction"),
+			endpoint.Description("Returns a message reaction."),
+			endpoint.Path("id", "integer", "ID of the message to react to", true),
+			endpoint.Body(models.CreateMessageReaction{}, "Message reaction to be created", true),
+			endpoint.Response(http.StatusOK, "Successfully created the message reaction", endpoint.SchemaResponseOption("string")),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Response(http.StatusBadRequest, "Bad request"),
+			endpoint.Response(http.StatusInternalServerError, "Unhandled error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Reaction"),
+		),
+	)
+
+	api.AddEndpoint(
+		endpoint.New(
 			http.MethodPost, "/messages/publication",
 			endpoint.Handler(messageController.CreatePublication),
 			endpoint.Summary("Create a new publication"),
