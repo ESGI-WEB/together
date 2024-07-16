@@ -94,5 +94,13 @@
   "back": "Zurück",
   "backToHome": "Zurück zur Startseite",
   "oopsCantDoThat": "Hoppla! Das können Sie im Moment nicht tun",
-  "tryFeatureLater": "Bitte kommen Sie später wieder. Diese Funktion ist derzeit nicht verfügbar."
+  "tryFeatureLater": "Bitte kommen Sie später wieder. Diese Funktion ist derzeit nicht verfügbar.",
+  "addPublication": "Eine Veröffentlichung hinzufügen",
+  "messageContent": "Nachrichteninhalt",
+  "enterContent": "Bitte geben Sie Inhalt ein",
+  "invalidMessage": "Der Inhalt muss zwischen {min} und {max} Zeichen lang sein",
+  "publish": "Veröffentlichen",
+  "noPublication": "Es gibt keine Veröffentlichungen.",
+  "editPublication": "Veröffentlichung bearbeiten",
+  "publicationContent": "Veröffentlichungsinhalt"
 }

@@ -94,5 +94,13 @@
   "back": "Back",
   "backToHome": "Back to Home",
   "oopsCantDoThat": "Oops! You can't do that right now",
-  "tryFeatureLater": "Please come back later. This feature is currently unavailable."
+  "tryFeatureLater": "Please come back later. This feature is currently unavailable.",
+  "addPublication": "Add a publication",
+  "messageContent": "Message content",
+  "enterContent": "Please enter content",
+  "invalidMessage": "The content must be between {min} and {max} characters",
+  "publish": "Publish",
+  "noPublication": "There are no publications.",
+  "editPublication": "Edit the publication",
+  "publicationContent": "Publication content"
 }

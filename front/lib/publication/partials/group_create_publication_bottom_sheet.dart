@@ -4,6 +4,7 @@ import 'package:front/publication/create_publication_screen/blocs/create_publica
 import 'package:front/publication/create_publication_screen/blocs/create_publication_event.dart';
 import 'package:front/publication/create_publication_screen/blocs/create_publication_state.dart';
 import 'package:front/publications/blocs/publications_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GroupCreatePublicationBottomSheet extends StatelessWidget {
   final int groupId;
@@ -26,7 +27,7 @@ class GroupCreatePublicationBottomSheet extends StatelessWidget {
             } else if (state.status == CreatePublicationStatus.error) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text(state.errorMessage ?? 'Erreur inconnue')),
+                    content: Text(state.errorMessage ?? AppLocalizations.of(context)!.errorOccurred)),
               );
             }
           },
@@ -65,7 +66,7 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ajouter une publication',
+                AppLocalizations.of(context)!.addPublication,
                 style: Theme.of(context).textTheme.headline6,
               ),
               IconButton(
@@ -87,7 +88,7 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
           TextFormField(
             controller: _contentController,
             decoration: InputDecoration(
-              labelText: 'Contenu du message',
+              labelText: AppLocalizations.of(context)!.messageContent,
               alignLabelWithHint: true,
               fillColor: Colors.white,
               filled: true,
@@ -100,9 +101,9 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
             minLines: 3,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer du contenu';
+                return AppLocalizations.of(context)!.enterContent;
               } else if (value.length < 10 || value.length > 300) {
-                return 'Le contenu doit contenir entre 10 et 300 caractères';
+                return AppLocalizations.of(context)!.invalidMessage(10, 300);
               }
               return null;
             },
@@ -129,7 +130,7 @@ class _CreatePublicationFormState extends State<CreatePublicationForm> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text('Publier'),
+            child: Text(AppLocalizations.of(context)!.publish),
           ),
         ],
       ),

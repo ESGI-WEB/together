@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/partials/avatar.dart';
@@ -105,17 +106,17 @@ class PublicationsListItem extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Modifier la publication'),
+          title: Text(AppLocalizations.of(context)!.editPublication),
           content: TextFormField(
             controller: contentController,
             maxLines: null,
-            decoration:
-                const InputDecoration(hintText: 'Contenu de la publication'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.publicationContent),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer du contenu';
+                return AppLocalizations.of(context)!.enterContent;
               } else if (value.length < 10 || value.length > 300) {
-                return 'Le contenu doit contenir entre 10 et 300 caractères';
+                return AppLocalizations.of(context)!.invalidMessage(10, 300);
               }
               return null;
             },
@@ -123,7 +124,7 @@ class PublicationsListItem extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -135,7 +136,7 @@ class PublicationsListItem extends StatelessWidget {
                     id: publication.id, publication: newPublication));
                 Navigator.pop(context);
               },
-              child: const Text('Enregistrer'),
+              child: Text(AppLocalizations.of(context)!.save),
             ),
           ],
         );

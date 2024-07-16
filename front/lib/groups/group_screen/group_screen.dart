@@ -36,7 +36,8 @@ class GroupScreen extends StatelessWidget {
     return null;
   }
 
-  void _showBottomSheet(BuildContext context, PublicationsBloc publicationsBloc) {
+  void _showBottomSheet(
+      BuildContext context, PublicationsBloc publicationsBloc) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -63,12 +64,14 @@ class GroupScreen extends StatelessWidget {
               create: (context) => GroupBloc()..add(LoadGroup(groupId: id)),
             ),
             BlocProvider(
-              create: (context) => PublicationsBloc()..add(LoadPublications(groupId: id)),
+              create: (context) =>
+                  PublicationsBloc()..add(LoadPublications(groupId: id)),
             ),
           ],
           child: Builder(
             builder: (context) {
-              final publicationsBloc = BlocProvider.of<PublicationsBloc>(context);
+              final publicationsBloc =
+                  BlocProvider.of<PublicationsBloc>(context);
               return Scaffold(
                 backgroundColor: Colors.grey[300],
                 body: Column(
@@ -97,24 +100,27 @@ class GroupScreen extends StatelessWidget {
                       child: BlocBuilder<GroupBloc, GroupState>(
                         builder: (context, state) {
                           if (state.status == GroupStatus.loading) {
-                            return const Center(child: CircularProgressIndicator());
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
 
-          if (state.status == GroupScreenStatus.error) {
-            return Center(
-              child: Text(state.errorMessage ??
-                  AppLocalizations.of(context)!.errorOccurred),
-            );
-          }
+                          if (state.status == GroupStatus.error) {
+                            return Center(
+                              child: Text(state.errorMessage ??
+                                  AppLocalizations.of(context)!.errorOccurred),
+                            );
+                          }
 
-          final group = state.group;
-          if (group == null) {
-            return Center(
-              child: Text(AppLocalizations.of(context)!.groupNotFound),
-            );
-          }
+                          final group = state.group;
+                          if (group == null) {
+                            return Center(
+                              child: Text(
+                                  AppLocalizations.of(context)!.groupNotFound),
+                            );
+                          }
 
-                          final isGroupOwner = state.group?.ownerId == state.userData?.id;
+                          final isGroupOwner =
+                              state.group?.ownerId == state.userData?.id;
 
                           return SingleChildScrollView(
                             child: Column(

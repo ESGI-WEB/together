@@ -25,7 +25,7 @@ class GroupsListItem extends StatelessWidget {
       ),
       child: ListTile(
         onTap: () {
-          GroupScreen.navigateTo(context, id: group.id);  // Pass the bloc to navigateTo
+          GroupScreen.navigateTo(context, id: group.id);
         },
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),

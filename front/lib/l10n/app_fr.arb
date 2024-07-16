@@ -94,5 +94,13 @@
   "back": "Retour",
   "backToHome": "Retour à l'accueil",
   "oopsCantDoThat": "Oups ! Vous ne pouvez pas faire ça pour le moment",
-  "tryFeatureLater": "Veuillez revenir plus tard. Cette fonctionnalité n'est pas disponible actuellement."
+  "tryFeatureLater": "Veuillez revenir plus tard. Cette fonctionnalité n'est pas disponible actuellement.",
+  "addPublication": "Ajouter une publication",
+  "messageContent": "Contenu du message",
+  "enterContent": "Veuillez entrer du contenu",
+  "invalidMessage": "Le contenu doit contenir entre {min} et {max} caractères",
+  "publish": "Publier",
+  "noPublication": "Il n'y a pas de publications.",
+  "editPublication": "Modifier la publication",
+  "publicationContent": "Contenu de la publication"
 }
