@@ -71,8 +71,8 @@ class MessageBubbleState extends State<MessageBubble> {
                   },
                 ),
               Row(
-                children: widget.message.reactions
-                    .map((string) => Text(string))
+                children: widget.message.reactions.entries
+                    .map((entry) => Text("${entry.value} ${entry.key}"))
                     .toList(),
               )
             ],

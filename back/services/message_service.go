@@ -30,18 +30,18 @@ func (s *MessageService) GetAllChatMessagesByGroup(groupID uint) ([]models.Messa
 	return messages, nil
 }
 
-func (s *MessageService) GetMessageReactions(messageID uint) ([]string, error) {
+func (s *MessageService) GetMessageReactions(messageID uint) (map[string]int, error) {
 	var reactions []models.Reaction
 	if err := database.CurrentDatabase.Where("message_id = ?", messageID).Find(&reactions).Error; err != nil {
 		return nil, err
 	}
 
-	reactionContents := make([]string, len(reactions))
-	for i, reaction := range reactions {
-		reactionContents[i] = reaction.Content
+	reactionCounts := make(map[string]int)
+	for _, reaction := range reactions {
+		reactionCounts[reaction.Content]++
 	}
 
-	return reactionContents, nil
+	return reactionCounts, nil
 }
 
 func (s *MessageService) ReactToMessage(messageID uint, reactionContent string, whoReacted models.User) (*models.Reaction, error) {

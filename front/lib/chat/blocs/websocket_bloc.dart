@@ -18,7 +18,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
   WebSocketBloc() : super(MessagesState(messages: [])) {
     on<InitializeWebSocketEvent>((event, emit) async {
       await _initWebSocket(emit);
-      emit(WebSocketReady());
+      emit(MessagesState(messages: []));
     });
 
     on<NewMessageReceivedEvent>((event, emit) async {
@@ -55,9 +55,7 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
         ).toJson();
         _sendWebSocketMessage(messageObject);
 
-        if (state is WebSocketReady) {
-          emit((state as WebSocketReady).clone(event.groupId));
-        }
+        emit((state as WebSocketReady).clone(event.groupId));
       }
     });
 

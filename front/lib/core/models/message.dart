@@ -6,7 +6,7 @@ class ChatMessage {
   final User author;
   final int groupId;
   final int messageId;
-  final List<String> reactions;
+  final Map<String, int> reactions;
 
   ChatMessage({
     required this.content,
@@ -17,7 +17,8 @@ class ChatMessage {
   });
 
   factory ChatMessage.fromServerBoundChatMessage(
-      ServerBoundSendChatMessage serverBoundSendChatMessage) {
+    ServerBoundSendChatMessage serverBoundSendChatMessage,
+  ) {
     return ChatMessage(
       content: serverBoundSendChatMessage.content,
       author: serverBoundSendChatMessage.author,
