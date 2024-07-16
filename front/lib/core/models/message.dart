@@ -1,3 +1,4 @@
+import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/core/models/user.dart';
 import 'package:front/core/models/websocket.dart';
