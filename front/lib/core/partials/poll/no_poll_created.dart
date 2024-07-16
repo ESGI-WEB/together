@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NoPollCreated extends StatelessWidget {
   final void Function()? onTap;
@@ -27,12 +28,12 @@ class NoPollCreated extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Créer un sondage',
+                    AppLocalizations.of(context)!.createAPoll,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "Demander un avis, prendre une décision, créez un sondage pour voter !",
+                    AppLocalizations.of(context)!.createAPollDescription,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 10),
@@ -48,14 +49,14 @@ class NoPollCreated extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: const Text("C'est parti !"),
+                        child: Text(AppLocalizations.of(context)!.createAPoll),
                       ),
                       if (onSeeClosedPolls != null)
                         PopupMenuButton<void>(
                           itemBuilder: (context) => [
                             PopupMenuItem(
                               onTap: onSeeClosedPolls,
-                              child: const Text('Voir les sondages clôturés'),
+                              child: Text(AppLocalizations.of(context)!.seeClosedPolls),
                             ),
                           ],
                         ),

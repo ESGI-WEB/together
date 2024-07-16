@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/models/poll.dart' as poll_model;
 import 'package:front/core/partials/avatar_stack.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PollField extends StatelessWidget {
   final poll_model.Poll poll;
@@ -34,8 +35,8 @@ class PollField extends StatelessWidget {
               ),
               Text(
                 poll.isMultiple
-                    ? 'Plusieurs réponses possibles'
-                    : 'Une seule réponse possible',
+                    ? AppLocalizations.of(context)!.manyAnswersPossible
+                    : AppLocalizations.of(context)!.oneAnswerPossible,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 16),
@@ -79,7 +80,7 @@ class PollField extends StatelessWidget {
                         TextFormField(
                           controller: choiceController,
                           decoration: InputDecoration(
-                            hintText: 'Ajouter une autre réponse',
+                            hintText: AppLocalizations.of(context)!.addAnAnswer,
                             hintStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
                               color: Theme.of(context).colorScheme.onBackground,
                             ),

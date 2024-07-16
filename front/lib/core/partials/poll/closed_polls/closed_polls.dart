@@ -5,6 +5,7 @@ import 'package:front/core/models/poll.dart';
 import 'package:front/core/partials/poll/blocs/poll_bloc.dart';
 import 'package:front/core/partials/poll/poll_field.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/closed_poll_bloc.dart';
 
@@ -94,13 +95,15 @@ class _ClosedPollsState extends State<ClosedPolls> {
 
             if (state.status == ClosedPollStatus.loadClosedPollsError) {
               return Center(
-                  child: Text(state.errorMessage ?? 'Une erreur est survenue'));
+                child: Text(state.errorMessage ??
+                    AppLocalizations.of(context)!.errorOccurred),
+              );
             }
 
             final pollPage = state.pollPage;
             if (pollPage == null || pollPage.rows.isEmpty) {
-              return const Center(
-                child: Text('Aucun sondage clos'),
+              return Center(
+                child: Text(AppLocalizations.of(context)!.noClosedPolls),
               );
             }
 
@@ -109,7 +112,8 @@ class _ClosedPollsState extends State<ClosedPolls> {
               child: Column(
                 children: [
                   Text(
-                    "${pollPage.total} sondages clos",
+                    AppLocalizations.of(context)!
+                        .numberOfClosedPolls(pollPage.total),
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),

@@ -116,6 +116,15 @@ flutter run -d chrome
 ```
 Attention ! Faut pour ca bien mettre l'ip de votre pc dans le fichier .env et non le localhost de l'emulateur (pas 10.0.2.2:8080)
 
+### Traductions
+
+Fichiers de traductions dans /front/lib/l10n
+
+Lancer cette commande pour regenerer les fichiers de traductions
+```bash
+flutter gen-l10n
+```
+
 ## Testing
 
 - Lancer les tests du back :

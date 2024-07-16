@@ -5,6 +5,7 @@ import 'package:front/chat/blocs/websocket_event.dart';
 import 'package:front/chat/message_bubble.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/websocket_bloc.dart';
 import 'blocs/websocket_state.dart';
@@ -57,8 +58,8 @@ class _ChatScreenState extends State<ChatScreen> {
                     Expanded(
                       child: TextFormField(
                         controller: _messageController,
-                        decoration: const InputDecoration(
-                          hintText: "Écrire un message",
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.writeAMessage,
                         ),
                       ),
                     ),

@@ -10,6 +10,7 @@ import 'package:front/publication/partials/group_create_publication_bottom_sheet
 import 'package:front/publications/blocs/publications_bloc.dart';
 import 'package:front/publications/partials/PublicationsList.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/group_bloc.dart';
 
@@ -99,14 +100,19 @@ class GroupScreen extends StatelessWidget {
                             return const Center(child: CircularProgressIndicator());
                           }
 
-                          if (state.status == GroupStatus.error) {
-                            return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
-                          }
+          if (state.status == GroupScreenStatus.error) {
+            return Center(
+              child: Text(state.errorMessage ??
+                  AppLocalizations.of(context)!.errorOccurred),
+            );
+          }
 
-                          final group = state.group;
-                          if (group == null) {
-                            return const Center(child: Text('Groupe introuvable'));
-                          }
+          final group = state.group;
+          if (group == null) {
+            return Center(
+              child: Text(AppLocalizations.of(context)!.groupNotFound),
+            );
+          }
 
                           final isGroupOwner = state.group?.ownerId == state.userData?.id;
 

@@ -120,7 +120,7 @@ func (c *UserController) UpdateUser(ctx echo.Context) error {
 	if jsonBody.Name != "" {
 		userToUpdate.Name = jsonBody.Name
 	}
-	if jsonBody.Email != "" {
+	if jsonBody.Email != "" && jsonBody.Email != userToUpdate.Email {
 		userToUpdate.Email = jsonBody.Email
 	}
 	// if biography is "" then it should be updated, but if null then it should not be updated
