@@ -115,3 +115,10 @@ Quelque chose comme 192.123.123.123:8080
 flutter run -d chrome
 ```
 Attention ! Faut pour ca bien mettre l'ip de votre pc dans le fichier .env et non le localhost de l'emulateur (pas 10.0.2.2:8080)
+
+## Testing
+
+- Lancer les tests du back :
+```bash
+docker exec together-app go test -v ./...
+```
