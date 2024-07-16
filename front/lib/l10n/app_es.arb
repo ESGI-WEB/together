@@ -94,5 +94,19 @@
   "back": "Atrás",
   "backToHome": "Volver al inicio",
   "oopsCantDoThat": "¡Ups! No puedes hacer eso en este momento",
-  "tryFeatureLater": "Por favor, vuelve más tarde. Esta función no está disponible actualmente."
+  "tryFeatureLater": "Por favor, vuelve más tarde. Esta función no está disponible actualmente.",
+  "addPublication": "Añadir una publicación",
+  "messageContent": "Contenido del mensaje",
+  "enterContent": "Por favor, introduzca contenido",
+  "invalidMessage": "El contenido debe tener entre {min} y {max} caracteres",
+  "publish": "Publicar",
+  "noPublication": "No hay publicaciones.",
+  "editPublication": "Editar la publicación",
+  "publicationContent": "Contenido de la publicación",
+  "news": "¿Qué hay de nuevo?",
+  "nextEvent": "Próximo evento",
+  "publications": "Publicaciones",
+  "edit": "Editar",
+  "comment": "Comentar",
+  "like": "Amar"
 }

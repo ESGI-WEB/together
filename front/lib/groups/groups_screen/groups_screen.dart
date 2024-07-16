@@ -122,9 +122,9 @@ class GroupsScreen extends StatelessWidget {
                           icon: Icons.add,
                           label: AppLocalizations.of(context)!.create,
                           onPressed: () {
-                            final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(CreateGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            final groupsBloc = context.read<GroupsBloc>();
+                            CreateGroupScreen.navigateTo(
+                                context, groupsBloc);
                           },
                         ),
                         const SizedBox(width: 16),
@@ -133,8 +133,8 @@ class GroupsScreen extends StatelessWidget {
                           label: AppLocalizations.of(context)!.join,
                           onPressed: () {
                             final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(JoinGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            JoinGroupScreen.navigateTo(
+                                context, groupsScreenBloc);
                           },
                         ),
                       ],

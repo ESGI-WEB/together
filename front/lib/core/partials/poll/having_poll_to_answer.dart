@@ -23,7 +23,6 @@ class HavingPollToAnswer extends StatelessWidget {
               image: AssetImage('assets/images/poll.gif'),
             ),
             const SizedBox(width: 10),
-
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

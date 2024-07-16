@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'blocs/users_bloc.dart';
 
 class UsersScreen extends StatefulWidget {
-  static const String routeName = '/users';
+  static const String routeName = 'users';
 
   static void navigateTo(BuildContext context) {
     context.goNamed(routeName);

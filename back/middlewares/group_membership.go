@@ -10,7 +10,7 @@ import (
 
 func GroupMembershipMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		groupID, err := strconv.Atoi(c.Param("id"))
+		groupID, err := strconv.Atoi(c.Param("groupId"))
 		if err != nil {
 			return c.NoContent(http.StatusBadRequest)
 		}
@@ -20,12 +20,12 @@ func GroupMembershipMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, "unauthorized")
 		}
 
-		belongsToGroup, err := services.NewGroupService().UserBelongsToGroup(user.ID, uint(groupID))
+		isUserInGroup, err := services.NewGroupService().IsUserInGroup(user.ID, uint(groupID))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, "internal server error")
 		}
 
-		if !belongsToGroup && !user.IsAdmin() {
+		if !isUserInGroup && !user.IsAdmin() {
 			return c.JSON(http.StatusUnauthorized, "user does not belong to this group")
 		}
 

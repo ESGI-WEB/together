@@ -54,22 +54,18 @@ class _LiveDotState extends State<LiveDot> with SingleTickerProviderStateMixin {
               shape: BoxShape.circle,
             ),
           ),
-          OverflowBox(
-            maxWidth: double.infinity,
-            maxHeight: double.infinity,
-            child: AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                return Container(
-                  width: widget.maxSize * _animation.value,
-                  height: widget.maxSize * _animation.value,
-                  decoration: BoxDecoration(
-                    color: widget.color.withOpacity(1 - _animation.value),
-                    shape: BoxShape.circle,
-                  ),
-                );
-              },
-            ),
+          AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return Container(
+                width: widget.maxSize * _animation.value,
+                height: widget.maxSize * _animation.value,
+                decoration: BoxDecoration(
+                  color: widget.color.withOpacity(1 - _animation.value),
+                  shape: BoxShape.circle,
+                ),
+              );
+            },
           ),
         ],
       ),

@@ -163,3 +163,21 @@ func (c *UserController) UpdateUser(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, updatedUser)
 }
+
+func (c *UserController) FindByID(ctx echo.Context) error {
+	idInt, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	id := uint(idInt)
+	user, err := c.UserService.FindByID(id)
+	if err != nil {
+		if errors.Is(err, coreErrors.ErrNotFound) {
+			return ctx.NoContent(http.StatusNotFound)
+		}
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, user)
+}

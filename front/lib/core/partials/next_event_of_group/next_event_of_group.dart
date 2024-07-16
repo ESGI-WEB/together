@@ -6,7 +6,6 @@ import 'package:front/core/partials/next_event_of_group/blocs/next_event_of_grou
 import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NextEventOfGroup extends StatelessWidget {
   final int groupId;
@@ -58,15 +57,6 @@ class NextEventOfGroup extends StatelessWidget {
                       eventId: event.id,
                     );
                   },
-                ),
-                TextButton(
-                  onPressed: () {
-                    CreateEventScreen.navigateTo(
-                      context,
-                      groupId: groupId,
-                    );
-                  },
-                  child: Text(AppLocalizations.of(context)!.createAnotherEvent),
                 ),
               ],
             );

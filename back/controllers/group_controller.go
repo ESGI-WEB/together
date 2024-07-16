@@ -64,7 +64,7 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 }
 
 func (c *GroupController) GetGroupById(ctx echo.Context) error {
-	id := ctx.Param("id")
+	id := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(id)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
@@ -130,8 +130,9 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 }
 
 func (c *GroupController) GetNextEvent(ctx echo.Context) error {
-	id := ctx.Param("id")
+	id := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(id)
+
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
