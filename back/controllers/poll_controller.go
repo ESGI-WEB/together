@@ -65,6 +65,7 @@ func (c *PollController) CreatePoll(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -95,6 +96,7 @@ func (c *PollController) GetPollsByEventID(ctx echo.Context) error {
 	closed := ctx.QueryParam("closed") == "true"
 	polls, err := c.pollService.GetPollsForEvent(eventID, pagination, closed)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -119,6 +121,7 @@ func (c *PollController) GetPollsByGroupID(ctx echo.Context) error {
 	closed := ctx.QueryParam("closed") == "true"
 	polls, err := c.pollService.GetPollsForGroup(groupID, pagination, closed)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -137,6 +140,7 @@ func (c *PollController) GetPoll(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -162,6 +166,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -201,6 +206,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 				// TODO check if the choice belongs to the poll
 				choiceTarget, err := c.pollService.GetPollChoiceByID(*choice.ID)
 				if err != nil {
+					ctx.Logger().Error(err)
 					return ctx.NoContent(http.StatusInternalServerError)
 				}
 				if choiceTarget.PollID != poll.ID {
@@ -216,6 +222,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 	if len(editedChoices) > 0 {
 		err = c.pollService.EditPollChoices(*poll, editedChoices)
 		if err != nil {
+			ctx.Logger().Error(err)
 			return ctx.NoContent(http.StatusInternalServerError)
 		}
 	}
@@ -227,6 +234,7 @@ func (c *PollController) EditPoll(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -246,6 +254,7 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -256,6 +265,7 @@ func (c *PollController) DeletePoll(ctx echo.Context) error {
 
 	err = c.pollService.DeletePoll(poll.ID)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -281,6 +291,7 @@ func (c *PollController) AddChoice(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -299,6 +310,7 @@ func (c *PollController) AddChoice(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -318,6 +330,7 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -328,6 +341,7 @@ func (c *PollController) DeleteChoice(ctx echo.Context) error {
 
 	err = c.pollService.DeletePollChoice(choice.ID)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -347,6 +361,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -359,6 +374,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 	// check if the choice is already selected by this user
 	selectedChoices, err := c.pollService.GetPollChoicesOfUser(poll.ID, user.ID)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -373,6 +389,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		for _, selectedChoice := range selectedChoices {
 			err = c.pollService.SelectPollChoice(*user, selectedChoice, false)
 			if err != nil {
+				ctx.Logger().Error(err)
 				return ctx.NoContent(http.StatusInternalServerError)
 			}
 		}
@@ -384,6 +401,7 @@ func (c *PollController) SelectChoice(ctx echo.Context) error {
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return ctx.String(http.StatusConflict, "You have already selected this choice")
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -403,6 +421,7 @@ func (c *PollController) DeselectChoice(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrBadRequest) {
 			return ctx.NoContent(http.StatusBadRequest)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -414,6 +433,7 @@ func (c *PollController) DeselectChoice(ctx echo.Context) error {
 
 	err = c.pollService.SelectPollChoice(*user, *choice, false)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

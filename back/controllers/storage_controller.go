@@ -24,6 +24,7 @@ func (c *StorageController) GetImage(ctx echo.Context) error {
 		if errors.As(err, &awsErr) && awsErr.StatusCode() == 404 {
 			return ctx.NoContent(http.StatusNotFound)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

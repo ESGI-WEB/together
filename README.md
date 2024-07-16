@@ -124,3 +124,10 @@ Lancer cette commande pour regenerer les fichiers de traductions
 ```bash
 flutter gen-l10n
 ```
+
+## Testing
+
+- Lancer les tests du back :
+```bash
+docker exec together-app go test -v ./...
+```

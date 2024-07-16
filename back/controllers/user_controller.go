@@ -47,6 +47,7 @@ func (c *UserController) CreateUser(ctx echo.Context) error {
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
 
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -59,6 +60,7 @@ func (c *UserController) GetUsers(ctx echo.Context) error {
 
 	usersPagination, err := c.UserService.GetUsers(pagination, &search)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -81,6 +83,7 @@ func (c *UserController) DeleteUser(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrNotFound) {
 			return ctx.NoContent(http.StatusNotFound)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -154,6 +157,7 @@ func (c *UserController) UpdateUser(ctx echo.Context) error {
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
 
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

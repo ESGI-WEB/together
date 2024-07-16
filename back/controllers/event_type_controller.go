@@ -25,6 +25,7 @@ func NewEventTypeController() *EventTypeController {
 func (c *EventTypeController) GetAllEventTypes(ctx echo.Context) error {
 	eventTypes, err := c.EventTypeService.GetAllEventTypes()
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 	return ctx.JSON(http.StatusOK, eventTypes)
@@ -62,6 +63,7 @@ func (c *EventTypeController) CreateEventType(ctx echo.Context) error {
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
 
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -108,6 +110,7 @@ func (c *EventTypeController) UpdateEventType(ctx echo.Context) error {
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
 
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -129,6 +132,7 @@ func (c *EventTypeController) DeleteEventType(ctx echo.Context) error {
 
 	err = c.EventTypeService.DeleteEventType(eventType)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
