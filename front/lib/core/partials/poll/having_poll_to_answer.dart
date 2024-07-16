@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/partials/live_dot.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HavingPollToAnswer extends StatelessWidget {
   final int pollCount;
@@ -22,25 +23,24 @@ class HavingPollToAnswer extends StatelessWidget {
               image: AssetImage('assets/images/poll.gif'),
             ),
             const SizedBox(width: 10),
-
             Flexible(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$pollCount ${pollCount > 1 ? 'sondages sont' : 'sondage est'} en cours',
+                    AppLocalizations.of(context)!.currentPolls(pollCount),
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   // add a red dot like a registering red light
                   const SizedBox(height: 10),
                   Text(
-                    "Les membres de votre groupe ont besoin de votre avis !",
+                    AppLocalizations.of(context)!.groupMembersNeedYourOpinion,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 10),
                   OutlinedButton(
                     onPressed: onPressed,
-                    child: const Text("C'est parti"),
+                    child: Text(AppLocalizations.of(context)!.letsGo),
                   ),
                 ],
               ),

@@ -43,6 +43,7 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 
 	isUserInGroup, err := c.GroupService.IsUserInGroup(user.ID, jsonBody.GroupID)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 	if !isUserInGroup {
@@ -56,6 +57,7 @@ func (c *EventController) CreateEvent(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -78,6 +80,7 @@ func (c *EventController) GetEvent(ctx echo.Context) error {
 
 	event, err := c.EventService.GetEventByID(uint(eventID))
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -108,6 +111,7 @@ func (c *EventController) GetEventAttends(ctx echo.Context) error {
 
 	attends, err := c.EventService.GetEventAttends(uint(eventID), pagination, hasAttended)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -147,6 +151,7 @@ func (c *EventController) GetEvents(ctx echo.Context) error {
 				validationErrors := utils.GetValidationErrors(validationErrs, filter)
 				return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 			}
+			ctx.Logger().Error(err)
 			return ctx.NoContent(http.StatusInternalServerError)
 		}
 	}
@@ -154,6 +159,7 @@ func (c *EventController) GetEvents(ctx echo.Context) error {
 	pagination := utils.PaginationFromContext(ctx)
 	events, err := c.EventService.GetEvents(pagination, filters...)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: together-app
     working_dir: /src/app/back
     depends_on:
       - postgres

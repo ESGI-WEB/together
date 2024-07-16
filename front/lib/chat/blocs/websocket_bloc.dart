@@ -94,7 +94,6 @@ class WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {
           add(NewMessageReceivedEvent.fromString(message));
           break;
         default:
-          print("WebSocket event type not handled: ${message['type']}");
           break;
       }
     }, onDone: () {

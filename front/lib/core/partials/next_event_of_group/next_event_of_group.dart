@@ -58,15 +58,6 @@ class NextEventOfGroup extends StatelessWidget {
                     );
                   },
                 ),
-                TextButton(
-                  onPressed: () {
-                    CreateEventScreen.navigateTo(
-                      context,
-                      groupId: groupId,
-                    );
-                  },
-                  child: const Text('Créer un autre évènement'),
-                ),
               ],
             );
           }

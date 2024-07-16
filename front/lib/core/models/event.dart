@@ -69,9 +69,28 @@ class Event {
       groupId: json['group_id'],
       recurrenceType: json['recurrence_type'] != null
           ? RecurrenceType.values.firstWhere((e) =>
-              e.toString() == 'RecurrenceType.' + json['recurrence_type'])
+              e.toString() == 'RecurrenceType.${json['recurrence_type']}')
           : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'ID': id,
+      'CreatedAt': createdAt.toIso8601String(),
+      'UpdatedAt': updatedAt.toIso8601String(),
+      'DeletedAt': deletedAt?.toIso8601String(),
+      'name': name,
+      'description': description,
+      'date': date.toIso8601String(),
+      'time': time,
+      'type_id': typeId,
+      'organizer_id': organizerId,
+      'address_id': addressId,
+      'address': address?.toJson(),
+      'organizer': organizer?.toJson(),
+      'type': type?.toJson(),
+    };
   }
 }
 

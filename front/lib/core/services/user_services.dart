@@ -96,4 +96,17 @@ class UserServices {
       rethrow;
     }
   }
+
+  static Future<User> findById(int id) async {
+    try {
+      final response = await ApiServices.get('/users/$id');
+      return User.fromJson(ApiServices.decodeResponse(response));
+    } on ApiException catch (e) {
+      if (e.response?.statusCode == 404) {
+        throw ApiException(message: 'Utilisateur non trouvé');
+      } else {
+        rethrow;
+      }
+    }
+  }
 }

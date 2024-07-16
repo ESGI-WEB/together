@@ -43,6 +43,7 @@ func (c *SecurityController) Login(ctx echo.Context) error {
 		if errors.Is(err, coreErrors.ErrInvalidCredentials) {
 			return ctx.NoContent(http.StatusUnauthorized)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

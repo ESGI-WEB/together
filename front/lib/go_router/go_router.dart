@@ -49,7 +49,9 @@ final goRouter = GoRouter(
   debugLogDiagnostics: true,
   initialLocation: !kIsWeb ? '/groups' : '/admin',
   redirect: (BuildContext context, GoRouterState state) async {
-    if (await StorageService.isUserLogged()) {
+    if (state.uri.toString() == '/register') {
+      return '/register';
+    } else if (await StorageService.isUserLogged()){
       return null;
     } else {
       return '/login';
@@ -118,8 +120,7 @@ final goRouter = GoRouter(
           name: GroupsScreen.routeName,
           path: '/groups',
           builder: (context, state) {
-            return BlocProvider(
-                create: (context) => GroupsBloc(), child: const GroupsScreen());
+            return const GroupsScreen();
           },
           routes: [
             GoRoute(
@@ -183,7 +184,7 @@ final goRouter = GoRouter(
                           groupId: int.parse(state.pathParameters['groupId']!),
                         );
                       },
-                    )
+                    ),
                   ],
                 ),
               ],

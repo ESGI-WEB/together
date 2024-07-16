@@ -11,6 +11,7 @@ class AvatarStack extends StatelessWidget {
   final int? total;
 
   final double leftSpacing = 25;
+  final double avatarSize = 15;
 
   const AvatarStack({
     super.key,
@@ -25,7 +26,7 @@ class AvatarStack extends StatelessWidget {
     int totalCircles = usersCirclesToDisplay + (showMoreUsersCircle ? 1 : 0);
 
     // displayedCirclesInTotal * avatarLeft + (avatarSize - avatarLeft)
-    return totalCircles * leftSpacing + (40 - leftSpacing);
+    return totalCircles * leftSpacing + (avatarSize*2 - leftSpacing);
   }
 
   int _getTotal() {
@@ -36,13 +37,13 @@ class AvatarStack extends StatelessWidget {
   Widget build(BuildContext context) {
     if (users.isEmpty) {
       return const WidgetAvatar(
-        child: Text('0'),
+        child: Text('0', style: TextStyle(fontSize: 14)),
       );
     }
 
     return SizedBox(
       // avatar's height
-      height: 40,
+      height: avatarSize*2,
       width: getStackSize(),
       child: Stack(
         children: [

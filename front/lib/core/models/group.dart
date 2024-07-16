@@ -33,8 +33,8 @@ class Group {
       name: json['name'],
       description: json['description'],
       code: json['code'],
-      users: json['Users'] != null
-          ? List<User>.from(json['Users'].map((user) => User.fromJson(user)))
+      users: json['users'] != null
+          ? List<User>.from(json['users'].map((user) => User.fromJson(user)))
           : null,
       ownerId: json['owner_id'],
     );
@@ -49,7 +49,7 @@ class Group {
       'Name': name,
       'Description': description,
       'Code': code,
-      'Users': users,
+      'Users': users?.map((user) => user.toJson()),
     };
   }
 }

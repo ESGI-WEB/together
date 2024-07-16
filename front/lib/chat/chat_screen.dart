@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/chat/blocs/websocket_event.dart';
 import 'package:front/chat/message_bubble.dart';
@@ -63,7 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextFormField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          labelText: "Écrire un message",
+                          labelText:
+                              AppLocalizations.of(context)!.writeAMessage,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
