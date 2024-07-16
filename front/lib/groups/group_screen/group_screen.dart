@@ -69,13 +69,13 @@ class GroupScreen extends StatelessWidget {
                   PublicationsBloc()..add(LoadPublications(groupId: id)),
             ),
           ],
-          child: Builder(
-            builder: (context) {
-              final publicationsBloc =
-                  BlocProvider.of<PublicationsBloc>(context);
-              return SingleChildScrollView(
-                child: Container(
-                  color: Colors.grey[100],
+          child: Container(
+            color: Colors.grey[100],
+            child: Builder(
+              builder: (context) {
+                final publicationsBloc =
+                    BlocProvider.of<PublicationsBloc>(context);
+                return SingleChildScrollView(
                   child: Column(
                     children: [
                       InkWell(
@@ -168,8 +168,8 @@ class GroupScreen extends StatelessWidget {
                                   groupId: id,
                                   authenticatedUser: authenticatedUser,
                                   publicationsBloc: publicationsBloc,
-                                  onAddPublication: () =>
-                                      _showBottomSheet(context, publicationsBloc),
+                                  onAddPublication: () => _showBottomSheet(
+                                      context, publicationsBloc),
                                 ),
                               ],
                             );
@@ -178,9 +178,9 @@ class GroupScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         );
       },
