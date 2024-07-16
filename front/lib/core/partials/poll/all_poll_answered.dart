@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AllPollAnswered extends StatelessWidget {
   const AllPollAnswered({
@@ -19,12 +20,12 @@ class AllPollAnswered extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Vous avez répondu à tous les sondages en cours !',
+                AppLocalizations.of(context)!.allPollsAnswered,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 10),
               Text(
-                "Vous pouvez changer vos réponses ou voir les réponses des autres participants.",
+                AppLocalizations.of(context)!.allPollsAnsweredSecondLine,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 10),
