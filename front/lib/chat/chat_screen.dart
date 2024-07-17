@@ -49,8 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: MessageBubble(
                         message: msg,
-                        reverse:
-                            msg.author.id == 1, // TODO: Get logged-in user's ID
+                        reverse: msg.isOwnMessage,
                       ),
                     );
                   },
