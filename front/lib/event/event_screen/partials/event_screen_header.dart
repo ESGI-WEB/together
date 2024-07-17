@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
@@ -9,7 +10,6 @@ import 'package:front/core/services/api_services.dart';
 import 'package:front/local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 class EventScreenHeader extends StatelessWidget {
   final Event event;
 
@@ -48,11 +48,11 @@ class EventScreenHeader extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      spacing: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           event.name,
@@ -60,6 +60,7 @@ class EventScreenHeader extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
+                        const SizedBox(height: 8),
                         if (organizer != null)
                           Text(
                             AppLocalizations.of(context)!.fromNameTheDay(
@@ -70,24 +71,27 @@ class EventScreenHeader extends StatelessWidget {
                                 .textTheme
                                 .labelSmall
                                 ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground,
-                                ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onBackground,
+                            ),
                           ),
+                        const SizedBox(height: 8),
                         if (address != null)
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(
                                 Icons.location_on,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                event.address!.fullAddress,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
+                              Expanded(
+                                child: Text(
+                                  address.fullAddress,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
                               ),
                             ],
                           ),
@@ -105,3 +109,4 @@ class EventScreenHeader extends StatelessWidget {
     );
   }
 }
+
