@@ -45,7 +45,10 @@ class MessageBubbleState extends State<MessageBubble> {
                         return SizedBox(
                           height: 200,
                           child: SendReactionRow(
-                            reactions: const ["👍", "😂", "👏", "💕"],
+                            reactions: const [
+                              "👍", "😂", "👏", "💕", "🔥", "😢", "😡",
+                              "💦", "🤔", "🙄", "😬", "😭", "😱"
+                            ],
                             messageId: widget.message.messageId,
                             onPressed: () {
                               setState(() {
