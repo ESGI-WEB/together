@@ -5,6 +5,7 @@ import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/list_events/list_events_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:front/info/info_group_screen.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final Widget child;
@@ -51,6 +52,9 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       case 2:
         ChatScreen.navigateTo(context, id: widget.groupId);
         break;
+      case 3:
+        InfoGroupScreen.navigateTo(context, id: widget.groupId);
+        break;
     }
   }
 
@@ -71,6 +75,10 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         BottomNavigationBarItem(
           icon: const Icon(Icons.message),
           label: AppLocalizations.of(context)!.inbox,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.info_outline),
+          label: AppLocalizations.of(context)!.infos,
         ),
       ],
       currentIndex: _selectedIndex,

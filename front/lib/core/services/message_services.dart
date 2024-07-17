@@ -5,7 +5,7 @@ import 'package:front/core/models/paginated.dart';
 import 'api_services.dart';
 
 class MessageServices {
-  static Future<Paginated<Message>> fetchPublicationsByGroup(int groupId, int page, int limit, {String sort = "created_at desc"}) async {
+  static Future<Paginated<Message>> fetchPublicationsByGroup(int groupId, int page, int limit, {String sort = "updated_at desc"}) async {
     try {
       final response = await ApiServices.get('/messages/group/$groupId?page=$page&limit=$limit&sort=$sort');
       final jsonData = ApiServices.decodeResponse(response);
@@ -19,7 +19,7 @@ class MessageServices {
     }
   }
 
-  static Future<Paginated<Message>> fetchPublicationsByEventAndGroup(int groupId, int eventId, int page, int limit, {String sort = "created_at desc"}) async {
+  static Future<Paginated<Message>> fetchPublicationsByEventAndGroup(int groupId, int eventId, int page, int limit, {String sort = "updated_at desc"}) async {
     try {
       final response = await ApiServices.get('/messages/group/$groupId/event/$eventId?page=$page&limit=$limit&sort=$sort');
       final jsonData = ApiServices.decodeResponse(response);

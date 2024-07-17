@@ -118,5 +118,7 @@
   "yourNextEvents": "Your next events",
   "yourNextParticipatingEvents": "Your next participating events",
   "like": "Like",
-  "lastModified": "Last modified"
+  "lastModified": "Last modified",
+  "infos": "Infos",
+  "copiedCode": "Code copied"
 }
