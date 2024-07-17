@@ -71,9 +71,9 @@ class MessageServices {
     }
   }
 
-  static Future<Message> pinMessage(int id, Map<String, dynamic> pinStatus) async {
+  static Future<Message> pinMessage(int id, Map<String, dynamic> pinMessage) async {
     try {
-      final response = await ApiServices.post('/messages/$id/pin', pinStatus);
+      final response = await ApiServices.patch('/messages/$id/pin', pinMessage);
       return Message.fromJson(ApiServices.decodeResponse(response));
     } on ApiException catch (e) {
       throw ApiException(

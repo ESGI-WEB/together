@@ -6,7 +6,7 @@ import (
 	"together/middlewares"
 )
 
-type MessageRouter struct {}
+type MessageRouter struct{}
 
 func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	messageController := controllers.NewMessageController()
@@ -21,7 +21,7 @@ func (r *MessageRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("/publication", messageController.CreatePublication)
 	group.PATCH("/:id", messageController.UpdateMessage)
 	group.DELETE("/:id", messageController.DeleteMessage)
-	group.POST("/:id/pin", messageController.PinMessage)
+	group.PATCH("/:id/pin", messageController.PinMessage)
 	group.GET("/group/:groupId/event/:eventId", messageController.GetPublicationsByEventAndGroup, middlewares.GroupMembershipMiddleware)
 	group.GET("/group/:groupId", messageController.GetPublicationsByGroup, middlewares.GroupMembershipMiddleware)
 }

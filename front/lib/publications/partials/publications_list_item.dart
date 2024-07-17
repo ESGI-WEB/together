@@ -75,7 +75,13 @@ class PublicationsListItem extends StatelessWidget {
                         ? Theme.of(context).colorScheme.primary
                         : Colors.grey,
                   ),
-                  onPressed: null,
+                  onPressed: () {
+                    final isPinned = MessagePinned(
+                      isPinned: !publication.isPinned,
+                    );
+                    publicationsBloc.add(
+                        PinPublication(id: publication.id, isPinned: isPinned));
+                  },
                 ),
             ],
           ),
@@ -160,7 +166,8 @@ class PublicationsListItem extends StatelessWidget {
             controller: contentController,
             maxLines: null,
             decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.publicationContent),
+              hintText: AppLocalizations.of(context)!.publicationContent,
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return AppLocalizations.of(context)!.enterContent;

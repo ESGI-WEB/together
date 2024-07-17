@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
-import 'package:front/core/services/message_services.dart';
 import 'package:front/core/models/message.dart';
+import 'package:front/core/services/message_services.dart';
 
 part 'publications_event.dart';
 part 'publications_state.dart';
@@ -17,13 +17,19 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
       ));
 
       try {
-        final paginatedPublications = await MessageServices.fetchPublicationsByGroup(event.groupId, state.page, state.limit, );
+        final paginatedPublications =
+            await MessageServices.fetchPublicationsByGroup(
+          event.groupId,
+          state.page,
+          state.limit,
+        );
         emit(state.copyWith(
           status: PublicationsStatus.success,
           publications: paginatedPublications.rows,
           total: paginatedPublications.total,
           pages: paginatedPublications.pages,
-          hasReachedMax: paginatedPublications.page >= paginatedPublications.pages,
+          hasReachedMax:
+              paginatedPublications.page >= paginatedPublications.pages,
         ));
       } on ApiException catch (error) {
         emit(state.copyWith(
@@ -34,13 +40,17 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
     });
 
     on<PublicationsLoadMore>((event, emit) async {
-      if (state.hasReachedMax || state.status == PublicationsStatus.loadingMore) return;
+      if (state.hasReachedMax || state.status == PublicationsStatus.loadingMore)
+        return;
 
       try {
         emit(state.copyWith(status: PublicationsStatus.loadingMore));
         final newPage = state.page + 1;
-        final paginatedPublications = await MessageServices.fetchPublicationsByGroup(event.groupId, newPage, state.limit);
-        final updatedPublications = List<Message>.from(state.publications ?? [])..addAll(paginatedPublications.rows);
+        final paginatedPublications =
+            await MessageServices.fetchPublicationsByGroup(
+                event.groupId, newPage, state.limit);
+        final updatedPublications = List<Message>.from(state.publications ?? [])
+          ..addAll(paginatedPublications.rows);
         emit(state.copyWith(
           status: PublicationsStatus.success,
           publications: updatedPublications,
@@ -56,7 +66,8 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
     });
 
     on<PublicationAdded>((event, emit) {
-      final updatedPublications = List<Message>.from(state.publications ?? [])..add(event.publication);
+      final updatedPublications = List<Message>.from(state.publications ?? [])
+        ..add(event.publication);
       emit(state.copyWith(
         publications: updatedPublications,
         status: PublicationsStatus.success,
@@ -70,7 +81,33 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
         });
 
         final updatedPublications = state.publications!.map((publication) {
-          return publication.id == updatedMessage.id ? updatedMessage : publication;
+          return publication.id == updatedMessage.id
+              ? updatedMessage
+              : publication;
+        }).toList();
+
+        emit(state.copyWith(
+          publications: updatedPublications,
+          status: PublicationsStatus.success,
+        ));
+      } on ApiException catch (error) {
+        emit(state.copyWith(
+          status: PublicationsStatus.error,
+          errorMessage: error.message,
+        ));
+      }
+    });
+
+    on<PinPublication>((event, emit) async {
+      try {
+        print(event.isPinned.isPinned);
+        final pinnedMessage = await MessageServices.pinMessage(
+            event.id, {'is_pinned': event.isPinned});
+
+        final updatedPublications = state.publications!.map((publication) {
+          return publication.id == pinnedMessage.id
+              ? pinnedMessage
+              : publication;
         }).toList();
 
         emit(state.copyWith(

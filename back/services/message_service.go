@@ -96,6 +96,10 @@ func (s *MessageService) CreatePublication(message models.MessageCreate) (*model
 	return newMessage, nil
 }
 
+func newBool(b bool) *bool {
+	return &b
+}
+
 func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields interface{}) (*models.Message, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
 	if err := validate.Struct(updatedFields); err != nil {
@@ -110,6 +114,7 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedFields).Error; err != nil {
 		return nil, err
 	}
+
 	if err := database.CurrentDatabase.Preload("User").First(existingMessage, messageID).Error; err != nil {
 		return nil, err
 	}
