@@ -162,6 +162,8 @@ func (s *GroupService) GetGroupEvents(groupId uint, pagination utils.Pagination)
 		Preload("Participants").
 		Preload("Address").
 		Where("group_id = ?", groupId).
+		Where("date >= ?", time.Now().Format(models.DateFormat)).
+		Where("time is null or (date > ? or time >= ?)", time.Now().Format(models.DateFormat), time.Now().Format(models.TimeFormat)).
 		Order("date").
 		Order("time")
 
