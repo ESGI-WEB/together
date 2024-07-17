@@ -109,5 +109,6 @@
   "edit": "Bearbeiten",
   "comment": "Kommentar",
   "like": "Gefällt mir",
+  "nParticipants": "{count, plural, =0{Keine Teilnehmer} =1{1 Teilnehmer} other{{count} Teilnehmer}}",
   "createOrJoinGroup": "Erstellen oder treten Sie einer Gruppe bei, um mit Ihren Freunden zu diskutieren und an Veranstaltungen teilzunehmen!"
 }
