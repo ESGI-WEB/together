@@ -72,7 +72,7 @@ class MessageBubbleState extends State<MessageBubble> {
                 ),
               ),
               Positioned(
-                bottom: -16,
+                bottom: -20,
                 left: 0,
                 right: 0,
                 child: ViewReactionRow(
