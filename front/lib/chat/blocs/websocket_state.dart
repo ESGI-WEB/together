@@ -57,19 +57,19 @@ class MessagesState extends WebSocketReady {
   }
 }
 
-class PollUpdatedState extends WebSocketState {
+class PollUpdatedState extends WebSocketReady {
   final Poll poll;
 
   PollUpdatedState(this.poll);
 }
 
-class PollDeletedState extends WebSocketState {
+class PollDeletedState extends WebSocketReady {
   final int pollId;
 
   PollDeletedState(this.pollId);
 }
 
-class EventAttendChangedState extends WebSocketState {
+class EventAttendChangedState extends WebSocketReady {
   final Attend attend;
 
   EventAttendChangedState(this.attend);
