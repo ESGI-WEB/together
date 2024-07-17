@@ -40,8 +40,9 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
     });
 
     on<PublicationsLoadMore>((event, emit) async {
-      if (state.hasReachedMax || state.status == PublicationsStatus.loadingMore)
+      if (state.hasReachedMax || state.status == PublicationsStatus.loadingMore) {
         return;
+      }
 
       try {
         emit(state.copyWith(status: PublicationsStatus.loadingMore));

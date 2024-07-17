@@ -133,7 +133,7 @@ class GroupsScreen extends StatelessWidget {
                                   },
                                   child: ListView.separated(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     itemCount: state.groups!.length +
                                         (state.status ==
                                                 GroupsStatus.loadingMore

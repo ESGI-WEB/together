@@ -45,7 +45,7 @@ class PublicationsListItem extends StatelessWidget {
                     ),
                     if (publication.updatedAt != publication.createdAt)
                       Text(
-                        "${AppLocalizations.of(context)!.lastModified} ${DateFormat.yMMMMEEEEd(LocaleLanguage.of(context)?.locale).format(publication.updatedAt!)}",
+                        "${AppLocalizations.of(context)!.lastModified} ${DateFormat.yMMMMEEEEd(LocaleLanguage.of(context)?.locale).format(publication.updatedAt)}",
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
