@@ -1,58 +1,189 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:front/core/models/user.dart';
+import 'package:front/core/partials/avatar.dart';
 import 'package:front/core/partials/next_event_of_group/next_event_of_group.dart';
 import 'package:front/core/partials/poll/poll_gateway.dart';
+import 'package:front/core/services/storage_service.dart';
+import 'package:front/core/services/user_services.dart';
+import 'package:front/event/create_event_screen/create_event_screen.dart';
+import 'package:front/publication/partials/group_create_publication_bottom_sheet.dart';
+import 'package:front/publications/blocs/publications_bloc.dart';
+import 'package:front/publications/partials/publications_list.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'blocs/group_screen_bloc.dart';
+import 'blocs/group_bloc.dart';
 
 class GroupScreen extends StatelessWidget {
   static const String routeName = 'group';
 
   final int id;
 
+  const GroupScreen({super.key, required this.id});
+
   static void navigateTo(BuildContext context, {required int id}) {
-    context.goNamed(routeName, pathParameters: {'groupId': id.toString()});
+    context.goNamed(
+      routeName,
+      pathParameters: {'groupId': id.toString()},
+    );
   }
 
-  const GroupScreen({super.key, required this.id});
+  Future<User?> _getAuthenticatedUser() async {
+    var jwtData = await StorageService.readJwtDataFromToken();
+    if (jwtData != null) {
+      return await UserServices.findById(jwtData.id);
+    }
+    return null;
+  }
+
+  void _showBottomSheet(
+      BuildContext context, PublicationsBloc publicationsBloc) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return BlocProvider.value(
+          value: publicationsBloc,
+          child: GroupCreatePublicationBottomSheet(
+            groupId: id,
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GroupScreenBloc()..add(LoadGroupScreen(groupId: id)),
-      child: BlocBuilder<GroupScreenBloc, GroupScreenState>(
-        builder: (context, state) {
-          if (state.status == GroupScreenStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return FutureBuilder<User?>(
+      future: _getAuthenticatedUser(),
+      builder: (context, snapshot) {
+        final authenticatedUser = snapshot.data;
 
-          if (state.status == GroupScreenStatus.error) {
-            return Center(child: Text(state.errorMessage ?? 'Erreur inconnue'));
-          }
-
-          final group = state.group;
-          if (group == null) {
-            return const Center(child: Text('Groupe introuvable'));
-          }
-
-          final isGroupOwner = state.group?.ownerId == state.userData?.id;
-
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                PollGateway(
-                  id: id,
-                  hasParentEditionRights: isGroupOwner,
-                ),
-                NextEventOfGroup(
-                  groupId: id,
-                ),
-              ],
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => GroupBloc()..add(LoadGroup(groupId: id)),
             ),
-          );
-        },
-      ),
+            BlocProvider(
+              create: (context) =>
+                  PublicationsBloc()..add(LoadPublications(groupId: id)),
+            ),
+          ],
+          child: Container(
+            color: Colors.grey[100],
+            child: Builder(
+              builder: (context) {
+                final publicationsBloc =
+                    BlocProvider.of<PublicationsBloc>(context);
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () =>
+                            _showBottomSheet(context, publicationsBloc),
+                        child: Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              if (authenticatedUser != null)
+                                Avatar(user: authenticatedUser),
+                              const SizedBox(width: 10),
+                              Flexible(
+                                child: Text(
+                                  AppLocalizations.of(context)!.news,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BlocBuilder<GroupBloc, GroupState>(
+                          builder: (context, state) {
+                            if (state.status == GroupStatus.loading) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            if (state.status == GroupStatus.error) {
+                              return Center(
+                                child: Text(state.errorMessage ??
+                                    AppLocalizations.of(context)!
+                                        .errorOccurred),
+                              );
+                            }
+
+                            final group = state.group;
+                            if (group == null) {
+                              return Center(
+                                child: Text(AppLocalizations.of(context)!
+                                    .groupNotFound),
+                              );
+                            }
+
+                            final isGroupOwner =
+                                state.group?.ownerId == state.userData?.id;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        AppLocalizations.of(context)!.nextEvent,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall,
+                                      ),
+                                      const Spacer(),
+                                      IconButton(
+                                        onPressed: () {
+                                          CreateEventScreen.navigateTo(
+                                            context,
+                                            groupId: id,
+                                          );
+                                        },
+                                        color: Theme.of(context).primaryColor,
+                                        icon: const Icon(Icons.add),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                NextEventOfGroup(
+                                  groupId: id,
+                                ),
+                                PollGateway(
+                                  id: id,
+                                  hasParentEditionRights: isGroupOwner,
+                                ),
+                                const SizedBox(height: 20),
+                                PublicationsList(
+                                  groupId: id,
+                                  authenticatedUser: authenticatedUser,
+                                  publicationsBloc: publicationsBloc,
+                                  onAddPublication: () => _showBottomSheet(
+                                      context, publicationsBloc),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

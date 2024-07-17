@@ -16,9 +16,10 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 
 	group.GET("", groupController.GetAllMyGroups, middlewares.AuthenticationMiddleware())
 	group.GET("/all", groupController.GetAllGroups, middlewares.AuthenticationMiddleware(models.AdminRole))
-	group.GET("/:id", groupController.GetGroupById, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
+	group.GET("/:groupId", groupController.GetGroupById, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
 	group.POST("", groupController.CreateGroup, middlewares.AuthenticationMiddleware())
 	group.POST("/join", groupController.JoinGroup, middlewares.AuthenticationMiddleware())
+	group.GET("/:groupId/next-event", groupController.GetNextEvent, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
 	group.GET("/:id/next-event", groupController.GetNextEvent, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
 	group.GET("/:id/events", groupController.GetGroupEvents, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
 

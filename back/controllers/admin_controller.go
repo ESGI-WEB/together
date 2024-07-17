@@ -19,6 +19,7 @@ func NewAdminController() *AdminController {
 func (c *AdminController) GetMonthlyLastYearRegistrationsCount(ctx echo.Context) error {
 	stats, err := c.StatsService.GetMonthlyLastYearRegistrationsCount()
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -28,6 +29,7 @@ func (c *AdminController) GetMonthlyLastYearRegistrationsCount(ctx echo.Context)
 func (c *AdminController) GetMonthlyMessagesCount(ctx echo.Context) error {
 	stats, err := c.StatsService.GetMonthlyMessagesCount()
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

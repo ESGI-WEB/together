@@ -6,6 +6,7 @@ import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/groups_screen/partials/groups_list_item.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/groups_bloc.dart';
 
@@ -31,7 +32,7 @@ class GroupsScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.errorMessage ??
-                          'Impossible de charger les groupes.'),
+                          AppLocalizations.of(context)!.unableToLoadGroups),
                     ),
                   );
                 });
@@ -47,7 +48,7 @@ class GroupsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Groupes',
+                      AppLocalizations.of(context)!.groups,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 20),
@@ -97,9 +98,12 @@ class GroupsScreen extends StatelessWidget {
                           if (state.status == GroupsStatus.success &&
                               (state.groups == null || state.groups!.isEmpty)) {
                             return ListView(
-                              children: const [
+                              children: [
                                 Center(
-                                  child: Text('Aucun groupe disponible.'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!
+                                        .noGroupAvailable,
+                                  ),
                                 ),
                               ],
                             );
@@ -116,21 +120,21 @@ class GroupsScreen extends StatelessWidget {
                       children: [
                         CustomIconButton(
                           icon: Icons.add,
-                          label: 'Créer',
+                          label: AppLocalizations.of(context)!.create,
                           onPressed: () {
-                            final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(CreateGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            final groupsBloc = context.read<GroupsBloc>();
+                            CreateGroupScreen.navigateTo(
+                                context, groupsBloc);
                           },
                         ),
                         const SizedBox(width: 16),
                         CustomIconButton(
                           icon: Icons.group_add,
-                          label: 'Rejoindre',
+                          label: AppLocalizations.of(context)!.join,
                           onPressed: () {
                             final groupsScreenBloc = context.read<GroupsBloc>();
-                            context.goNamed(JoinGroupScreen.routeName,
-                                extra: groupsScreenBloc);
+                            JoinGroupScreen.navigateTo(
+                                context, groupsScreenBloc);
                           },
                         ),
                       ],

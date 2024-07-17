@@ -5,6 +5,7 @@ import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/register_bloc.dart';
 
@@ -34,11 +35,11 @@ class RegisterScreen extends StatelessWidget {
               builder: (context, state) {
             if (state is RegisterFeatureDisabled) {
               return ErrorOccurred(
-                    image: SvgPicture.asset(
-                      'assets/images/503.svg',
-                      height: 200,
-                    ),
-                  );
+                image: SvgPicture.asset(
+                  'assets/images/503.svg',
+                  height: 200,
+                ),
+              );
             }
 
             return Form(
@@ -56,7 +57,7 @@ class RegisterScreen extends StatelessWidget {
                           width: 150,
                         ),
                         const SizedBox(height: 10),
-                        Text("S'inscrire",
+                        Text(AppLocalizations.of(context)!.register,
                             style: Theme.of(context).textTheme.displayLarge),
                         const SizedBox(height: 10),
                         if (state is RegisterError)
@@ -66,12 +67,12 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         TextFormField(
                           enabled: state is! RegisterLoading,
-                          decoration: const InputDecoration(
-                            hintText: 'Nom',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.name,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un nom';
+                              return AppLocalizations.of(context)!.nameRequired;
                             }
                             return null;
                           },
@@ -80,21 +81,22 @@ class RegisterScreen extends StatelessWidget {
                                 RegisterFormChanged(
                                     name: value,
                                     email: state.email,
-                                    password: state.password));
+                                    password: state.password,
+                                ));
                           },
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           enabled: state is! RegisterLoading,
-                          decoration: const InputDecoration(
-                            hintText: 'Email',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.email,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un email';
+                              return AppLocalizations.of(context)!.emailRequired;
                             }
                             if (!UserServices.emailRegex.hasMatch(value)) {
-                              return 'Veuillez saisir un email valide';
+                              return AppLocalizations.of(context)!.emailInvalid;
                             }
                             return null;
                           },
@@ -110,12 +112,16 @@ class RegisterScreen extends StatelessWidget {
                         TextFormField(
                           enabled: state is! RegisterLoading,
                           obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: 'Mot de passe',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.password,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un mot de passe';
+                              return AppLocalizations.of(context)!.passwordRequired;
+                            }
+
+                            if (value.length < 8) {
+                              return AppLocalizations.of(context)!.passwordTooShort(8);
                             }
                             return null;
                           },
@@ -131,16 +137,16 @@ class RegisterScreen extends StatelessWidget {
                         TextFormField(
                           enabled: state is! RegisterLoading,
                           obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: 'Confirmer le mot de passe',
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.confirmPassword,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Veuillez entrer un mot de passe';
+                              return  AppLocalizations.of(context)!.passwordRequired;
                             }
 
                             if (value != state.password) {
-                              return 'Les mots de passe ne correspondent pas';
+                              return  AppLocalizations.of(context)!.passwordsDoNotMatch;
                             }
 
                             return null;
@@ -161,13 +167,13 @@ class RegisterScreen extends StatelessWidget {
                                         .add(RegisterFormSubmitted());
                                   }
                                 },
-                                child: const Text('Inscription'),
+                                child: Text(AppLocalizations.of(context)!.register),
                               ),
                               TextButton(
                                 onPressed: () {
                                   LoginScreen.navigateTo(context);
                                 },
-                                child: const Text('Se connecter'),
+                                child: Text(AppLocalizations.of(context)!.login),
                               ),
                             ],
                           );

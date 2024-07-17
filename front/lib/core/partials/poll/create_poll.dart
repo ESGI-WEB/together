@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front/core/models/poll.dart';
 import 'package:front/core/models/poll_choice.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreatePoll extends StatefulWidget {
   final Function(String question, bool allowMultipleAnswers,
@@ -112,31 +113,31 @@ class _CreatePollState extends State<CreatePoll> {
         children: [
           Text(
             widget.pollToEdit == null
-                ? 'Créer un sondage'
-                : 'Modifier le sondage',
+                ? AppLocalizations.of(context)!.createAPoll
+                : AppLocalizations.of(context)!.editAPoll,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Votre question',
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.yourQuestion,
             ),
             controller: _questionController,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer une question';
+                return AppLocalizations.of(context)!.questionRequired;
               }
               if (value.length < 3) {
-                return 'La question doit contenir au moins 3 caractères';
+                return AppLocalizations.of(context)!.questionMinLength(3);
               }
               if (value.length > 255) {
-                return 'La question doit contenir moins de 255 caractères';
+                return AppLocalizations.of(context)!.questionMaxLength(255);
               }
               return null;
             },
           ),
           const SizedBox(height: 30),
           Text(
-            '${_answersController.length} réponses possibles :',
+            AppLocalizations.of(context)!.numberOrAnswersPossible(_answersController.length),
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Container(
@@ -152,15 +153,16 @@ class _CreatePollState extends State<CreatePoll> {
                         Expanded(
                           child: TextFormField(
                             controller: _answersController[i].controller,
-                            decoration: const InputDecoration(
-                              labelText: 'Réponse',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.answer,
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Veuillez remplir ou supprimer';
+                                return AppLocalizations.of(context)!.answerRequiredOrDelete;
                               }
                               if (value.length > 255) {
-                                return 'La réponse doit contenir moins de 255 caractères';
+                                return AppLocalizations.of(context)!
+                                    .answerMaxLength(255);
                               }
                               return null;
                             },
@@ -195,14 +197,14 @@ class _CreatePollState extends State<CreatePoll> {
               });
             },
             icon: const Icon(Icons.add),
-            label: const Text('Ajouter une réponse'),
+            label: Text(AppLocalizations.of(context)!.addAnAnswer),
           ),
           const SizedBox(height: 20),
           SwitchListTile(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            title: const Text('Autoriser plusieurs réponses'),
+            title: Text(AppLocalizations.of(context)!.allowMultipleAnswers),
             value: allowMultipleAnswers,
             onChanged: (value) {
               setState(() {
@@ -220,7 +222,7 @@ class _CreatePollState extends State<CreatePoll> {
             children: [
               TextButton(
                 onPressed: widget.onClose,
-                child: const Text('Annuler'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               const Spacer(),
               ElevatedButton.icon(
@@ -234,7 +236,7 @@ class _CreatePollState extends State<CreatePoll> {
                         ),
                       ),
                 onPressed: widget.saving != true ? submit : null,
-                label: const Text('Enregistrer'),
+                label: Text(AppLocalizations.of(context)!.save),
               ),
             ],
           ),

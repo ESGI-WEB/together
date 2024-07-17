@@ -43,6 +43,7 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -54,6 +55,7 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 		case errors.Is(err, coreErrors.ErrCodeDoesNotExist):
 			return ctx.String(http.StatusNotFound, err.Error())
 		default:
+			ctx.Logger().Error(err)
 			return ctx.NoContent(http.StatusInternalServerError)
 		}
 	}
@@ -62,7 +64,7 @@ func (c *GroupController) CreateGroup(ctx echo.Context) error {
 }
 
 func (c *GroupController) GetGroupById(ctx echo.Context) error {
-	id := ctx.Param("id")
+	id := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(id)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
@@ -86,6 +88,7 @@ func (c *GroupController) GetAllMyGroups(ctx echo.Context) error {
 
 	groups, err := c.GroupService.GetAllMyGroups(user.ID, pagination)
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -119,6 +122,7 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -126,14 +130,16 @@ func (c *GroupController) JoinGroup(ctx echo.Context) error {
 }
 
 func (c *GroupController) GetNextEvent(ctx echo.Context) error {
-	id := ctx.Param("id")
+	id := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(id)
+
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
 
 	event, err := c.GroupService.GetNextEvent(uint(groupID))
 	if err != nil {
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -164,6 +170,7 @@ func (c *GroupController) GetAllGroups(ctx echo.Context) error {
 				validationErrors := utils.GetValidationErrors(validationErrs, filter)
 				return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 			}
+			ctx.Logger().Error(err)
 			return ctx.NoContent(http.StatusInternalServerError)
 		}
 	}

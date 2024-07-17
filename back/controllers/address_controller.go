@@ -34,6 +34,7 @@ func (c *AddressController) CreateAddress(ctx echo.Context) error {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
 			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
 		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

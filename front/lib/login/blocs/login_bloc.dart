@@ -33,7 +33,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             password: state.password));
       } on ApiException {
         emit(LoginError(
-            errorMessage: "Une erreur s'est produite",
+            errorMessage: 'An error occurred',
             email: state.email,
             password: state.password));
       }

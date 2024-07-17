@@ -17,5 +17,6 @@ func SetupSwaggerRoutes(e *echo.Echo) {
 		SetupStorageSwagger(),
 		SetupAdminSwagger(),
 		SetupMessageSwagger(),
+		SetupPollSwagger(),
 	)
 }
