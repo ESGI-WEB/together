@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/event_type.dart';
@@ -10,7 +11,6 @@ import 'package:front/event/event_screen/event_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/create_event_bloc.dart';
 
@@ -196,6 +196,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final borderDecoration = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+    );
     return BlocProvider(
       create: (context) => CreateEventBloc(),
       child: Builder(
@@ -211,20 +214,23 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               } else if (state.status == CreateEventStatus.error) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.errorMessage ?? AppLocalizations.of(context)!.errorOccurred),
+                    content: Text(state.errorMessage ??
+                        AppLocalizations.of(context)!.errorOccurred),
                   ),
                 );
               }
             },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: [
-                    TextFormField(
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
                       decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.name),
+                        labelText: AppLocalizations.of(context)!.name,
+                        border: borderDecoration,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return AppLocalizations.of(context)!.nameRequired;
@@ -235,9 +241,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         name = value!;
                       },
                     ),
-                    TextFormField(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
                       decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.description),
+                        labelText: AppLocalizations.of(context)!.description,
+                        border: borderDecoration,
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return AppLocalizations.of(context)!
@@ -249,9 +260,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         description = value!;
                       },
                     ),
-                    TextFormField(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
                       decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.date),
+                        labelText: AppLocalizations.of(context)!.date,
+                        border: borderDecoration,
+                      ),
                       readOnly: true,
                       onTap: () => _selectDate(context),
                       controller: TextEditingController(text: date),
@@ -262,9 +278,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         return null;
                       },
                     ),
-                    TextFormField(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
                       decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.time),
+                        labelText: AppLocalizations.of(context)!.time,
+                        border: borderDecoration,
+                      ),
                       readOnly: true,
                       onTap: () => _selectTime(context),
                       controller: TextEditingController(text: time),
@@ -275,9 +296,13 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         return null;
                       },
                     ),
-                    DropdownButtonFormField<RecurrenceType>(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonFormField<RecurrenceType>(
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.eventRecurrent,
+                        border: borderDecoration,
                       ),
                       value: selectedRecurrenceType,
                       items: recurrenceTypes.map((RecurrenceType type) {
@@ -291,13 +316,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                           selectedRecurrenceType = newValue;
                         });
                       },
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 16), // Style de l'élément sélectionné
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
-                    DropdownButtonFormField<EventType>(
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonFormField<EventType>(
                       decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context)!.eventType),
+                        labelText: AppLocalizations.of(context)!.eventType,
+                        border: borderDecoration,
+                      ),
                       items: eventTypes.map((EventType type) {
                         return DropdownMenuItem<EventType>(
                           value: type,
@@ -330,22 +358,27 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         return null;
                       },
                     ),
-                    Autocomplete<Map<String, String>>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text.length < 5) {
-                          return const Iterable<Map<String, String>>.empty();
-                        }
-                        _fetchAddressSuggestions(textEditingValue.text);
-                        return addressSuggestions;
-                      },
-                      displayStringForOption: (option) => option['label']!,
-                      fieldViewBuilder:
-                          (context, controller, focusNode, onFieldSubmitted) {
-                        return TextFormField(
+                  ),
+                  Autocomplete<Map<String, String>>(
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.length < 5) {
+                        return const Iterable<Map<String, String>>.empty();
+                      }
+                      _fetchAddressSuggestions(textEditingValue.text);
+                      return addressSuggestions;
+                    },
+                    displayStringForOption: (option) => option['label']!,
+                    fieldViewBuilder:
+                        (context, controller, focusNode, onFieldSubmitted) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
                           controller: controller,
                           focusNode: focusNode,
                           decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!.address),
+                            labelText: AppLocalizations.of(context)!.address,
+                            border: borderDecoration,
+                          ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return AppLocalizations.of(context)!
@@ -353,35 +386,36 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                             }
                             return null;
                           },
-                        );
-                      },
-                      onSelected: (Map<String, String> selection) {
-                        setState(() {
-                          street = selection['street']!;
-                          number = selection['housenumber']!;
-                          city = selection['city']!;
-                          zip = selection['postcode']!;
-                          latitude = double.tryParse(selection['latitude']!);
-                          longitude = double.tryParse(selection['longitude']!);
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
+                        ),
+                      );
+                    },
+                    onSelected: (Map<String, String> selection) {
+                      setState(() {
+                        street = selection['street']!;
+                        number = selection['housenumber']!;
+                        city = selection['city']!;
+                        zip = selection['postcode']!;
+                        latitude = double.tryParse(selection['latitude']!);
+                        longitude = double.tryParse(selection['longitude']!);
+                      });
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
                       onPressed: () => _submitForm(context),
                       child: Text(AppLocalizations.of(context)!.createEvent),
                     ),
-                    BlocBuilder<CreateEventBloc, CreateEventState>(
-                      builder: (context, state) {
-                        if (state.status == CreateEventStatus.loading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  BlocBuilder<CreateEventBloc, CreateEventState>(
+                    builder: (context, state) {
+                      if (state.status == CreateEventStatus.loading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
             ),
           );
