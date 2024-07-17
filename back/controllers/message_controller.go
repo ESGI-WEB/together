@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -199,7 +198,6 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 
 	pinnedMessage, err := c.messageService.PinnedMessage(uint(messageID), jsonBody)
 	if err != nil {
-		fmt.Println(err)
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
