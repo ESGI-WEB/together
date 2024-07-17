@@ -102,6 +102,21 @@ func SetupGroupSwagger() *swag.API {
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("Group"),
 		),
+		endpoint.New(
+			http.MethodGet, "/groups/{id}/events",
+			endpoint.Handler(groupController.GetGroupEvents),
+			endpoint.Summary("Get events for a group"),
+			endpoint.Description("Returns a list of events for the group identified by the provided ID."),
+			endpoint.Path("id", "integer", "ID of the group to get the events for", true),
+			endpoint.Query("page", "integer", "Page number", false),
+			endpoint.Query("limit", "integer", "Number of items per page", false),
+			endpoint.Query("sort", "string", "Sort column and order like date asc", false),
+			endpoint.Response(http.StatusOK, "Successfully retrieved events", endpoint.SchemaResponseOption([]models.Event{})),
+			endpoint.Response(http.StatusBadRequest, "Invalid ID format"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("Group"),
+		),
 	)
 
 	return api

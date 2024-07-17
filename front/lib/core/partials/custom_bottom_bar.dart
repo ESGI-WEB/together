@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/services/storage_service.dart';
+import 'package:front/event/list_events/list_events_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -45,10 +46,10 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         GroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 1:
-        ChatScreen.navigateTo(context, id: widget.groupId);
+        ListEventsGroupScreen.navigateTo(context, id: widget.groupId);
         break;
       case 2:
-        Navigator.pushNamed(context, '/profile');
+        ChatScreen.navigateTo(context, id: widget.groupId);
         break;
     }
   }
@@ -60,16 +61,16 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     return BottomNavigationBar(
       items: [
         BottomNavigationBarItem(
+          icon: const Icon(Icons.group),
+          label: AppLocalizations.of(context)!.group,
+        ),
+        BottomNavigationBarItem(
           icon: const Icon(Icons.event),
           label: AppLocalizations.of(context)!.events,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.message),
           label: AppLocalizations.of(context)!.inbox,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.person),
-          label: AppLocalizations.of(context)!.profile,
         ),
       ],
       currentIndex: _selectedIndex,

@@ -19,9 +19,11 @@ class ViewReactionRow extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 2.0),
                 child: Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: Colors.blue,
-                    ),
+                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.grey.shade200,
+                        border: Border.all(
+                          color: Colors.grey.shade700,
+                        )),
                     child: Text("${entry.value} ${entry.key}")),
               ))
           .toList(),
