@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -148,7 +149,7 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	if !isUserInGroup {
+	if !isUserInGroup || message.UserID != user.ID {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
@@ -192,12 +193,13 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	if !isUserInGroup {
+	if !isUserInGroup || message.UserID != user.ID {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
 	pinnedMessage, err := c.messageService.PinnedMessage(uint(messageID), jsonBody)
 	if err != nil {
+		fmt.Println(err)
 		var validationErrs validator.ValidationErrors
 		if errors.As(err, &validationErrs) {
 			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)

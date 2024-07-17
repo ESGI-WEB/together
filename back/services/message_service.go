@@ -96,13 +96,9 @@ func (s *MessageService) CreatePublication(message models.MessageCreate) (*model
 	return newMessage, nil
 }
 
-func newBool(b bool) *bool {
-	return &b
-}
-
-func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields interface{}) (*models.Message, error) {
+func (s *MessageService) UpdateContent(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
 	validate := validator.New(validator.WithRequiredStructEnabled())
-	if err := validate.Struct(updatedFields); err != nil {
+	if err := validate.Struct(updatedMessage); err != nil {
 		return nil, err
 	}
 
@@ -111,7 +107,7 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 		return nil, err
 	}
 
-	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedFields).Error; err != nil {
+	if err := database.CurrentDatabase.Model(existingMessage).Updates(updatedMessage).Error; err != nil {
 		return nil, err
 	}
 
@@ -128,12 +124,32 @@ func (s *MessageService) updateMessageGeneric(messageID uint, updatedFields inte
 	return existingMessage, nil
 }
 
-func (s *MessageService) UpdateContent(messageID uint, updatedMessage models.MessageUpdate) (*models.Message, error) {
-	return s.updateMessageGeneric(messageID, updatedMessage)
-}
-
 func (s *MessageService) PinnedMessage(messageID uint, updatedMessage models.MessagePinned) (*models.Message, error) {
-	return s.updateMessageGeneric(messageID, updatedMessage)
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	if err := validate.Struct(updatedMessage); err != nil {
+		return nil, err
+	}
+
+	existingMessage := &models.Message{}
+	if err := database.CurrentDatabase.First(existingMessage, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	if err := database.CurrentDatabase.Model(existingMessage).Update("is_pinned", updatedMessage.IsPinned).Error; err != nil {
+		return nil, err
+	}
+
+	if err := database.CurrentDatabase.Preload("User").First(existingMessage, messageID).Error; err != nil {
+		return nil, err
+	}
+
+	// force update the message's updated_at field
+	// wierd gorm bug for this table
+	if err := database.CurrentDatabase.Model(existingMessage).Update("updated_at", time.Now()).Error; err != nil {
+		return nil, err
+	}
+
+	return existingMessage, nil
 }
 
 func (s *MessageService) DeleteMessage(messageID uint) error {
