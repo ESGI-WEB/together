@@ -89,7 +89,7 @@ func SetupUserSwagger() *swag.API {
 			endpoint.Tags("User"),
 		),
 		endpoint.New(
-			http.MethodGet, "/users/me/events",
+			http.MethodGet, "/users/events",
 			endpoint.Handler(userController.GetUserEvents),
 			endpoint.Summary("Get events for the authenticated user"),
 			endpoint.Description("Returns a list of events for the authenticated user."),
