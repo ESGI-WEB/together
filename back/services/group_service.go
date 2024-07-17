@@ -154,3 +154,22 @@ type GroupFilter struct {
 	database.Filter
 	Column string `json:"column" validate:"required,oneof=name code"`
 }
+
+func (s *GroupService) GetGroupEvents(groupId uint, pagination utils.Pagination) (*utils.Pagination, error) {
+	var events []models.Event
+
+	query := database.CurrentDatabase.
+		Preload("Participants").
+		Preload("Address").
+		Where("group_id = ?", groupId).
+		Where("date >= ?", time.Now().Format(models.DateFormat)).
+		Where("time is null or (date > ? or time >= ?)", time.Now().Format(models.DateFormat), time.Now().Format(models.TimeFormat)).
+		Order("date").
+		Order("time")
+
+	query.Scopes(utils.Paginate(events, &pagination, query)).Find(&events)
+
+	pagination.Rows = events
+
+	return &pagination, nil
+}

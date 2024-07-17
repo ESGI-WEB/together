@@ -17,6 +17,7 @@ class GroupsState {
   final int? total;
   final int? pages;
   final bool hasReachedMax;
+  final Event? nextEventOfUser;
 
   GroupsState({
     this.status = GroupsStatus.initial,
@@ -27,6 +28,7 @@ class GroupsState {
     this.total,
     this.pages,
     this.hasReachedMax = false,
+    this.nextEventOfUser,
   });
 
   GroupsState copyWith({
@@ -38,6 +40,7 @@ class GroupsState {
     int? total,
     int? pages,
     bool? hasReachedMax,
+    Event? nextEventOfUser,
   }) {
     return GroupsState(
       status: status ?? this.status,
@@ -48,6 +51,7 @@ class GroupsState {
       total: total ?? this.total,
       pages: pages ?? this.pages,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      nextEventOfUser: nextEventOfUser ?? this.nextEventOfUser,
     );
   }
 }

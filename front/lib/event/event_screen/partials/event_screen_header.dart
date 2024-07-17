@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/core/models/address.dart';
 import 'package:front/core/models/event.dart';
@@ -10,6 +9,7 @@ import 'package:front/core/services/api_services.dart';
 import 'package:front/local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class EventScreenHeader extends StatelessWidget {
   final Event event;
 
@@ -20,7 +20,8 @@ class EventScreenHeader extends StatelessWidget {
     final Address? address = event.address;
     final User? organizer = event.organizer;
 
-    final NetworkImage image = event.type?.image ?? NetworkImage("${ApiServices.baseUrl}/storage/images/types/default.png");
+    final NetworkImage image = event.type?.image ??
+        NetworkImage("${ApiServices.baseUrl}/storage/images/types/default.png");
 
     return Container(
       decoration: BoxDecoration(
@@ -64,17 +65,17 @@ class EventScreenHeader extends StatelessWidget {
                         if (organizer != null)
                           Text(
                             AppLocalizations.of(context)!.fromNameTheDay(
-                                organizer.name,
-                                "${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}"
+                              "${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}",
+                              organizer.name,
                             ),
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
                                 ?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onBackground,
-                            ),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground,
+                                ),
                           ),
                         const SizedBox(height: 8),
                         if (address != null)
@@ -109,4 +110,3 @@ class EventScreenHeader extends StatelessWidget {
     );
   }
 }
-

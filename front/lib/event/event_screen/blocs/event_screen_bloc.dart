@@ -65,10 +65,6 @@ class EventScreenBloc extends Bloc<EventScreenEvent, EventScreenState> {
     });
 
     on<EventScreenEventAttendeesRequested>((event, emit) async {
-      emit(state.copyWith(
-        status: EventScreenStatus.attendsLoading,
-      ));
-
       try {
         final page = await EventsServices.getEventAttends(
           eventId: event.eventId,

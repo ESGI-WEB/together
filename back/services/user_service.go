@@ -4,6 +4,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/gommon/random"
 	"strconv"
+	"time"
 	"together/database"
 	"together/errors"
 	"together/models"
@@ -131,4 +132,24 @@ func (s *UserService) FindByID(id uint) (*models.User, error) {
 	}
 
 	return &user, nil
+}
+
+func (s *UserService) GetUserEvents(userID uint, pagination utils.Pagination) (*utils.Pagination, error) {
+	var events []models.Event
+
+	query := database.CurrentDatabase.
+		Joins("JOIN attends ON attends.event_id = events.id").
+		Where("attends.user_id = ?", userID).
+		Where("date >= ?", time.Now().Format(models.DateFormat)).
+		Where("time is null or (date > ? or time >= ?)", time.Now().Format(models.DateFormat), time.Now().Format(models.TimeFormat)).
+		Preload("Participants").
+		Preload("Address").
+		Order("date").
+		Order("time")
+
+	query.Scopes(utils.Paginate(events, &pagination, query)).Find(&events)
+
+	pagination.Rows = events
+
+	return &pagination, nil
 }

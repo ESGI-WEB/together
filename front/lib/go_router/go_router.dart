@@ -17,6 +17,8 @@ import 'package:front/core/partials/error_occurred.dart';
 import 'package:front/core/services/storage_service.dart';
 import 'package:front/event/create_event_screen/create_event_screen.dart';
 import 'package:front/event/event_screen/event_screen.dart';
+import 'package:front/event/list_events/list_events_group_screen.dart';
+import 'package:front/event/list_events/list_events_user_screen.dart';
 import 'package:front/groups/create_group_screen/create_group_screen.dart';
 import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
@@ -51,7 +53,7 @@ final goRouter = GoRouter(
   redirect: (BuildContext context, GoRouterState state) async {
     if (state.uri.toString() == '/register') {
       return '/register';
-    } else if (await StorageService.isUserLogged()){
+    } else if (await StorageService.isUserLogged()) {
       return null;
     } else {
       return '/login';
@@ -124,6 +126,13 @@ final goRouter = GoRouter(
           },
           routes: [
             GoRoute(
+              path: ListEventsUserScreen.routeName,
+              name: ListEventsUserScreen.routeName,
+              builder: (context, state) {
+                return const ListEventsUserScreen();
+              },
+            ),
+            GoRoute(
               name: CreateGroupScreen.routeName,
               path: 'create',
               builder: (context, state) {
@@ -157,6 +166,15 @@ final goRouter = GoRouter(
                     );
                   },
                   routes: [
+                    GoRoute(
+                      name: ListEventsGroupScreen.routeName,
+                      path: ListEventsGroupScreen.routeName,
+                      builder: (context, state) {
+                        return ListEventsGroupScreen(
+                          id: int.parse(state.pathParameters['groupId']!),
+                        );
+                      },
+                    ),
                     GoRoute(
                       name: EventScreen.routeName,
                       path: 'event/:eventId',

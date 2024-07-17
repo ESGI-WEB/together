@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:front/core/exceptions/api_exception.dart';
 import 'package:front/core/exceptions/conflit_exception.dart';
 import 'package:front/core/exceptions/unauthorized_exception.dart';
+import 'package:front/core/models/event.dart';
 import 'package:front/core/models/jwt.dart';
 import 'package:front/core/models/paginated.dart';
 import 'package:front/core/models/user.dart';
@@ -108,5 +109,13 @@ class UserServices {
         rethrow;
       }
     }
+  }
+
+  static Future<Paginated<Event>> getUserNextEvents({int page = 1}) async {
+    final response = await ApiServices.get('/users/events?page=$page');
+    return Paginated.fromJson(
+      ApiServices.decodeResponse(response),
+      (data) => Event.fromJson(data),
+    );
   }
 }
