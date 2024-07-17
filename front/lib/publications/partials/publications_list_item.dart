@@ -43,18 +43,29 @@ class PublicationsListItem extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
-                    Text(
-                      DateFormat.yMMMMEEEEd(LocaleLanguage.of(context)?.locale)
-                          .format(publication.createdAt),
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
+                    if (publication.updatedAt != publication.createdAt)
+                      Text(
+                        "${AppLocalizations.of(context)!.lastModified} ${DateFormat.yMMMMEEEEd(LocaleLanguage.of(context)?.locale).format(publication.updatedAt!)}",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      )
+                    else
+                      Text(
+                        DateFormat.yMMMMEEEEd(
+                                LocaleLanguage.of(context)?.locale)
+                            .format(publication.createdAt),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
-              if (publication.isPinned || publication.user.id == authenticatedUser?.id)
+              if (publication.isPinned ||
+                  publication.user.id == authenticatedUser?.id)
                 IconButton(
                   icon: Icon(
                     publication.isPinned
@@ -88,11 +99,11 @@ class PublicationsListItem extends StatelessWidget {
                   ),
                 ),
                 child: Row(
-                    children: [
-                      const Icon(Icons.thumb_up_alt_outlined),
-                      const SizedBox(width: 8.0),
-                      Text(AppLocalizations.of(context)!.like),
-                    ]
+                  children: [
+                    const Icon(Icons.thumb_up_alt_outlined),
+                    const SizedBox(width: 8.0),
+                    Text(AppLocalizations.of(context)!.like),
+                  ],
                 ),
               ),
               TextButton(
@@ -108,7 +119,7 @@ class PublicationsListItem extends StatelessWidget {
                     const Icon(Icons.comment_outlined),
                     const SizedBox(width: 8.0),
                     Text(AppLocalizations.of(context)!.comment),
-                  ]
+                  ],
                 ),
               ),
               if (authenticatedUser != null &&
@@ -122,11 +133,11 @@ class PublicationsListItem extends StatelessWidget {
                     ),
                   ),
                   child: Row(
-                      children: [
-                        const Icon(Icons.edit),
-                        const SizedBox(width: 8.0),
-                        Text(AppLocalizations.of(context)!.edit),
-                      ]
+                    children: [
+                      const Icon(Icons.edit),
+                      const SizedBox(width: 8.0),
+                      Text(AppLocalizations.of(context)!.edit),
+                    ],
                   ),
                 ),
             ],

@@ -17,7 +17,7 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
       ));
 
       try {
-        final paginatedPublications = await MessageServices.fetchPublicationsByGroup(event.groupId, state.page, state.limit);
+        final paginatedPublications = await MessageServices.fetchPublicationsByGroup(event.groupId, state.page, state.limit, );
         emit(state.copyWith(
           status: PublicationsStatus.success,
           publications: paginatedPublications.rows,

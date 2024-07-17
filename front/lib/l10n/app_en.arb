@@ -108,5 +108,6 @@
   "publications": "Publications",
   "edit": "Edit",
   "comment": "Comment",
-  "like": "Like"
+  "like": "Like",
+  "lastModified": "Last modified"
 }
