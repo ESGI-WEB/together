@@ -42,9 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
             children: [
               Expanded(
                 child: ListView.builder(
+                  reverse: true,
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
-                    final msg = state.messages[index];
+                    final msg = state.messages[state.messages.length - index - 1];
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                         vertical: 16,

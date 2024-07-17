@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:front/admin/admin_drawer.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/admin/event_types/event_types_screen.dart';
 import 'package:front/admin/features/features_screen.dart';
-import 'package:front/chat/blocs/websocket_bloc.dart';
 import 'package:front/admin/users/users_screen.dart';
+import 'package:front/chat/blocs/websocket_bloc.dart';
 import 'package:front/chat/chat_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
@@ -24,6 +24,7 @@ import 'package:front/groups/group_screen/group_screen.dart';
 import 'package:front/groups/groups_screen/blocs/groups_bloc.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/groups/join_group_screen/join_group_screen.dart';
+import 'package:front/info/info_group_screen.dart';
 import 'package:front/login/login_screen.dart';
 import 'package:front/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -151,10 +152,21 @@ final goRouter = GoRouter(
             ShellRoute(
               builder:
                   (BuildContext context, GoRouterState state, Widget child) {
-                return CustomBottomBar(
-                  groupId: int.parse(state.pathParameters['groupId']!),
-                  child: child,
-                );
+                    int selectedIndex = 0;
+                    final location = state.uri.toString();
+                    if (location.contains(ListEventsGroupScreen.routeName)) {
+                      selectedIndex = 1;
+                    } else if (location.contains(ChatScreen.routeName)) {
+                      selectedIndex = 2;
+                    } else if (location.contains(InfoGroupScreen.routeName)) {
+                      selectedIndex = 3;
+                    }
+
+                    return CustomBottomBar(
+                      groupId: int.parse(state.pathParameters['groupId']!),
+                      selectedIndex: selectedIndex,
+                      child: child,
+                    );
               },
               routes: [
                 GoRoute(
@@ -186,6 +198,15 @@ final goRouter = GoRouter(
                       },
                     ),
                     GoRoute(
+                      name: InfoGroupScreen.routeName,
+                      path: InfoGroupScreen.routeName,
+                      builder: (context, state) {
+                        return InfoGroupScreen(
+                            groupId:
+                                int.parse(state.pathParameters['groupId']!));
+                      },
+                    ),
+                    GoRoute(
                       name: CreateEventScreen.routeName,
                       path: 'create_event',
                       builder: (context, state) {
@@ -196,7 +217,7 @@ final goRouter = GoRouter(
                     ),
                     GoRoute(
                       name: ChatScreen.routeName,
-                      path: 'messaging',
+                      path: ChatScreen.routeName,
                       builder: (context, state) {
                         return ChatScreen(
                           groupId: int.parse(state.pathParameters['groupId']!),

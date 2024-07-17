@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:front/event/list_events/list_events.dart';
 import 'package:go_router/go_router.dart';

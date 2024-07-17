@@ -22,8 +22,7 @@ class SendReactionRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Wrap(
           children: List.generate(
             reactions.length,
             (index) => TextButton(
@@ -32,7 +31,6 @@ class SendReactionRow extends StatelessWidget {
                 style: const TextStyle(fontSize: 24),
               ),
               onPressed: () {
-                // TODO: Handle reaction press
                 ChatService.createReaction(
                   Reaction(
                     content: reactions[index],

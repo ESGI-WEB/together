@@ -27,3 +27,10 @@ class UpdatePublication extends PublicationsEvent {
 
   UpdatePublication({required this.id, required this.publication});
 }
+
+class PinPublication extends PublicationsEvent {
+  final int id;
+  final MessagePinned isPinned;
+
+  PinPublication({required this.id, required this.isPinned});
+}

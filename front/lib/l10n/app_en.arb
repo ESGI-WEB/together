@@ -116,5 +116,9 @@
   "group": "Group",
   "groupEvents": "Group Events",
   "yourNextEvents": "Your next events",
-  "yourNextParticipatingEvents": "Your next participating events"
+  "yourNextParticipatingEvents": "Your next participating events",
+  "like": "Like",
+  "lastModified": "Last modified",
+  "infos": "Infos",
+  "copiedCode": "Code copied"
 }

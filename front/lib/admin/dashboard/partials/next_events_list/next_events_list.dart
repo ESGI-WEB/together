@@ -47,7 +47,7 @@ class NextEventsList extends StatelessWidget {
 
               return Container(
                 constraints: const BoxConstraints(
-                  maxHeight: 400,
+                  maxHeight: 350,
                 ),
                 child: ListView.builder(
                   itemCount: events.length,
