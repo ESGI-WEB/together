@@ -3,8 +3,12 @@ import 'package:front/core/services/api_services.dart';
 
 class ChatService {
   static Future<Reaction?> createReaction(Reaction reaction) async {
-    final response = await ApiServices.post(
-        '/messages/${reaction.messageId}/reaction', reaction.toJson());
-    return Reaction.fromJson(ApiServices.decodeResponse(response));
+    try {
+      final response = await ApiServices.post(
+          '/messages/${reaction.messageId}/reaction', reaction.toJson());
+      return Reaction.fromJson(ApiServices.decodeResponse(response));
+    } catch (e) {
+      return null;
+    }
   }
 }
