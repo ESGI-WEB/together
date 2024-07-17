@@ -152,10 +152,21 @@ final goRouter = GoRouter(
             ShellRoute(
               builder:
                   (BuildContext context, GoRouterState state, Widget child) {
-                return CustomBottomBar(
-                  groupId: int.parse(state.pathParameters['groupId']!),
-                  child: child,
-                );
+                    int selectedIndex = 0;
+                    final location = state.uri.toString();
+                    if (location.contains(ListEventsGroupScreen.routeName)) {
+                      selectedIndex = 1;
+                    } else if (location.contains(ChatScreen.routeName)) {
+                      selectedIndex = 2;
+                    } else if (location.contains(InfoGroupScreen.routeName)) {
+                      selectedIndex = 3;
+                    }
+
+                    return CustomBottomBar(
+                      groupId: int.parse(state.pathParameters['groupId']!),
+                      selectedIndex: selectedIndex,
+                      child: child,
+                    );
               },
               routes: [
                 GoRoute(
@@ -188,7 +199,7 @@ final goRouter = GoRouter(
                     ),
                     GoRoute(
                       name: InfoGroupScreen.routeName,
-                      path: 'infos',
+                      path: InfoGroupScreen.routeName,
                       builder: (context, state) {
                         return InfoGroupScreen(
                             groupId:
@@ -206,7 +217,7 @@ final goRouter = GoRouter(
                     ),
                     GoRoute(
                       name: ChatScreen.routeName,
-                      path: 'messaging',
+                      path: ChatScreen.routeName,
                       builder: (context, state) {
                         return ChatScreen(
                           groupId: int.parse(state.pathParameters['groupId']!),
