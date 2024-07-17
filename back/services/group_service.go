@@ -166,3 +166,20 @@ type GroupFilter struct {
 	database.Filter
 	Column string `json:"column" validate:"required,oneof=name code"`
 }
+
+func (s *GroupService) GetGroupEvents(groupId uint, pagination utils.Pagination) (*utils.Pagination, error) {
+	var events []models.Event
+
+	query := database.CurrentDatabase.
+		Preload("Participants").
+		Preload("Address").
+		Where("group_id = ?", groupId).
+		Order("date").
+		Order("time")
+
+	query.Scopes(utils.Paginate(events, &pagination, query)).Find(&events)
+
+	pagination.Rows = events
+
+	return &pagination, nil
+}

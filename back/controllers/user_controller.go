@@ -159,3 +159,19 @@ func (c *UserController) UpdateUser(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, updatedUser)
 }
+
+func (c *UserController) GetUserEvents(ctx echo.Context) error {
+	user, ok := ctx.Get("user").(models.User)
+	if !ok || user.ID == 0 {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
+	pagination := utils.PaginationFromContext(ctx)
+
+	events, err := c.UserService.GetUserEvents(user.ID, pagination)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, events)
+}

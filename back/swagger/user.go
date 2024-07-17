@@ -88,6 +88,20 @@ func SetupUserSwagger() *swag.API {
 			endpoint.Security("bearer_auth"),
 			endpoint.Tags("User"),
 		),
+		endpoint.New(
+			http.MethodGet, "/users/me/events",
+			endpoint.Handler(userController.GetUserEvents),
+			endpoint.Summary("Get events for the authenticated user"),
+			endpoint.Description("Returns a list of events for the authenticated user."),
+			endpoint.Query("page", "integer", "Page number", false),
+			endpoint.Query("limit", "integer", "Number of items per page", false),
+			endpoint.Query("sort", "string", "Sort column and order like date asc", false),
+			endpoint.Response(http.StatusOK, "Successfully retrieved events", endpoint.SchemaResponseOption([]models.Event{})),
+			endpoint.Response(http.StatusUnauthorized, "User not authenticated"),
+			endpoint.Response(http.StatusInternalServerError, "Internal server error"),
+			endpoint.Security("bearer_auth"),
+			endpoint.Tags("User"),
+		),
 	)
 
 	return api

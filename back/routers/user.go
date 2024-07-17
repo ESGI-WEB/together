@@ -22,4 +22,6 @@ func (r *UserRouter) SetupRoutes(e *echo.Echo) {
 	group.PUT("/:id", userController.UpdateUser, middlewares.AuthenticationMiddleware())
 
 	group.DELETE("/:id", userController.DeleteUser, middlewares.AuthenticationMiddleware(models.AdminRole))
+
+	group.GET("/me/events", userController.GetUserEvents, middlewares.AuthenticationMiddleware())
 }

@@ -176,3 +176,20 @@ func (c *GroupController) GetAllGroups(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, groups)
 }
+
+func (c *GroupController) GetGroupEvents(ctx echo.Context) error {
+	id := ctx.Param("id")
+	groupID, err := strconv.Atoi(id)
+	if err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	pagination := utils.PaginationFromContext(ctx)
+
+	events, err := c.GroupService.GetGroupEvents(uint(groupID), pagination)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+
+	return ctx.JSON(http.StatusOK, events)
+}

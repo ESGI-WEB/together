@@ -11,7 +11,7 @@ func SetupSwaggerRoutes(e *echo.Echo) {
 		SetupEventSwagger(),
 		SetupEventTypeSwagger(),
 		SetupFeatureSwagger(),
-		//SetupGroupSwagger(),
+		SetupGroupSwagger(),
 		SetupUserSwagger(),
 		SetupHelloSwagger(),
 		SetupStorageSwagger(),
