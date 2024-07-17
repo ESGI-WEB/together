@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"github.com/go-playground/validator/v10"
 	"time"
 	"together/database"
@@ -51,6 +52,18 @@ func (s *MessageService) ReactToMessage(messageID uint, reactionContent string, 
 	message, err := s.GetMessage(messageID)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if the reaction already exists
+	var existingReaction models.Reaction
+	err = database.CurrentDatabase.Where(&models.Reaction{
+		Content:   reactionContent,
+		MessageID: messageID,
+		UserID:    whoReacted.ID,
+	}).First(&existingReaction).Error
+
+	if err == nil {
+		return nil, errors.New("reaction already exists")
 	}
 
 	reaction := models.Reaction{
