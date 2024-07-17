@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:front/core/services/user_services.dart';
 import 'package:front/groups/groups_screen/groups_screen.dart';
 import 'package:front/login/blocs/login_bloc.dart';
@@ -55,6 +56,7 @@ class LoginScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        Text(dotenv.env['API_URL'] ?? 'http://10.0.2.2:8080'),
                         const ClipOval(
                           child: Image(
                             image: AssetImage('assets/images/login.gif'),

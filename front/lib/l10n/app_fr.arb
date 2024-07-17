@@ -108,5 +108,6 @@
   "publications": "Publications",
   "edit": "Modifier",
   "comment": "Commenter",
-  "like": "J'aime"
+  "like": "J'aime",
+  "createOrJoinGroup": "Créez ou rejoignez un groupe pour commencer à discuter et participer à des évènements avec vos amis !"
 }
