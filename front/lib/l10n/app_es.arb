@@ -108,5 +108,7 @@
   "publications": "Publicaciones",
   "edit": "Editar",
   "comment": "Comentar",
-  "like": "Amar"
+  "like": "Amar",
+  "nParticipants": "{count, plural, =0{No hay participantes} =1{1 participante} other{{count} participantes}}",
+  "createOrJoinGroup": "¡Crea o únete a un grupo para comenzar a chatear y participar en eventos con tus amigos!"
 }

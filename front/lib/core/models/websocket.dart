@@ -14,7 +14,7 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
   final User author;
   final int groupId;
   final int messageId;
-  final List<String> reactions;
+  final Map<String, int> reactions;
 
   ServerBoundSendChatMessage({
     required this.content,
@@ -30,12 +30,20 @@ class ServerBoundSendChatMessage extends WebSocketMessage {
       author: User.fromJson(json['author']),
       groupId: json['group_id'],
       messageId: json['message_id'],
-      reactions: (json['reactions'] as List<dynamic>).cast<String>(),
+      reactions:
+          (json['reactions'] as Map<String, dynamic>).cast<String, int>(),
     );
   }
 
-  ChatMessage toChatMessage() {
-    return ChatMessage.fromServerBoundChatMessage(this);
+  ChatMessage toChatMessage(int? id) {
+    return ChatMessage(
+      content: content,
+      author: author,
+      groupId: groupId,
+      messageId: messageId,
+      reactions: reactions,
+      isOwnMessage: author.id == id,
+    );
   }
 }
 

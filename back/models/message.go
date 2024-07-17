@@ -7,13 +7,13 @@ import (
 type MessageType string
 
 const (
-	TChatMessageType MessageType = "chat"
-	PubMessageType   MessageType = "publication"
+	ChatMessageType MessageType = "chat"
+	PubMessageType  MessageType = "publication"
 )
 
 type Message struct {
 	gorm.Model
-	Type     MessageType `json:"type" gorm:"default:tchat"`
+	Type     MessageType `json:"type" gorm:"default:chat"`
 	Content  string      `json:"content" validate:"required,min=10,max=300"`
 	IsPinned bool        `gorm:"default:false;not null" json:"is_pinned"`
 	GroupID  uint        `json:"group_id" validate:"required"`
