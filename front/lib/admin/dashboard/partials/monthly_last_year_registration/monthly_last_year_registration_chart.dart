@@ -47,7 +47,7 @@ class MonthlyLastYearRegistrationChart extends StatelessWidget {
 
               return Container(
                 constraints: const BoxConstraints(
-                  maxHeight: 400,
+                  maxHeight: 350,
                 ),
                 child: MonthlyChart(
                     chartData: stats,

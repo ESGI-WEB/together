@@ -91,7 +91,7 @@ func SetupMessageSwagger() *swag.API {
 
 	api.AddEndpoint(
 		endpoint.New(
-			http.MethodPost, "/messages/{id}/pin",
+			http.MethodPatch, "/messages/{id}/pin",
 			endpoint.Handler(messageController.PinMessage),
 			endpoint.Summary("Pin or unpin a message"),
 			endpoint.Description("Pins or unpins an existing message by ID."),

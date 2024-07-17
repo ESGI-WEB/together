@@ -46,7 +46,7 @@ class LastGroupsList extends StatelessWidget {
 
               return Container(
                 constraints: const BoxConstraints(
-                  maxHeight: 400,
+                  maxHeight: 350,
                 ),
                 child: ListView.builder(
                   itemCount: groups.length,

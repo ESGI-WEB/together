@@ -16,7 +16,7 @@ import (
 type MessageController struct {
 	webSocketService *services.WebSocketService
 	groupService     *services.GroupService
-	messageService *services.MessageService
+	messageService   *services.MessageService
 }
 
 func NewMessageController() *MessageController {
@@ -148,12 +148,18 @@ func (c *MessageController) UpdateMessage(ctx echo.Context) error {
 	if err != nil {
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	if !isUserInGroup {
+	if !isUserInGroup || message.UserID != user.ID {
 		return ctx.NoContent(http.StatusUnauthorized)
 	}
 
 	updatedMessage, err := c.messageService.UpdateContent(uint(messageID), jsonBody)
 	if err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
+			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
+			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 
@@ -168,7 +174,6 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 	}
 
 	var jsonBody models.MessagePinned
-
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&jsonBody); err != nil {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
@@ -183,8 +188,22 @@ func (c *MessageController) PinMessage(ctx echo.Context) error {
 		return ctx.NoContent(http.StatusNotFound)
 	}
 
+	isUserInGroup, err := c.groupService.IsUserInGroup(user.ID, message.GroupID)
+	if err != nil {
+		return ctx.NoContent(http.StatusInternalServerError)
+	}
+	if !isUserInGroup || message.UserID != user.ID {
+		return ctx.NoContent(http.StatusUnauthorized)
+	}
+
 	pinnedMessage, err := c.messageService.PinnedMessage(uint(messageID), jsonBody)
 	if err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
+			validationErrors := utils.GetValidationErrors(validationErrs, jsonBody)
+			return ctx.JSON(http.StatusUnprocessableEntity, validationErrors)
+		}
+		ctx.Logger().Error(err)
 		return ctx.NoContent(http.StatusInternalServerError)
 	}
 

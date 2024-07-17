@@ -5,9 +5,9 @@ import 'package:front/core/models/paginated.dart';
 import 'api_services.dart';
 
 class MessageServices {
-  static Future<Paginated<Message>> fetchPublicationsByGroup(int groupId, int page, int limit) async {
+  static Future<Paginated<Message>> fetchPublicationsByGroup(int groupId, int page, int limit, {String sort = "updated_at desc"}) async {
     try {
-      final response = await ApiServices.get('/messages/group/$groupId?page=$page&limit=$limit');
+      final response = await ApiServices.get('/messages/group/$groupId?page=$page&limit=$limit&sort=$sort');
       final jsonData = ApiServices.decodeResponse(response);
       return Paginated.fromJson(jsonData, (json) => Message.fromJson(json));
     } on ApiException catch (e) {
@@ -19,9 +19,9 @@ class MessageServices {
     }
   }
 
-  static Future<Paginated<Message>> fetchPublicationsByEventAndGroup(int groupId, int eventId, int page, int limit) async {
+  static Future<Paginated<Message>> fetchPublicationsByEventAndGroup(int groupId, int eventId, int page, int limit, {String sort = "updated_at desc"}) async {
     try {
-      final response = await ApiServices.get('/messages/group/$groupId/event/$eventId?page=$page&limit=$limit');
+      final response = await ApiServices.get('/messages/group/$groupId/event/$eventId?page=$page&limit=$limit&sort=$sort');
       final jsonData = ApiServices.decodeResponse(response);
       return Paginated.fromJson(jsonData, (json) => Message.fromJson(json));
     } on ApiException catch (e) {
@@ -71,9 +71,9 @@ class MessageServices {
     }
   }
 
-  static Future<Message> pinMessage(int id, Map<String, dynamic> pinStatus) async {
+  static Future<Message> pinMessage(int id, Map<String, dynamic> pinMessage) async {
     try {
-      final response = await ApiServices.post('/messages/$id/pin', pinStatus);
+      final response = await ApiServices.patch('/messages/$id/pin', pinMessage);
       return Message.fromJson(ApiServices.decodeResponse(response));
     } on ApiException catch (e) {
       throw ApiException(
