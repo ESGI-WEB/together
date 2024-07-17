@@ -185,7 +185,7 @@ func (c *GroupController) GetAllGroups(ctx echo.Context) error {
 }
 
 func (c *GroupController) GetGroupEvents(ctx echo.Context) error {
-	id := ctx.Param("id")
+	id := ctx.Param("groupId")
 	groupID, err := strconv.Atoi(id)
 	if err != nil {
 		return ctx.NoContent(http.StatusBadRequest)

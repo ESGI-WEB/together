@@ -90,4 +90,12 @@ class GroupServices {
       Group.fromJson,
     );
   }
+
+  static Future<Paginated<Event>> getGroupNextEvents({required int groupId, int page = 1}) async {
+    final response = await ApiServices.get('/groups/$groupId/events?page=$page');
+    return Paginated.fromJson(
+      ApiServices.decodeResponse(response),
+      (data) => Event.fromJson(data),
+    );
+  }
 }

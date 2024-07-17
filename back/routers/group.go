@@ -20,5 +20,5 @@ func (r *GroupRouter) SetupRoutes(e *echo.Echo) {
 	group.POST("", groupController.CreateGroup, middlewares.AuthenticationMiddleware())
 	group.POST("/join", groupController.JoinGroup, middlewares.AuthenticationMiddleware())
 	group.GET("/:groupId/next-event", groupController.GetNextEvent, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
-	group.GET("/:id/events", groupController.GetGroupEvents, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
+	group.GET("/:groupId/events", groupController.GetGroupEvents, middlewares.AuthenticationMiddleware(), middlewares.GroupMembershipMiddleware)
 }

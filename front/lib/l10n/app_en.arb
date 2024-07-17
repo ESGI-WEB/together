@@ -110,5 +110,11 @@
   "comment": "Comment",
   "like": "Like",
   "nParticipants": "{count, plural, =0{No participants} =1{1 participant} other{{count} participants}}",
-  "createOrJoinGroup": "Create or join a group to start chatting and participating in events with your friends!"
+  "noNextEvent": "No upcoming events",
+  "createOrJoinGroup": "Create or join a group to start chatting and participating in events with your friends!",
+  "seeMore": "See more",
+  "group": "Group",
+  "groupEvents": "Group Events",
+  "yourNextEvents": "Your next events",
+  "yourNextParticipatingEvents": "Your next participating events"
 }
