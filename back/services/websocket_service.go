@@ -223,11 +223,11 @@ type ClientBoundSendChatMessage struct {
 
 type ServerBoundSendChatMessage struct {
 	TypeMessage
-	Content   string       `json:"content" validate:"required"`
-	Author    *models.User `json:"author" validate:"required"`
-	GroupId   uint         `json:"group_id" validate:"required"`
-	MessageId uint         `json:"message_id" validate:"required"`
-	Reactions []string     `json:"reactions"`
+	Content   string         `json:"content" validate:"required"`
+	Author    *models.User   `json:"author" validate:"required"`
+	GroupId   uint           `json:"group_id" validate:"required"`
+	MessageId uint           `json:"message_id" validate:"required"`
+	Reactions map[string]int `json:"reactions"`
 }
 
 type ClientBoundFetchChatMessage struct {

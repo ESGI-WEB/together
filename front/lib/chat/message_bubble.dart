@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:front/chat/reaction_row.dart';
+import 'package:front/chat/send_reaction_row.dart';
+import 'package:front/chat/view_reactions.dart';
 import 'package:front/core/models/message.dart';
 import 'package:front/core/partials/avatar.dart';
 
 class MessageBubble extends StatefulWidget {
   final ChatMessage message;
+  final bool reverse;
 
   const MessageBubble({
     super.key,
     required this.message,
+    required this.reverse,
   });
 
   @override
@@ -16,34 +19,42 @@ class MessageBubble extends StatefulWidget {
 }
 
 class MessageBubbleState extends State<MessageBubble> {
-  late bool _showReactions;
-
   @override
   void initState() {
     super.initState();
-    _showReactions = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      textDirection: widget.reverse ? TextDirection.rtl : TextDirection.ltr,
       children: [
         Avatar(user: widget.message.author),
         const SizedBox(width: 10),
         Expanded(
           child: Stack(
             clipBehavior: Clip.none,
-            children: [
+            alignment:
+                widget.reverse ? Alignment.centerRight : Alignment.centerLeft,
+            children: <Widget>[
               GestureDetector(
                 onLongPress: () {
-                  setState(() {
-                    _showReactions = !_showReactions;
-                  });
-                },
-                onTap: () {
-                  setState(() {
-                    _showReactions = false;
-                  });
+                  showModalBottomSheet<void>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return SizedBox(
+                          height: 200,
+                          child: SendReactionRow(
+                            reactions: const ["👍", "😂", "👏", "💕"],
+                            messageId: widget.message.messageId,
+                            onPressed: () {
+                              setState(() {
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        );
+                      });
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -60,20 +71,14 @@ class MessageBubbleState extends State<MessageBubble> {
                   ),
                 ),
               ),
-              if (_showReactions)
-                ReactionRow(
-                  reactions: const ["👍", "😂", "👏", "💕"],
-                  messageId: widget.message.messageId,
-                  onPressed: () {
-                    setState(() {
-                      _showReactions = false;
-                    });
-                  },
+              Positioned(
+                bottom: -16,
+                left: 0,
+                right: 0,
+                child: ViewReactionRow(
+                  reverse: widget.reverse,
+                  reactions: widget.message.reactions,
                 ),
-              Row(
-                children: widget.message.reactions
-                    .map((string) => Text(string))
-                    .toList(),
               )
             ],
           ),

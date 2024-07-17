@@ -97,15 +97,37 @@ class GroupsScreen extends StatelessWidget {
 
                           if (state.status == GroupsStatus.success &&
                               (state.groups == null || state.groups!.isEmpty)) {
-                            return ListView(
-                              children: [
-                                Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .noGroupAvailable,
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Image(
+                                    width: 150,
+                                    image: AssetImage('assets/images/poll.gif'),
                                   ),
-                                ),
-                              ],
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    AppLocalizations.of(context)!.noGroupAvailable,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    AppLocalizations.of(context)!.createOrJoinGroup,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  OutlinedButton.icon(
+                                    onPressed: () {
+                                      final groupsBloc = context.read<GroupsBloc>();
+                                      CreateGroupScreen.navigateTo(
+                                          context, groupsBloc);
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: Text(AppLocalizations.of(context)!.create),
+                                  ),
+                                ],
+                              ),
                             );
                           }
 

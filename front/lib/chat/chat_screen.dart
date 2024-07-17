@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:front/chat/blocs/websocket_event.dart';
 import 'package:front/chat/message_bubble.dart';
 import 'package:front/core/partials/error_occurred.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'blocs/websocket_bloc.dart';
 import 'blocs/websocket_state.dart';
@@ -44,9 +44,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: ListView.builder(
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
+                    final msg = state.messages[index];
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: MessageBubble(message: state.messages[index]),
+                      child: MessageBubble(
+                        message: msg,
+                        reverse:
+                            msg.author.id == 1, // TODO: Get logged-in user's ID
+                      ),
                     );
                   },
                 ),
@@ -59,7 +64,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextFormField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(context)!.writeAMessage,
+                          labelText:
+                              AppLocalizations.of(context)!.writeAMessage,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ),

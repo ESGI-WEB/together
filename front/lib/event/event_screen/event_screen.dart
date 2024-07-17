@@ -199,7 +199,11 @@ class EventScreen extends StatelessWidget {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 Text(
-                                                  '${state.participantsPage?.total} participants',
+                                                  AppLocalizations.of(context)!
+                                                      .nParticipants(state
+                                                              .participantsPage
+                                                              ?.total ??
+                                                          0),
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleSmall,
@@ -254,7 +258,11 @@ class EventScreen extends StatelessWidget {
                                         hasParentEditionRights,
                                   ),
                                   const SizedBox(height: 16),
-                                  EventScreenAbout(event: event),
+                                  Row(
+                                    children: [
+                                      EventScreenAbout(event: event),
+                                    ],
+                                  ),
                                   const SizedBox(height: 16),
                                   ElevatedButton(
                                     onPressed: () async {
