@@ -100,9 +100,8 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
 
     on<PinPublication>((event, emit) async {
       try {
-        print(event.isPinned.isPinned);
         final pinnedMessage = await MessageServices.pinMessage(
-            event.id, {'is_pinned': event.isPinned});
+            event.id, {'is_pinned': event.isPinned.isPinned});
 
         final updatedPublications = state.publications!.map((publication) {
           return publication.id == pinnedMessage.id
