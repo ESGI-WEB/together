@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:front/admin/dashboard/dasboard_screen.dart';
 import 'package:front/core/models/jwt_data.dart';
 import 'package:front/core/models/user.dart';
@@ -44,6 +45,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     JwtData? authenticatedData,
   ) {
     return AppBar(
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
       centerTitle: true,
       title: Image.asset("assets/images/logo.png", width: 100.0),
       leading: widget.canPop
