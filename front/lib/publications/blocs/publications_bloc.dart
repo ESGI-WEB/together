@@ -40,7 +40,8 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
     });
 
     on<PublicationsLoadMore>((event, emit) async {
-      if (state.hasReachedMax || state.status == PublicationsStatus.loadingMore) {
+      if (state.hasReachedMax ||
+          state.status == PublicationsStatus.loadingMore) {
         return;
       }
 
@@ -67,8 +68,20 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
     });
 
     on<PublicationAdded>((event, emit) {
-      final updatedPublications = List<Message>.from(state.publications ?? [])
-        ..add(event.publication);
+      final updatedPublications = List<Message>.from(state.publications ?? []);
+
+      if (event.publication.isPinned) {
+        updatedPublications.insert(0, event.publication);
+      } else {
+        int lastPinnedIndex =
+            updatedPublications.indexWhere((pub) => !pub.isPinned);
+        if (lastPinnedIndex == -1) {
+          updatedPublications.add(event.publication);
+        } else {
+          updatedPublications.insert(lastPinnedIndex, event.publication);
+        }
+      }
+
       emit(state.copyWith(
         publications: updatedPublications,
         status: PublicationsStatus.success,
@@ -87,6 +100,19 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
               : publication;
         }).toList();
 
+        updatedPublications.sort((a, b) {
+          if (a.isPinned && !b.isPinned) {
+            return -1;
+          } else if (!a.isPinned && b.isPinned) {
+            return 1;
+          } else if (a.id == updatedMessage.id) {
+            return -1;
+          } else if (b.id == updatedMessage.id) {
+            return 1;
+          }
+          return 0;
+        });
+
         emit(state.copyWith(
           publications: updatedPublications,
           status: PublicationsStatus.success,
@@ -104,11 +130,22 @@ class PublicationsBloc extends Bloc<PublicationsEvent, PublicationsState> {
         final pinnedMessage = await MessageServices.pinMessage(
             event.id, {'is_pinned': event.isPinned.isPinned});
 
-        final updatedPublications = state.publications!.map((publication) {
-          return publication.id == pinnedMessage.id
-              ? pinnedMessage
-              : publication;
-        }).toList();
+        final updatedPublications =
+            List<Message>.from(state.publications ?? []);
+        final publicationIndex = updatedPublications
+            .indexWhere((publication) => publication.id == pinnedMessage.id);
+
+        if (publicationIndex != -1) {
+          updatedPublications.removeAt(publicationIndex);
+        }
+
+        if (pinnedMessage.isPinned) {
+          updatedPublications.insert(0, pinnedMessage);
+        } else {
+          int lastPinnedIndex =
+              updatedPublications.lastIndexWhere((pub) => pub.isPinned);
+          updatedPublications.insert(lastPinnedIndex + 1, pinnedMessage);
+        }
 
         emit(state.copyWith(
           publications: updatedPublications,
