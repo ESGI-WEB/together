@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:front/core/exceptions/api_exception.dart';
+import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/core/services/group_services.dart';
+import 'package:front/core/services/user_services.dart';
 
 part 'groups_event.dart';
 part 'groups_state.dart';
@@ -12,12 +14,22 @@ class GroupsBloc extends Bloc<GroupsEvent, GroupsState> {
     on<GroupsLoaded>((event, emit) async {
       emit(state.copyWith(
         status: GroupsStatus.loading,
-        page: 1,
+        page: event.page,
         hasReachedMax: false,
       ));
 
       try {
         final paginatedGroups = await GroupServices.fetchGroups(state.page, state.limit);
+
+        if (event.page == 1) {
+          try {
+            final nextEventOfUser = await UserServices.getUserNextEvents();
+            emit(state.copyWith(nextEventOfUser: nextEventOfUser.rows.firstOrNull));
+          } catch (error) {
+            // Do nothing, we don't want to block the groups loading
+          }
+        }
+
         emit(state.copyWith(
           status: GroupsStatus.success,
           groups: paginatedGroups.rows,

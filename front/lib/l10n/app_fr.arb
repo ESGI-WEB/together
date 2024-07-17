@@ -109,5 +109,14 @@
   "edit": "Modifier",
   "comment": "Commenter",
   "like": "J'aime",
+  "nParticipants": "{count, plural, =0{Aucun participant} =1{1 participant} other{{count} participants}}",
+  "noNextEvent": "Il n'y a pas d'évènement à venir",
+  "createOrJoinGroup": "Créez ou rejoignez un groupe pour commencer à discuter et participer à des évènements avec vos amis !",
+  "seeMore": "Voir plus",
+  "group": "Groupe",
+  "groupEvents": "Evènements du groupe",
+  "yourNextEvents": "Vos prochains évènements",
+  "yourNextParticipatingEvents": "Vos prochains évènements auxquels vous participez"
+  "like": "J'aime",
   "lastModified": "Modifié le"
 }

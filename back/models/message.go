@@ -7,8 +7,8 @@ import (
 type MessageType string
 
 const (
-	TChatMessageType MessageType = "chat"
-	PubMessageType   MessageType = "publication"
+	ChatMessageType MessageType = "chat"
+	PubMessageType  MessageType = "publication"
 )
 
 type Message struct {

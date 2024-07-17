@@ -28,7 +28,7 @@ class DateTile extends StatelessWidget {
                     ),
               ),
               Text(
-                DateFormat.MMMM(LocaleLanguage.of(context)?.locale).format(event.date).capitalize(),
+                DateFormat.MMM(LocaleLanguage.of(context)?.locale).format(event.date).capitalize(),
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ],

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"github.com/go-playground/validator/v10"
 	"time"
 	"together/database"
@@ -16,7 +17,7 @@ func NewMessageService() *MessageService {
 }
 
 func (s *MessageService) CreateChatMessage(message models.Message) (*models.Message, error) {
-	message.Type = models.TChatMessageType // Ensure the message type is set to chat message
+	message.Type = models.ChatMessageType // Ensure the message type is set to chat message
 
 	if err := database.CurrentDatabase.Create(&message).Error; err != nil {
 		return nil, err
@@ -27,30 +28,42 @@ func (s *MessageService) CreateChatMessage(message models.Message) (*models.Mess
 
 func (s *MessageService) GetAllChatMessagesByGroup(groupID uint) ([]models.Message, error) {
 	var messages []models.Message
-	if err := database.CurrentDatabase.Preload("User").Where("group_id = ? AND type = ?", groupID, models.TChatMessageType).Find(&messages).Error; err != nil {
+	if err := database.CurrentDatabase.Preload("User").Where("group_id = ? AND type = ?", groupID, models.ChatMessageType).Find(&messages).Error; err != nil {
 		return nil, err
 	}
 	return messages, nil
 }
 
-func (s *MessageService) GetMessageReactions(messageID uint) ([]string, error) {
+func (s *MessageService) GetMessageReactions(messageID uint) (map[string]int, error) {
 	var reactions []models.Reaction
 	if err := database.CurrentDatabase.Where("message_id = ?", messageID).Find(&reactions).Error; err != nil {
 		return nil, err
 	}
 
-	reactionContents := make([]string, len(reactions))
-	for i, reaction := range reactions {
-		reactionContents[i] = reaction.Content
+	reactionCounts := make(map[string]int)
+	for _, reaction := range reactions {
+		reactionCounts[reaction.Content]++
 	}
 
-	return reactionContents, nil
+	return reactionCounts, nil
 }
 
 func (s *MessageService) ReactToMessage(messageID uint, reactionContent string, whoReacted models.User) (*models.Reaction, error) {
 	message, err := s.GetMessage(messageID)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check if the reaction already exists
+	var existingReaction models.Reaction
+	err = database.CurrentDatabase.Where(&models.Reaction{
+		Content:   reactionContent,
+		MessageID: messageID,
+		UserID:    whoReacted.ID,
+	}).First(&existingReaction).Error
+
+	if err == nil {
+		return nil, errors.New("reaction already exists")
 	}
 
 	reaction := models.Reaction{

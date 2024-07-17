@@ -20,7 +20,8 @@ class EventScreenHeader extends StatelessWidget {
     final Address? address = event.address;
     final User? organizer = event.organizer;
 
-    final NetworkImage image = event.type?.image ?? NetworkImage("${ApiServices.baseUrl}/storage/images/types/default.png");
+    final NetworkImage image = event.type?.image ??
+        NetworkImage("${ApiServices.baseUrl}/storage/images/types/default.png");
 
     return Container(
       decoration: BoxDecoration(
@@ -48,11 +49,11 @@ class EventScreenHeader extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(16),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Wrap(
-                      direction: Axis.vertical,
-                      spacing: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           event.name,
@@ -60,11 +61,12 @@ class EventScreenHeader extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),
+                        const SizedBox(height: 8),
                         if (organizer != null)
                           Text(
                             AppLocalizations.of(context)!.fromNameTheDay(
-                                organizer.name,
-                                "${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}"
+                              "${DateFormat.yMd(LocaleLanguage.of(context)?.locale).format(event.date)}${event.time != null ? " ${event.time}" : ''}",
+                              organizer.name,
                             ),
                             style: Theme.of(context)
                                 .textTheme
@@ -75,19 +77,22 @@ class EventScreenHeader extends StatelessWidget {
                                       .onBackground,
                                 ),
                           ),
+                        const SizedBox(height: 8),
                         if (address != null)
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Icon(
                                 Icons.location_on,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                event.address!.fullAddress,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
+                              Expanded(
+                                child: Text(
+                                  address.fullAddress,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
                               ),
                             ],
                           ),

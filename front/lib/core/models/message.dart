@@ -1,14 +1,14 @@
 import 'package:front/core/models/event.dart';
 import 'package:front/core/models/group.dart';
 import 'package:front/core/models/user.dart';
-import 'package:front/core/models/websocket.dart';
 
 class ChatMessage {
   final String content;
   final User author;
   final int groupId;
   final int messageId;
-  final List<String> reactions;
+  final bool isOwnMessage;
+  final Map<String, int> reactions;
 
   ChatMessage({
     required this.content,
@@ -16,18 +16,8 @@ class ChatMessage {
     required this.groupId,
     required this.messageId,
     required this.reactions,
+    required this.isOwnMessage,
   });
-
-  factory ChatMessage.fromServerBoundChatMessage(
-      ServerBoundSendChatMessage serverBoundSendChatMessage) {
-    return ChatMessage(
-      content: serverBoundSendChatMessage.content,
-      author: serverBoundSendChatMessage.author,
-      groupId: serverBoundSendChatMessage.groupId,
-      messageId: serverBoundSendChatMessage.messageId,
-      reactions: serverBoundSendChatMessage.reactions,
-    );
-  }
 }
 
 class Reaction {
